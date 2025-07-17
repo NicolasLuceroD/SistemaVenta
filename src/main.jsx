@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { departamentos, compra, reportes, corte2,cliente, productos, configuracion, nuevoProducto, editarProducto, eliminarProducto, app, importar, corteC, loginUsuario, usuarios, metodoPago, credito, testVenta, plataEnCaja} from './routes/routes.js'
+import {departamentos, compra, reportes, corte2,cliente, productos, configuracion, nuevoProducto, editarProducto, eliminarProducto, app, importar, corteC, loginUsuario, usuarios, metodoPago, credito, testVenta, plataEnCaja, corte, inventario, paquete, stock, creditoproveedores, auditoriacompra, gestionMesas} from './routes/routes.js'
 import Clientes from './components/Clientes.jsx'
 import Compra from './components/Compras.jsx'
-import {Corte} from "./components/Corte.jsx"
 import Productos from './components/Productos.jsx'
 import Configuracion from "./components/Configuracion.jsx"
 import NuevoProduct from "./CrudProductos/NuevoProduct.jsx"
@@ -27,6 +26,13 @@ import PlataCaja from './components/PlataCaja.jsx'
 import { VentaProvider } from './context/VentaProvider.jsx'
 import Corte2 from './components/Corte2.jsx'
 import Reportes from './components/Reportes.jsx'
+import Corte from './components/Corte.jsx'
+import Stock from './components/Stock.jsx'
+import Inventario from './CrudProductos/Inventario.jsx'
+import Paquete from './CrudProductos/Paquete.jsx'
+import CreditoProveedores from './components/CreditoProveedores.jsx'
+import AuditoriaCompra from './components/AuditoriaCompra.jsx'
+import GestionMesas from './components/GestionMesas.jsx'
 
 
 
@@ -59,7 +65,11 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path={plataEnCaja} element={<PlataCaja/>}/>
                 <Route path={corte2} element={<Corte2/>}/>
                 <Route path={reportes} element={<Reportes/>}/>
-              
+                <Route path={corte} element={<Corte/>}/>
+                <Route path={inventario} element={<Inventario/>}/>
+                <Route path={paquete} element={<Paquete/>}/>
+                <Route path={creditoproveedores} element={<CreditoProveedores/>}/>
+                <Route path={auditoriacompra} element={<AuditoriaCompra/>}/>
                 {/* PRODUCTOS */}
                 <Route path={productos} element={<Productos/>}/>
                 <Route path={nuevoProducto} element={<NuevoProduct/>}/>
@@ -67,6 +77,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path={eliminarProducto} element={<Eliminar/>}/>
                 <Route path={departamentos} element={<Departamentos/>}/>
                 <Route path={importar} element={<Importar/>}/>
+                <Route path={stock} element={<Stock/>}/>
+                <Route path={gestionMesas} element={<GestionMesas/>}/>
 
               </Routes>
             </VentaProvider>  

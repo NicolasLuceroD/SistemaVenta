@@ -4,9 +4,9 @@ const router = Router()
 
 const { verCaja, loginCaja } = require('../controllers/Caja')
 
-router.get("/caja/:Id_sucursal", verCaja)
+router.get("/:Id_sucursal", verCaja)
 
-router.post("/caja/post",loginCaja)
+router.post("/post",loginCaja)
 
 
 module.exports = router

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const {Router} = require('express')
 const router = Router()
 
@@ -5,7 +6,7 @@ const router = Router()
 const {verSucursales} = require('../controllers/Sucursales')
 
 
-router.get("/sucursales",verSucursales)
+router.get("/",verSucursales)
 
 
 module.exports = router

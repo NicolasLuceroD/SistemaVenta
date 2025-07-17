@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect,useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 import {
@@ -8,22 +8,24 @@ import {
   MDBCol,
   MDBCard,
   MDBCardBody,
-  MDBInput,
 }
 from 'mdb-react-ui-kit';
 import Swal from 'sweetalert2'
-import logo2 from '../assets/logo-negro2.png'
-import logoblanco from '../assets/logo-blanco.png'
 
+import { DataContext } from '../context/DataContext';
+ 
 const Login = () => {
   const navigate = useNavigate();
   const [nombre_sucursal, setNombre_sucursal] = useState("");
   const [clave, setClave] = useState("");
-  const [sucursales, setSucursales] = useState([]);
- 
+
+
+  const {sucursales, URL} = useContext(DataContext)
+
+  console.log(sucursales)
 
   const comprobarLogin = () => {
-    axios.post("http://localhost:3001/login/post",{ 
+    axios.post(`${URL}login/post`,{ 
       nombre_sucursal: nombre_sucursal,
       clave: clave
     })
@@ -69,49 +71,46 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("http://localhost:3001/sucursales")
-      .then(response => {
-        setSucursales(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching sucursales:', error);
-      });
-  }, []);
+    console.log('Sucursales cargadas:', sucursales);
+  }, [sucursales]);
 
   return (
-    <>
-      <img src={logoblanco} alt="loguito" style={{ position: 'absolute', top: '15px', left: '15px', width: '120px' }} />
-      <MDBContainer fluid>
+<>
+<div className="fondo-login"></div>
+       <MDBContainer fluid className='d-flex justify-content-center align-items-center min-vh-100'>
+        <MDBRow className='w-100'>
+          <MDBCol className='d-flex justify-content-center'>
+            <MDBCard className='bg-white my-5' style={{ borderRadius: '1rem', maxWidth: '500px', padding: '30px' }}>
+              <MDBCardBody className='p-5 w-100 d-flex flex-column'>
 
-<MDBRow className='d-flex justify-content-center align-items-center h-100'>
-  <MDBCol col='12'>
+                <div className='d-flex justify-content-center'>
+                <h2>EL VARISTA</h2>
+                </div>
+                <br />
 
-    <MDBCard className='bg-white my-5 mx-auto' style={{borderRadius: '1rem', maxWidth: '500px'}}>
-      <MDBCardBody className='p-5 w-100 d-flex flex-column'>
-
-        <img src={logo2} alt="logo" />
-        <br />
-
-        <select className='form-select mb-4 w-100' value={nombre_sucursal} onChange={(e) => setNombre_sucursal(e.target.value)}>
-                    <option value='' disabled selected>Seleccione sucursal</option>
-                    {sucursales.map(sucursal => (
+                <select className='form-select mb-4 w-100' value={nombre_sucursal} onChange={(e) => setNombre_sucursal(e.target.value)}>
+                  <option value='' disabled>Seleccione sucursal</option>
+                  {sucursales.length === 0 ? (
+                    <option disabled>Cargando sucursales...</option>
+                  ) : (
+                    sucursales.map(sucursal => (
                       <option key={sucursal.Id_sucursal} value={sucursal.nombre_sucursal}>{sucursal.nombre_sucursal}</option>
-                    ))}
-                  </select>           
-      
-        <input className='form-control mb-4 w-100' placeholder='Ingrese clave...' type='password' size="lg" value={clave} onChange={(e) => setClave(e.target.value)}/>
+                    ))
+                  )}
+                </select>        
 
-        <MDBBtn size='lg' onClick={comprobarLogin}>
-          INGRESAR
-        </MDBBtn>
-      </MDBCardBody>
-    </MDBCard>
+                <input className='form-control mb-4 w-100' placeholder='Ingrese clave...' type='password' size="lg" value={clave} onChange={(e) => setClave(e.target.value)} />
 
-  </MDBCol>
-</MDBRow>
-
-</MDBContainer>
+                <MDBBtn size='lg' onClick={comprobarLogin} style={{backgroundColor: '#411e19', border: 'none', cursor: 'pointer'}}>
+                  INGRESAR
+                </MDBBtn>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+        </MDBRow>
+      </MDBContainer>
     </>
+
   );
 };
 

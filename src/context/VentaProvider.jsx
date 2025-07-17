@@ -1,3 +1,5 @@
+
+/* eslint-disable react/prop-types */
 import { useReducer } from 'react'
 import { VentaContext } from "./VentaContext"
 
@@ -14,7 +16,7 @@ export const VentaProvider = ({children}) => {
                 return [...estado, accion.payload]
              
             case '[VENTA] Eliminar Venta':
-                return estado.filter(venta => venta.Id_venta !== accion.payload)
+                return estado.filter(venta => venta !== accion.payload)
             default:
                 return estado
         }
@@ -32,10 +34,10 @@ export const VentaProvider = ({children}) => {
     
     }
 
-    const eliminarVenta = (Id_venta) => {
+    const eliminarVenta = (venta) => {
         const accion = {
             type: '[VENTA] Eliminar Venta',
-            payload: Id_venta
+            payload: venta
         }
         dispatch(accion)
 

@@ -1,12 +1,10 @@
 const { connection } = require("../database/config");
 
 const login = (req, res) => {
-
     const nombre_sucursal = req.body.nombre_sucursal;
-    const clave = req.body.clave;
-    
+    const clave = req.body.clave;  
     connection.query(
-        "SELECT id_sucursal FROM Sucursales WHERE nombre_sucursal = ? AND clave = ?",
+        "SELECT id_sucursal FROM sucursales WHERE nombre_sucursal = ? AND clave = ?",
         [nombre_sucursal, clave],
         (error, result) => {
             if (error) {
@@ -29,7 +27,7 @@ const loginUsuario = (req, res) => {
     const Id_sucursal = req.body.Id_sucursal;
 
     connection.query(
-        "SELECT id_usuario, rol_usuario FROM Usuarios WHERE nombre_usuario = ? AND clave_usuario = ? AND Id_sucursal = ?",
+        "SELECT id_usuario, rol_usuario FROM usuarios WHERE nombre_usuario = ? AND clave_usuario = ? AND Id_sucursal = ?",
         [nombre_usuario, clave_usuario, Id_sucursal],
         (error, results) => {
             if (error) {

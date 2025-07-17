@@ -4,9 +4,9 @@ const router = Router()
 
 const  {verProveedores, crearProveedores,eliminarProveedor,editarProveedores} = require("../controllers/Proveedor")
 
-router.get("/proveedores",verProveedores)
-router.post("/proveedores/post",crearProveedores)
-router.put("/proveedores/put/:Id_proveedor",editarProveedores)
-router.delete("/proveedores/delete/:Id_proveedor", eliminarProveedor)
+router.get("/",verProveedores)
+router.post("/post",crearProveedores)
+router.put("/put/:Id_proveedor",editarProveedores)
+router.put("/delete/:Id_proveedor", eliminarProveedor)
 
 module.exports = router

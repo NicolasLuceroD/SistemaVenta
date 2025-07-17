@@ -5,10 +5,10 @@ const {verClientes,crearCliente,editarCliente,eliminarCliente} = require('../con
 
 
 
-router.get('/cliente', verClientes)
-router.post('/cliente/post', crearCliente)
-router.put('/cliente/put/:Id_cliente', editarCliente)
-router.delete('/cliente/delete/:Id_cliente', eliminarCliente)
+router.get('/:sucursalId', verClientes)
+router.post('/crear', crearCliente)
+router.put('/put/:Id_cliente', editarCliente)
+router.put('/delete/:Id_cliente', eliminarCliente)
 
 
 module.exports = router

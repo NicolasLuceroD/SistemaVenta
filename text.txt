@@ -1,759 +1,199 @@
+-------------COMPONENTE VENTA-------------
 
 
-//PRODUCTOS 
-const [Id_producto, setId_producto] = useState("")
-const [nombre_producto, setNombreProducto] = useState("")
-const [descripcion_producto, setDescripcionProducto] = useState("")
-const [precio_producto, setPrecioProducto] = useState("")
-const [cantidad_producto, setCantidadProducto] = useState("")
+HACER VENTA COMPLETA CON CREDITO => LISTO
+VENDER UNA VENTA GUARDAD => LISTO 
+ELIMINAR UNA VENTA => LISTO
+REGISTRAR INGRESO => LISTO
+REGISTRAR EGRESO => LISTO
+PODER VER TODAS LAS VENTAS SEGUN FECHA => LISTO
 
-//VENTA
-const [Id_venta, setIdVenta] = useState("")
-const [drescripcion_venta, setDescripcion_venta] = ("")
-const [precioTotal_venta, setPrecioTotal] = ("")
 
-//CLIENTES
-const [Id_cliente, setIdCliente] = useState("")
-const [nombre_cliente, setNombre_cliente] = useState("")
-const [apellido_cliente, setApellido_cliente] = useState("")
-const [telefono_cliente, setTelefonoCliente] = useState("")
-const [correo_cliente, setCorreoCliente] = useState("")
-const [codigoPostal_cliente, setCodigoPostal] = useState("")
-const [domicilio_cliente, setDomicilio_cliente] = useState("")
-const [ciudad_cliente, setCiudad_cliente] = useState("")
+-------------COMPONENTE CREDITO-------------
 
-  // const AgregarProducto = () => {
-  //   axios.get(`http://localhost:3001/productos`).then((response) => {
-  //     const product = response.data;
-  
-  //     if (product) {
-  //       const nuevoProducto = {
-  //         Id_producto: product[0].Id_producto, 
-  //         nombre_producto: product[0].nombre_producto, 
-  //         descripcion_producto: product[0].descripcion_producto, 
-  //         precio_producto: product[0].precio_producto, 
-  //         cantidad_producto: product[0].cantidad_producto, 
-  //         subTotal: product[0].precio_producto * product.cantidad_producto 
-  //       };
-  //       setProductosList([...productosList, nuevoProducto]);
-  //     } else {
-  //       console.log('ERROR NO EXISTE ');
-  //     }
-  //   });
-  // };
-
-
-asdsd
-hhhhhh
-
-    //CLIENTES
-    // const [Id_cliente, setIdCliente] = useState("")
-    // const [nombre_cliente, setNombre_cliente] = useState("")
-    // const [apellido_cliente, setApellido_cliente] = useState("")
-    // const [telefono_cliente, setTelefonoCliente] = useState("")
-    // const [correo_cliente, setCorreoCliente] = useState("")
-    // const [codigoPosta_cliente, setCodigoPostal] = useState("")
-
-
-
-    //DETALLE VENTA
-    // const [Id_detalleVenta, setId_detalleVenta] = useState ("")
-    // const [Id_metodoPago, setId_metodoPago] = useState("")
-    // const [ventasTotales_detalleVenta, setventasTotales_detalleVenta] =useState ("")
-    // const [ganacia_detalleVenta, setGanacia_detalleVenta] =useState ("")
-    // const [descripcion_detalleVenta, setDescripcion_detalleVenta] = useState("")
-
-
-
-    //ELIMINAR 
-
-    
-    const eliminarProducto = (id) => {
-      const arrayNuevo = productosList.filter((producto)=> producto.Id_producto !== id)
-      console.log(arrayNuevo)
-      setProductosList(arrayNuevo)
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /// ULTIMO COMPONENTE ANTES DEL CONTEXT 
-
-     // Estados
-  const [productosList, setProductosList] = useState([]);
-  const [Id_producto, setId_producto] = useState("");
-  const [nombre_producto, setNombreProducto] = useState("");
-  const [precio_producto, setPrecioProducto] = useState("");
-  const [cantidad_producto, setCantidadProducto] = useState("");
-  const [productoSeleccionado, setProductoSeleccionado] = useState("");
-  const [descripcion_producto, setDescripcion_producto] = useState("");
-  const [verListado, setVerListado] = useState([])
-
-  // Función para cargar un producto por su nombre
-  const cargarProducto = (val) => {
-    setId_producto(val.Id_producto);
-    setNombreProducto(val.nombre_producto);
-    setPrecioProducto(val.precio_producto);
-    setCantidadProducto(val.cantidad_producto);
-  };
-
-
-  const handleAgregar = () => {
-    const existeProducto = productosList.find(
-      (producto) => producto.Id_producto === Id_producto
-    );
-    if (existeProducto) {
-      const productosActualizados = productosList.map((producto) => {
-        if (producto.Id_producto === Id_producto) {
-          return {
-            ...producto,
-            cantidad_producto:
-              Number(producto.cantidad_producto) + Number(cantidad_producto),
-          };
-        }
-        return producto;
-      });
-      setProductosList(productosActualizados);
-    } else {
-      const nuevoProducto = {
-        Id_producto,
-        nombre_producto,
-        precio_producto,
-        cantidad_producto,
-      };
-      setProductosList([...productosList, nuevoProducto]);
-    }
-  };
-
-
-  const AgregarProducto = (e) => {
-    if (e.key === "Enter") {
-      axios
-        .get(
-          `http://localhost:3001/productos?nombre_producto=${nombre_producto}`
-        )
-        .then((response) => {
-          const productoEncontrado = response.data;
-
-          if (productoEncontrado) {
-            setId_producto(productoEncontrado.Id_producto);
-            setNombreProducto(productoEncontrado.nombre_producto);
-            setPrecioProducto(productoEncontrado.precio_producto);
-            setCantidadProducto(productoEncontrado.cantidad_producto);
-          } else {
-            console.log("ERROR NO EXISTE ");
-          }
-        });
-    }
-  };
-
-  const verListaConProductos = () =>{
-    axios.get("http://localhost:3001/productos").then((response)=>{
-      setVerListado(response.data)
-      console.log(response.data)
-    })
-  }
-  const handleSeleccionarProducto = (producto) => {
-    setProductoSeleccionado(producto);
-  };
-
-  // Efecto para cargar el producto seleccionado
-  useEffect(() => {
-    verListaConProductos()
-
-  }, []);
-  useEffect(()=>{
-    productoSeleccionado!=null ? cargarProducto(productoSeleccionado) : setNombreProducto("")
-   },[productoSeleccionado])
- 
-
-
-//FUNCIONES KEYDOWN 
-
-const manejarKeyDown = (event) => {
-  // Verificar si la tecla presionada es la tecla Enter (código 13)
-  if (event.key === 'Enter') {
-    console.log('Se presionó la tecla f11: ');
-    // Aquí puedes realizar cualquier acción que desees al presionar Enter
-    // Por ejemplo, enviar un formulario, ejecutar una función, etc.
-  }
-};
-
-useEffect(()=>{
-  document.addEventListener('keydown', manejarKeyDown, true)
-},[])
-
-
-onKeyDown={manejarKeyDown}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////import { useState, useEffect } from 'react';
-
-
-
-import axios from 'axios';
-import { Button } from 'react-bootstrap';
-import Productos from '../components/Productos.jsx';
-import * as XLSX from 'xlsx';
-import useScanDetection from 'use-scan-detection';
-
-const NuevoProduct = ({ filename, sheetname }) => {
-    const [ver, setVer] = useState([]);
-    const [nombre_producto, setnombre_Producto] = useState('');
-    const [descripcion_producto, setdescripcion_Producto] = useState('');
-    const [precioCompra, setPrecioCompra] = useState('');
-    const [precioVenta, setPrecioVenta] = useState('');
-    const [cantidad_producto, setcantidad_Producto] = useState('');
-    const [Id_categoria, setId_categoria] = useState('');
-    const [tipoVenta, setTipoVenta] = useState('unidad'); // Agregado para seleccionar el tipo de venta
-    const id_sucursal = localStorage.getItem('sucursalId');
-
-    useEffect(() => {
-        axios.get(`http://localhost:3001/productos/sucursal/${id_sucursal}`)
-            .then((response) => {
-                setVer(response.data);
-            })
-            .catch((error) => {
-                console.log('Error al obtener los productos:', error);
-            });
-    }, [id_sucursal]);
-
-    const exportToExcel = () => {
-        const ws = XLSX.utils.json_to_sheet(ver);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, sheetname);
-        XLSX.writeFile(wb, `${filename}.xlsx`);
-    };
-
-    const crearProductos = () => {
-        axios.post("http://localhost:3001/productos/post",
-            {
-                nombre_producto,
-                descripcion_producto,
-                precioCompra,
-                precioVenta,
-                cantidad_producto,
-                Id_categoria,
-                tipoVenta, // Ahora se incluye el tipo de venta en la petición
-                Id_sucursal: id_sucursal
-            })
-            .then(() => {
-                alert('producto creado con éxito');
-            })
-            .catch(() => {
-                console.log('Error al crear el producto:');
-            });
-    };
-
-    const [value, setValue] = useState("");
-
-    useScanDetection({
-        onComplete: setValue,
-        minLength: 15
-    });
-
-    return (
-        <>
-            <Productos /><br />
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col">
-                        Nombre: <input type="text" value={nombre_producto} onChange={(e) => setnombre_Producto(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Descripcion: <input type="text" value={descripcion_producto} onChange={(e) => setdescripcion_Producto(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Precio costo: <input type="text" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Precio venta: <input type="text" value={precioVenta} onChange={(e) => setPrecioVenta(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Cantidad: <input type="text" value={cantidad_producto} onChange={(e) => setcantidad_Producto(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Departamento: <input type="text" value={Id_categoria} onChange={(e) => setId_categoria(e.target.value)} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        Tipo de venta:
-                        <select value={tipoVenta} onChange={(e) => setTipoVenta(e.target.value)}>
-                            <option value="unidad">Unidad</option>
-                            <option value="granel">Granel</option>
-                        </select>
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        <Button className="btn btn-success" onClick={crearProductos}>Guardar Producto</Button>
-                    </div>
-                </div>
-            </div>
-            <table className='table table-striped table-hover mt-5 shadow-lg'>
-                <thead>
-                    <tr className='table-info'>
-                        <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Descripcion</th>
-                        <th>Precio costo</th>
-                        <th>Precio venta</th>
-                        <th>Cantidad</th>
-                        <th>Departamento</th>
-                        <th>Fecha de creacion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        ver.map((val) => (
-                            <tr key={val.Id_producto}>
-                                <td>{val.Id_producto}</td>
-                                <td>{val.nombre_producto}</td>
-                                <td>{val.descripcion_producto}</td>
-                                <td>{val.precioCompra}</td>
-                                <td>{val.precioVenta}</td>
-                                <td>{val.cantidad_producto}</td>
-                                <td>{val.nombre_categoria}</td>
-                                <td>{new Date(val.fecha_registro).toISOString().slice(0, 10)}</td>
-                            </tr>
-                        ))
-                    }
-                </tbody>
-            </table>
-            <button onClick={exportToExcel}>Exportar a Excel</button>
-        </>
-    );
-};
-
-export default NuevoProduct;
-
-                                      <button 
-                                      className="btn btn-ouline-primary" 
-                                      onClick={()=> disminuirCantidad(productos.Id_producto)}
-                                      >-</button>
-                                      <button className="btn btn-primary">{productos.cantidad_producto}</button>
-                                      <button 
-                                      className="btn btn-ouline-primary" 
-                                      onClick={ () => aumentarCantidad(productos.Id_producto)}
-                                      >+</button>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                        <label htmlFor="nombre_sucursal">Nombre de Sucursal:</label>
-      <input type="text" id="nombre_sucursal" value={nombre_sucursal} onChange={(e) => setNombre_sucursal(e.target.value)} />
-      <label htmlFor="clave">Contraseña:</label>
-      <input type="password" id="clave" value={clave} onChange={(e) => setClave(e.target.value)} />
-      <button onClick={comprobarLogin}>Login</button>
-
-
-
-
-
-
-
-
-      
-                <div className="row">
-                    <div className="col">
-                        Tipo de venta:
-                        <select value={tipo_venta} onChange={(e) => setTipoVenta(e.target.value)}>
-                            <option value="unidad">Unidad</option>
-                            <option value="granel">Granel gr</option>
-                        </select>
-                    </div>
-                </div>
-
-
-
-//COMPONENTE VENTAS
-                import { useContext, useEffect, useState } from 'react';
-import { Button, Table } from "react-bootstrap";
-import { DataContext } from '../context/DataContext';
-import { CarritoContext } from '../context/CarritoContext';
-import styled from "styled-components";
-import ModalCarrito from './ModalCarrito';
-import App from '../App';
-import { ShoppingCart } from "@mui/icons-material";
-import Badge from '@mui/material/Badge';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-
-const Venta = () => {
-
-  const [vuelto, setVuelto] = useState(0);
-  const [vueltoADar, setVueltoADar] = useState(0);
-  const [estadoModal1, setEstadoModal1] = useState(false);
-  const [buscar, setBuscar] = useState("");
-  const [Id_venta, setId_venta] = useState();
-  const [verCliente, setVerCliente] = useState([])
-  const [verMetodoPago, setVerMetodoPago] = useState([])
-  const [intereses, setIntereses] = useState(0)
-  const [cantidadesVendidas, setCantidadesVendidas] = useState({});
-
-  const { listaCompras, eliminarCompra, agregarCompra } = useContext(CarritoContext);
-
-
-
-
-  const { productos } = useContext(DataContext);
-
-
-
-   const calcularTotal = () => {
-    return listaCompras.reduce((total, item) => total + item.precioVenta * cantidadesVendidas[item.Id_producto], 0);
-
-  };
-
-
-  const SumarIntereses = () => {
-    return calcularTotal() + (calcularTotal() * intereses) / 100
-  };
-
-
-  const handleAgregar = (compra) => {
-    const cantidadActual = cantidadesVendidas[compra.Id_producto];
-    if (cantidadActual === undefined) {
-      setCantidadesVendidas({ ...cantidadesVendidas, [compra.Id_producto]: 0 });
-    } 
-    agregarCompra(compra);
-  };
-  
-
-
-  
-
-  useEffect(() => {
-    const initialCantidadesVendidas = {};
-    listaCompras.forEach(producto => {
-      initialCantidadesVendidas[producto.Id_producto] =  producto.cantidadVendida;
-    });
-    setCantidadesVendidas(initialCantidadesVendidas);
-  }, []);
-
-
-
-  const verClienteFuncion = () => {
-    axios.get("http://localhost:3001/cliente").then((response) => {
-      setVerCliente(response.data)
-    }).catch((error) => {
-      console.log(error)
-    })
-  };
-
-  const traerVentaCorrelativa = async () => {
-    await axios.get("http://localhost:3001/ventacorrelativa").then((response) => {
-      setId_venta(response.data[0].ultimopedido);
-    }).catch((error) => {
-      console.log('error en traer id_venta', error)
-    })
-  };
-
-  useEffect(() => {
-    traerVentaCorrelativa()
-  }, []);
-
-  const FinalizarVenta = () => {
-    const id_sucursal = localStorage.getItem('sucursalId');
-    const id_usuario = localStorage.getItem('idUsuario')
-    if (Object.values(cantidadesVendidas).some(cantidad => cantidad > productos.cantidad_producto)) {
-      alert('No puedes vender más productos de los que tienes en stock');
-      return;
-    }
-
-    axios.post("http://localhost:3001/venta/post", {
-      descripcion_venta: 'XDD',
-      precioTotal_venta: SumarIntereses(),
-      Id_metodoPago: document.getElementById("metodoPago").value,
-      Id_cliente: document.getElementById("cliente").value,
-      Id_sucursal: id_sucursal,
-      Id_usuario: id_usuario
-    }).then(() => {
-      listaCompras.forEach((producto) => {
-        axios.post("http://localhost:3001/detalleVenta/post", {
-          descripcion_detalleVenta: 'test',
-          ventasTotales_detalleVenta: '1',
-          ganacia_detalleVenta: 0.0,
-          Id_producto: producto.Id_producto,
-          Id_venta: parseInt(Id_venta),
-          CantidadVendida: cantidadesVendidas[producto.Id_producto]
-        }).then(() => {
-          axios.put("http://localhost:3001/venta/descStock", {
-            Id_producto: producto.Id_producto,
-            cantidad_producto: cantidadesVendidas[producto.Id_producto]
-          });
-        }).then(() => {
-          const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
-          if (Id_metodoPago === 3) {
-            axios.put("http://localhost:3001/venta/aumentarCredito", {
-              Id_cliente: document.getElementById("cliente").value,
-              montoCredito: calcularTotal()
-            });
-          } else {
-            console.log('error al asignar el crédito')
-          }
-        }).catch((error) => {
-          console.log('casi pero no', error)
-        });
-      });
-      listaCompras.length = 0;
-      Swal.fire({
-        title: " <strong>Venta exitosa!</strong>",
-        html: "<i>La venta <strong> </strong> fue agregada con éxito</i>",
-        icon: 'success',
-        timer: 3000
-      });
-      setEstadoModal1(false);
-    }).catch((error) => {
-      console.log('error en la venta', error);
-    });
-  };
-
-  const metodoPago = () => {
-    axios.get("http://localhost:3001/metodopago").then(response => {
-      setVerMetodoPago(response.data);
-    }).catch((error) => {
-      console.log("error al obtener los métodos de pago", error);
-    })
-  };
-
-  const cambio = () => {
-    const total = SumarIntereses()
-    return vuelto - total
-  };
-
-  useEffect(() => {
-    setVueltoADar(vuelto - SumarIntereses());
-  }, [vuelto, listaCompras, intereses]);
-
-  useEffect(() => {
-    const manejarKeyDown = (event) => {
-      if (event.key === 'F2') {
-        setEstadoModal1(true);
-      }
-      if (event.key === 'Escape') {
-        setEstadoModal1(false);
-        listaCompras.length = 0;
-      }
-    };
-    document.addEventListener('keydown', manejarKeyDown);
-    return () => {
-      document.removeEventListener('keydown', manejarKeyDown);
-    };
-  }, [listaCompras]);
-
-  useEffect(() => {
-    metodoPago();
-    verClienteFuncion();
-  }, []);
-
-
-  const buscador = (e) => {
-    setBuscar(e.target.value)
-  }
-  let resultado = []
-  if (!buscar) {
-    resultado = productos
-  } else {
-    resultado = productos.filter((dato) =>
-      dato.nombre_producto.toLowerCase().includes(buscar.toLowerCase())
-    )
-  }
-
-
-
-
-
-  return (
-    <>
-      <App />
-      <br />
-      <div className='container-fluid'>
-        <div className='row'>
-          <div className='col'>
-            <ContenedorBotones>
-              <Button variant="danger" onClick={() => setEstadoModal1(true)}>
-                <Badge badgeContent={listaCompras.length} color="secondary">
-                  F2 <ShoppingCart color="action" />
-                </Badge>
-              </Button>
-            </ContenedorBotones>
-          </div>
-        </div>
-      </div>
-      <br /><br /><br />
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col">
-            <h3>PRODUCTOS</h3>
-
-            <br /><br />
-            <div className='col'>
-              <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control' />
-            </div>
-            <br /><br />
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>NOMBRE</th>
-                  <th>PRECIO</th>
-                  <th>TIPO VENTA</th>
-                  <th>CANTIDAD</th>
-                  <th>DESCRIPCIÓN</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {resultado.map((producto, index) => (
-                  <tr key={index}>
-                    <td>{producto.Id_producto}</td>
-                    <td>{producto.nombre_producto}</td>
-                    <td>${producto.precioVenta}</td>
-                    <td>{producto.tipo_venta}</td>
-                    <td>{producto.tipo_venta === 'granel' ? parseFloat(producto.cantidad_producto).toFixed(2) : producto.cantidad_producto}</td>
-                    <td>{producto.descripcion_producto}</td>
-                    <td>
-                      <Button className="btn btn-primary" onClick={() => handleAgregar(producto)}>Vender</Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </div>
-      </div>
-      <ModalCarrito
-        estado={estadoModal1}
-        cambiarEstado={setEstadoModal1}
-      >
-        <Contenido>
-          <table>
-            <thead>
-              <br /><br /><br />
-              <tr>
-                <th scope="col">NOMBRE</th>
-                <th scope="col">PRECIO</th>
-                <th scope="col">CANTIDAD</th>
-              </tr>
-            </thead>
-            <tbody>
-              {listaCompras.map(producto => (
-                <tr key={producto.Id_producto}>
-                  <td>{producto.nombre_producto}</td>
-                  <td>${producto.precioVenta}</td>
-                  <td>
-                    <input type="number" value={cantidadesVendidas[producto.Id_producto]} onChange={(e) => setCantidadesVendidas({...cantidadesVendidas, [producto.Id_producto]: e.target.value})} />
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() => eliminarCompra(producto.Id_producto)}
-                    >
-                      ELIMINAR
-                    </button>
-                  </td>
-                </tr>
-              ))}
-              <hr />
-              <th><b>SUBTOTAL: </b></th>
-              <td><b>${calcularTotal()}</b></td>
-              <th><b>TOTAL: </b></th>
-              <td><b>${SumarIntereses()}</b></td>
-              <hr />
-            </tbody>
-          </table>
-
-          <label><b>ABONA CON:</b></label>
-          <input type="number" onChange={(e) => setVuelto(e.target.value)} />
-
-          <label>Metodo de Pago:</label>
-          <select id="metodoPago">
-            {verMetodoPago.map(metodo => (
-              <option key={metodo.Id_metodoPago} value={metodo.Id_metodoPago}>{metodo.tipo_metodoPago}</option>
-            ))}
-          </select>
-
-          <label>Intereses</label>
-          <input type="number" onChange={(e) => setIntereses(e.target.value)} />
-
-          <label><b>Cliente:</b></label>
-          <select id="cliente">
-            {verCliente.map(cliente => (
-              <option key={cliente.Id_cliente} value={cliente.Id_cliente}>{cliente.nombre_cliente}</option>
-            ))}
-          </select>
-
-        <label><b>CAMBIO:</b> ${cambio()}</label> 
-
-          <Button className="btn btn-primary" onClick={FinalizarVenta}>FINALIZAR VENTA</Button>
-
-        </Contenido>
-      </ModalCarrito>
-    </>
-  );
-};
-
-export default Venta;
-
-const ContenedorBotones = styled.div`
-padding: 10px;
-display: flex;
-flex-wrap: wrap;
-justify-content: center;
-gap: 30px;
-`;
-
-const Contenido = styled.div`
-display: flex;
-flex-direction: column;
-
-h2 {
-  font-size: 50px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-p {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-label {
-  font-size: 30px;
-  margin-top: 40px;
-  margin-right: 50px;
-}
-`;
+TRAER TODOS LOS CLIENTES => LISTO
+LISTAR TODO LO DE UN CLIENTE => LISTO
+PAGAR UNA VENTA DEL CREDITO => LISTO
+PAGAR A CUENTA => LISTO
+
+
+-------------CLIENTES-------------
+
+AGREGAR UN CLIENTE => LISTO
+EDITAR UN CLIENTE => LISTO
+BUSCAR UN CLIENTE => LISTO
+
+
+-------------PRODCUTOS-------------
+
+AGREGAR UN PRODUCTO => LISTO
+EDITAR UN PRODUCTO => LISTO
+AGREGAR EL DEPARTAMENTO => LISTO
+EDITAR UN DEPARTAMENTO => LISTO
+
+
+-------------COMPRA-------------
+
+AGREGAR UNA COMPRA => LISTO
+FILTRAR POR FECHA LA COMPRA => LISTO
+
+
+-------------STOCK-------------
+
+AGREGAR STOCK DE UN PRODUCTO =>  LISTO
+FILTRAR EN EL STOCK => LISTO
+
+
+
+-------------USUARIOS-------------
+
+AGREGAR UN USUARIO => LISTO
+EDITAR UN USUARIO => LISTO
+
+
+
+-------------PROVEEDORES-------------
+
+AGREGAR UN PORVEEDOR => LISTO
+EDITAR UN PROVEEDOR => LISTO
+FILTRAR PROVEEDORES => LISTO 
+
+
+
+-------------METODO PAGO-------------
+
+AGREGAR UN METODO => LISTO
+EDITAR UN METODO => LISTO
+
+
+-------------CORTE-------------
+
+
+CORTE DEL DIA => LISTO
+CORTE DE CAJERO => LISTO
+
+
+-------------CORTE COMPRA-------------
+
+EDITAR UNA COMPRA => LISTO
+FILTRAR UNA COMPRA => LISTO
+
+
+
+-------------REPORTE-------------
+
+TODAS LAS TABLAS => LISTO
+TODOS LOS FILTROS => LISTO
+
+-------------CERRAR TURNO-------------
+LISTO
+
+
+
+
+
+
+
+FUNCION SIN TICKET PARA VENTA
+// //FUNCION PARA SELECCIONAR UN CLIENTE PARA LA VENTA
+// const FinalizarVenta = () => {
+//   if (listaCompras.length === 0) {
+//     alert("Debes cargar al menos 1 producto");
+//   } else {
+//     const Id_metodoPago = parseInt(document.getElementById("metodoPago").value); 
+//     const Id_Cliente = document.getElementById("cliente").value;
+
+//     if (Id_metodoPago === 3 && totalConCredito() > limiteCredito) {
+//       alert('No se puede vender a este cliente porque superó su límite de crédito');
+//       return;
+//     }  
+
+//     const totalParaTodo = SumarIntereses();
+
+//     axios.post(`${URL}ventas/crear`, {
+//       descripcion_venta: 'XDD',
+//       precioTotal_venta: totalParaTodo,
+//       Id_metodoPago: Id_metodoPago,
+//       Id_cliente: Id_Cliente,
+//       Id_sucursal: id_sucursal,
+//       Id_usuario: id_usuario
+//     })
+//     .then(() => {
+//       console.log("id", document.getElementById("cliente").value);
+//       listaCompras.forEach((producto) => {
+//         axios.post(`${URL}detalleVenta/crear`, {
+//           descripcion_detalleVenta: 'test',
+//           ventasTotales_detalleVenta: '1',
+//           CantidadVendida: cantidadesVendidas[producto.Id_producto],
+//           ganacia_detalleVenta: 0.0,
+//           Id_venta: parseInt(Id_venta),
+//           Id_producto: producto.Id_producto,
+//           Id_caja: IdCaja,
+//           IdEstadoCredito: 1,
+//           IdEstadoVenta: 1
+//         })
+//         .then(() => {
+//           console.log('a ver q pasa JR', producto.Id_producto);
+//           console.log('a ver q pasa', Id_venta);
+//           axios.put(`${URL}ventas/descStock`, {
+//             Id_sucursal: id_sucursal,
+//             Id_producto: producto.Id_producto,
+//             cantidad: cantidadesVendidas[producto.Id_producto],
+//           });
+//         })
+//         .then(() => {
+//           if (producto.Id_paquete === undefined) {
+//             console.log('No hay paquete');
+//           } else {
+//             console.log('q onda xd', producto.cantidadProducto);
+//             producto.productos.forEach(productoIndividual => {
+//               console.log('Id_producto:', productoIndividual.Id_producto);
+//               axios.put(`${URL}paquete/put/descPaquete`, {
+//                 Id_sucursal: id_sucursal, 
+//                 Id_producto: productoIndividual.Id_producto,
+//                 cantidad: cantidadesVendidas[producto.Id_producto] * productoIndividual.cantidadProducto
+//               });
+//             });
+//           }
+//         })
+//         .then(() => {
+//           if (Id_metodoPago === 5 ||  credito.length > 0) {
+//             axios.put(`${URL}ventas/aumentarCredito`, {
+//               Id_cliente: Id_Cliente,
+//               montoCredito: credito || totalParaTodo
+//             }).then(()=>{
+//               console.log("todo bien en credito", credito)
+//             })
+//             .catch((error) => {
+//               console.log('casi pero no', error);
+//               console.log('id meto pago', Id_metodoPago);
+//               console.log('id cliente', Id_Cliente);
+//               console.log('id venta', Id_venta);
+//               console.log('credito', credito)
+//             });
+//           } else {
+//             console.log('error al asignar el crédito');
+//           }
+//         });
+//       });
+//       listaCompras.length = 0;
+//       Swal.fire({
+//         title: " <strong>Venta exitosa!</strong>",
+//         html: "<i>La venta <strong> </strong> fue agregada con éxito</i>",
+//         icon: 'success',
+//         timer: 3000
+//       });
+//       setEstadoModal1(false);
+//       handleCloseModal(true);
+//       testID();
+//       setCantidadesVendidas({});
+//       console.log('usuario ', id_usuario);
+//       console.log('credito 2 ', credito)
+//       console.log('MP ', Id_metodoPago);
+//       console.log('Id_venta cuando sale bien', Id_venta);
+//     })
+//     .catch((error) => {
+//       console.log('Hubo un error:', error);
+//     });
+//   }
+// };

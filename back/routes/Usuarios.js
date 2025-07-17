@@ -4,10 +4,10 @@ const router = Router()
 const {verUsuarios,editarUsuarios,crearUsuarios, eliminarUsuarios} = require("../controllers/Usuarios")
 
 
-router.get("/usuarios/sucursal/:Id_sucursal",verUsuarios)
-router.post("/usuarios/post",crearUsuarios)
-router.put("/usuarios/put/:Id_usuario",editarUsuarios)
-router.delete("/usuarios/delete/:Id_usuario",eliminarUsuarios)
+router.get("/sucursal/:Id_sucursal",verUsuarios)
+router.post("/post",crearUsuarios)
+router.put("/put/:Id_usuario",editarUsuarios)
+router.put("/delete/:Id_usuario",eliminarUsuarios)
 
 
 module.exports = router

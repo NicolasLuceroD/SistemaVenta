@@ -1,3 +1,5 @@
+
+/* eslint-disable react/prop-types */
 import { CarritoContext } from "./CarritoContext"
 import { useReducer } from 'react'
 
@@ -10,23 +12,32 @@ export const CarritoProvider = ({children}) => {
     
     const comprasReducer = (state = initialState, action = {}) => {
         switch (action.type) {
+            case '[CARRITO] Agregar Compras': 
+            return [...state, ...action.payload]; 
             case '[CARRITO] Agregar Compra':
                 return [...state, action.payload]
             case '[CARRITO] Aumentar Cantidad Compra': 
                 return state.map(item => {
-                    const cant = item.cantidad_producto + item.cantidad_producto
-                    if(item.Id_producto === action.payload) return {...item, cantidad_producto: cant}
+                    const cant = item.cantidadesVendidas + item.cantidadesVendidas
+                    if(item.Id_producto === action.payload) return {...item, cantidadesVendidas: cant}
                     return item
                 })
             case '[CARRITO] Disminuir Cantidad Compra': 
             return state.map(item => {
-                const cant = item.cantidad_producto - item.cantidad_producto
-                if(item.Id_producto === action.payload && item.cantidad_producto > 1) return {...item, cantidad_producto: cant}
+                const cant = item.cantidadesVendidas - item.cantidadesVendidas
+                if(item.Id_producto === action.payload && item.cantidadesVendidas > 1) return {...item, cantidadesVendidas: cant}
                 return item
             })
              
             case '[CARRITO] Eliminar Compra':
                 return state.filter(compra => compra.Id_producto !== action.payload)
+
+            case '[CARRITO] Eliminar Compras':
+                return state.filter(compra => compra.Id_producto !== action.payload)
+
+            case '[CARRITO] Eliminar Ventas':
+                    return initialState; 
+
             default:
                 return state
         }
@@ -35,7 +46,6 @@ export const CarritoProvider = ({children}) => {
     const [listaCompras, dispatch] = useReducer(comprasReducer, initialState)
 
     const agregarCompra = (compra) => {
-        compra.cantidad_producto = 1
         const action = {
             type: '[CARRITO] Agregar Compra',
             payload: compra
@@ -59,6 +69,7 @@ export const CarritoProvider = ({children}) => {
         dispatch(action)
     
     }
+
     const eliminarCompra = (Id_producto) => {
         const action = {
             type: '[CARRITO] Eliminar Compra',
@@ -67,13 +78,25 @@ export const CarritoProvider = ({children}) => {
         dispatch(action)
     
     }
-    
-    
+    const agregarCompras = (compras) => {
+    const action = {
+        type: '[CARRITO] Agregar Compras', 
+        payload: compras 
+    };
+    dispatch(action);  
+    };
+
+    const eliminarVentas   = () => {
+    const action = {
+        type: '[CARRITO] Eliminar Ventas'
+    };
+    dispatch(action);
+    };
 
   return (
      <>
     
-      <CarritoContext.Provider value={{listaCompras, agregarCompra, aumentarCantidad, disminuirCantidad, eliminarCompra }}>
+      <CarritoContext.Provider value={{eliminarVentas ,listaCompras,agregarCompras, agregarCompra, aumentarCantidad, disminuirCantidad, eliminarCompra}}>
         {children}
       </CarritoContext.Provider>
     

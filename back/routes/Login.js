@@ -3,9 +3,9 @@ const router = Router();
 
 const { login, loginUsuario } = require("../controllers/Login");
 
-router.post("/login/post", login); 
+router.post("/post", login); 
 
-router.post("/loginUsuario/post", loginUsuario)
+router.post("/usu/post", loginUsuario)
 
 
 module.exports = router;

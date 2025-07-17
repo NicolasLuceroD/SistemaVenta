@@ -1,11 +1,16 @@
 import axios from "axios"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import App from "../App"
 import { Button } from "react-bootstrap"
 import {
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
-
+import Pagination from "react-bootstrap/Pagination";
+import { faClipboard } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
+import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { DataContext } from '../context/DataContext.jsx';
 
 const MetodoDePago = () => {
 
@@ -14,35 +19,42 @@ const MetodoDePago = () => {
   const[Id_metodoPago, setId_metodoPago] = useState("")
   const [editarMetodoPago, setEditarmetodoPago] = useState(false)  
 
+  const {  URL } = useContext(DataContext);
+
   const verMetodos = () =>{
-    axios.get("http://localhost:3001/metodopago").then((response)=>{
+    axios.get(`${URL}metodopago`).then((response)=>{
       setVerMetodoPago(response.data)
     })
   }
 
 
   const crearMetodo = () =>{
-    axios.post("http://localhost:3001/metodopago/post",{
-      tipo_metodoPago: tipo_metodoPago
-    }).then(()=>{
-      verMetodos()
-      limpiarCampos()
-    })
+    if(tipo_metodoPago.length === 0){
+      alert("Debes insertar un metodo de pago")
+    }else{
+      axios.post(`${URL}metodopago/post`,{
+        tipo_metodoPago: tipo_metodoPago
+      }).then(()=>{
+        verMetodos()
+        alert("Metodo de pago creado con exito")
+        limpiarCampos()
+      })
+    }
+  
   }
 
 
 
   const editarMetodo = () =>{
-    axios.put(`http://localhost:3001/metodopago/put/${Id_metodoPago}`,{
+    axios.put(`${URL}metodopago/put/${Id_metodoPago}`,{
       Id_metodoPago: Id_metodoPago,
       tipo_metodoPago: tipo_metodoPago
     }).then(()=>{
       verMetodos()
+      alert("Metodo de pago actualizado con exito")
       limpiarCampos()
-      console.log(Id_metodoPago)
     }).catch((error)=>{
-      console.log('hola',error)
-      console.log(Id_metodoPago)
+      console.log('Eror al editar el metodo de pago',error)
     })
   }
 
@@ -63,68 +75,109 @@ const MetodoDePago = () => {
   },[])
 
 
-
+   //PAGINACION (Estados para controlar la pagina actual y la cantidad x pagina)
+   const [paginaActual, setPaginaActual] = useState(1);
+   const elementosPorPagina = 6;
+   
+   const totalPaginas = Math.ceil(verMetodoPago.length / elementosPorPagina);
+   
+   let items = [];
+   
+   
+   const mostrarPaginacion = verMetodoPago.length > elementosPorPagina;
+   
+   for (let number = 1; number <= totalPaginas; number++) {
+     items.push(
+       mostrarPaginacion && (
+         <Pagination.Item
+           key={number}
+           active={number === paginaActual}
+           onClick={() => setPaginaActual(number)}
+         >
+           {number}
+         </Pagination.Item>
+       )
+     );
+   }
+   
+   const inicio = (paginaActual - 1) * elementosPorPagina;
+   const fin = inicio + elementosPorPagina;
+   const metodopagoPaginados = verMetodoPago.slice(inicio, fin);
 
 
   return (
   
     <>
-      <App/>
-
-      <div className="h3-ventas">
-        <h1>METODO DE PAGO</h1>
-      </div>
-      <div className="container-fluid">
-      <MDBInputGroup textBefore='📋'   className='mb-3'>
-            <input className='form-control' type='text' placeholder="Nombre" value={tipo_metodoPago} onChange={(e) => setTipoMetodoPago(e.target.value)}/>
-          </MDBInputGroup>
-             
-      </div>
- 
-
-      <div className='card-footer text-muted'>
-                  {
-                  editarMetodoPago ? 
-                  <div >
-                  <Button className="btn btn-warning m-2" onClick={editarMetodo}>✔️Editar</Button>
-                
-                  <Button className="btn btn-danger m-2" onClick={limpiarCampos}>❌ Cancelar</Button>
-                  </div> 
-                  :
-                
-                      <div > 
-                      <Button className="btn btn-success m-2" onClick={crearMetodo}>✔️Guardar</Button>
-                      </div> 
-                  }
-
-                    
-                   
+  <App/>
+  <div className="h3-ventas">
+  <h1>METODO DE PAGO</h1>
+</div>
+<div className="container"><br />
+              <div className= "row">
+                <div className= "col">
+                    <h2><strong>ADMINISTRACION DE PAGOS</strong></h2>
+                    <h4>Gestiona todos los metodos de pago en tu negocio</h4>   
                 </div>
+              </div>
+  <br/>  <br/> 
+  <MDBInputGroup className='mb-3'>
+  <span className="input-group-text">
+                  <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+          </span>
+      <input className='form-control' type='text' placeholder="Nombre" value={tipo_metodoPago} onChange={(e) => setTipoMetodoPago(e.target.value)}/>
+    </MDBInputGroup>
+       
+</div>
+<br/>
 
+<div className='card-footer text-muted'>
+            {
+            editarMetodoPago ? 
+            <div >
+            <Button className="btn btn-warning m-2" onClick={editarMetodo}><FontAwesomeIcon icon={faFloppyDisk} size="lg" style={{color: "#AB8512"}}></FontAwesomeIcon> EDITAR</Button>
+          
+            <Button className="btn btn-danger m-2" onClick={limpiarCampos}><FontAwesomeIcon icon={faBan} size="lg" style={{color: "#970c0c"}}></FontAwesomeIcon> CANCELAR</Button>
+            </div> 
+            :
+          
+                <div > 
+                <Button className="btn btn-success m-2" onClick={crearMetodo}><FontAwesomeIcon icon={faFloppyDisk} style={{color: '#2fd11a'}} size="lg"></FontAwesomeIcon> GUARDAR</Button>
+                </div> 
+            }
 
+              
+             
+          </div>
 
-        <table className='table table-striped table-hover mt-5 shadow-lg'>
-                <thead>
-                    <tr className='table-info'>
-                        <th>Id</th>
-                        <th>Nombre del Metodo de Pago</th>                    
-                        <th>Opcion</th>                    
-                    </tr>
-                </thead>
-                <tbody>
-                   {verMetodoPago.map((metodos) =>(
-                    <tr  key={metodos.Id_metodoPago}>
-                     <td>{metodos.Id_metodoPago}</td>
-                      <td>{metodos.tipo_metodoPago}</td>
-                      <td><Button className="btn btn-warning" onClick={()=>verLosMetodos(metodos)}>👀ver</Button></td>
-                    </tr>
-                        
-                     ))}
-                </tbody>
-            </table>
-     
-      
-    </>
+  <div className="container table">
+  <table className='table table-striped table-hover mt-5 shadow-lg'>
+  <thead className='custom-table-header'>
+              <tr>
+                  <th>FOLIO</th>
+                  <th>NOMBRE METODO PAGO</th>                    
+                  <th>OPCION</th>                    
+              </tr>
+          </thead>
+          <tbody>
+             {metodopagoPaginados.map((metodos) =>(
+              <tr  key={metodos.Id_metodoPago}>
+               <td>{metodos.Id_metodoPago}</td>
+                <td>{metodos.tipo_metodoPago}</td>
+                <td><Button className="btn btn-primary" onClick={()=>verLosMetodos(metodos)}>SELECCIONAR</Button></td>
+              </tr>
+                  
+               ))}
+          </tbody>
+      </table>
+  </div>
+
+ 
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+  <Pagination size='xl'>{items}</Pagination>
+  <br />
+</div>
+
+</>
   )
 }
 

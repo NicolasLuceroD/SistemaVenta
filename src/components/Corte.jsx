@@ -1,18 +1,25 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import App from '../App';
 import * as XLSX from 'xlsx';
 import '../index.css';
+import Pagination from "react-bootstrap/Pagination";
+import { DataContext } from '../context/DataContext.jsx';
+import Paginacion from './Paginacion.jsx';
+
 
 export const Corte = ({ filename, sheetname }) => {
-  
+
+
   const [buscar, setBuscar] = useState("");
   const [resultado, setResultado] = useState([]);
   const [sumaTotal, setSumaTotal] = useState(0);
-  const [usuarios, setUsuarios] = useState([])
+  const [usuarios, setUsuarios] = useState([]);
+  const [datosOriginales, setDatosOriginales] = useState([]);
 
-
-
+  const {  URL } = useContext(DataContext);
 
   const buscador = (e) => {
     const textoBuscado = e.target.value.toLowerCase();
@@ -21,39 +28,36 @@ export const Corte = ({ filename, sheetname }) => {
     let total = 0;
   
     if (!textoBuscado) {
-      resultadoFiltrado = [...resultado];
+      resultadoFiltrado = [...datosOriginales];
     } else {
-      resultadoFiltrado = resultado.filter((dato) => {
+      resultadoFiltrado = datosOriginales.filter((dato) => {
         const fechaRegistroStr = new Date(dato.fecha_registro).toLocaleString().toLowerCase();
-        const nombreUsuarioStr = dato.usuarios.nombre_usuario.toLocaleString().toLowerCase();
-        return fechaRegistroStr.includes(textoBuscado) || nombreUsuarioStr.includes(textoBuscado);
+        const nombreEmpleado = dato.usuarios.nombre_usuario.toLowerCase(); 
+        return fechaRegistroStr.includes(textoBuscado) || nombreEmpleado.includes(textoBuscado);
       });
     }
   
-    total = resultadoFiltrado.reduce((acumulador, valorActual) => acumulador + parseFloat(valorActual.precioTotal_venta), 0);
+    if (resultadoFiltrado.length > 0) {
+      total = resultadoFiltrado.reduce((acumulador, valorActual) => {
+        const precioTotal = parseFloat(valorActual.precioTotal_venta);
+        return acumulador + (isNaN(precioTotal) ? 0 : precioTotal);
+      }, 0);
+    }
+  
     setSumaTotal(total);
-
     setResultado(resultadoFiltrado);
   };
-
- 
-
-  const verUsuarios = () =>{
   
-    axios.get(`http://localhost:3001/usuarios/sucursal/${id_sucursal}`)
-    .then((response) => {
-      setUsuarios(response.data);
-    })
-   .catch((error) => {
-      console.log('Error al obtener los usuarios:', error);
-    });
-  
-  
-  }
 
-
-
-
+  const verUsuarios = () => {
+    axios.get(`${URL}usuarios/sucursal/${id_sucursal}`)
+      .then((response) => {
+        setUsuarios(response.data);
+      })
+      .catch((error) => {
+        console.log('Error al obtener los usuarios:', error);
+      });
+  };
 
   const exportToExcel = () => {
     const ws = XLSX.utils.json_to_sheet(resultado);
@@ -61,81 +65,178 @@ export const Corte = ({ filename, sheetname }) => {
     XLSX.utils.book_append_sheet(wb, ws, sheetname);
     XLSX.writeFile(wb, `${filename}.xlsx`);
   };
-  
+
   const id_sucursal = localStorage.getItem('sucursalId');
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/venta/sucursal/${id_sucursal}`)
+    axios.get(`${URL}ventas/sucursal/${id_sucursal}`)
       .then((response) => {
-        console.log(response.data)
-        setResultado(response.data);       
+        setResultado(response.data);
+        setDatosOriginales(response.data);
+        setTotal(response.data.length)
       })
       .catch((error) => {
         console.log('Error al obtener los datos:', error);
       });
-  }, [id_sucursal]); 
+  }, [id_sucursal]);
 
-useEffect(()=>{
-  verUsuarios()
-},[])
+  const [paginaActual, setPaginaActual] = useState(1);
+  const elementosPorPagina = 10;
+  const totalPaginas = Math.ceil(resultado.length / elementosPorPagina);
+  let items = [];
+  const mostrarPaginacion = resultado.length > elementosPorPagina;
+
+  for (let number = 1; number <= totalPaginas; number++) {
+    items.push(
+      mostrarPaginacion && (
+        <Pagination.Item
+          key={number}
+          active={number === paginaActual}
+          onClick={() => setPaginaActual(number)}
+        >
+          {number}
+        </Pagination.Item>
+      )
+    );
+  }
+
+  const inicio = (paginaActual - 1) * elementosPorPagina;
+  const fin = inicio + elementosPorPagina;
+  const resultadosPaginados = resultado.slice(inicio, fin);
+
+
+
+  const nombreSuc = localStorage.getItem("nombreSucursal")
+
+  const sortedResultados = resultado.sort((a, b) => new Date(b.fecha_registro) - new Date(a.fecha_registro));
+//PAGINACION NUEVA
+const productosPorPagina = 10
+const [actualPagina,setActualPagina] = useState(1)
+const [total, setTotal]=useState(0)
+const ultimoIndex = actualPagina * productosPorPagina;
+const primerIndex = ultimoIndex - productosPorPagina;
+
+
+
+
+  // FUNCION PARA PASAR A PESOS ARG
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+    }).format(value);
+  };
+
+
+
+useEffect(() => {
+  verUsuarios();
+}, []);
 
   return (
     <>
       <App />
-      <br />
-      <h2>REPORTE DE LAS VENTAS</h2>
-      <h4>Ventas completas junto a sus detalles de venta</h4>
-      <br /><br />
-      <div className="container-fluid">
-        <input value={buscar} onChange={buscador} type="text" placeholder='Busca una venta...' className='form-control' />
-        <div><h4>Suma total de ventas: ${sumaTotal}</h4></div>
-      </div>
-      <div className='container-fluid'>
-      <table className='table mt-5 shadow-lg'>
-  <thead>
-    <tr className='table-success'>
-      <th>Id venta</th>
-      <th>Descripcion de la venta</th>
-      <th>Total de la venta</th>
-      <th>Productos de la venta</th>
-      <th>Cantidad vendida</th>
-      <th>Precio producto</th>
-      <th>Fecha Registro</th>
-      <th>Empleado que realizó la venta</th>
 
-    </tr>
-  </thead>
+      <div className='h3-ventas'>
+        <h1>DETALLE DE VENTAS</h1>
+      </div>
+
+      <br />
+      <h2><strong>REPORTE DE LAS VENTAS</strong></h2>
+      <h4>Ventas completas junto a sus detalles de venta</h4>
+      <h5>Sucursal: {nombreSuc}</h5>
+      <br /><br />
+
+        <div className='container'>
+          <input value={buscar} onChange={buscador} type="text" placeholder='Busca una venta...' className='form-control' />
+          <div style={{marginTop: '10px'}}><h4>SUMA TOTAL DE VENTAS: <strong>{formatCurrency(sumaTotal)}</strong></h4></div>
+        </div>
+
+
+        <div className='container table'>
+        <table className='table table-striped table-hover mt-5 shadow-lg custom-table'>
+          <thead className='custom-table-header'>
+            <tr className='table-success'>
+              <th>FOLIO</th>
+              <th>TOTAL DE LA VENTA</th>
+              <th>PRODUCTOS DE LA VENTA</th>
+              <th>CANTIDAD VENDIDA</th>
+              <th>PRECIO PRODUCTO</th>
+              <th>CLIENTE</th>
+              <th>METODO PAGO</th>
+              <th>FECHA REGISTRO</th>
+              <th>EMPLEADO QUE REALIZO LA VENTA</th>
+            </tr>
+          </thead>
   <tbody>
-    {resultado.map((val) => (
-      <tr key={val.Id_venta}>
-        <td>{val.Id_venta}</td>
-        <td>{val.descripcion_venta}</td>
-        <td>${val.precioTotal_venta}</td>
-        <td>
-          {val.productos && Array.isArray(val.productos) && val.productos.map((producto) => (
-            <li key={producto.Id_producto}>{producto.nombre_producto}</li>
+  {sortedResultados.slice(primerIndex, ultimoIndex).map((val) => (
+    <tr key={val.Id_venta}>
+      <td>{val.Id_venta}</td>
+      <td><strong>{formatCurrency(val.precioTotal_venta)}</strong></td>
+      <td>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {val.paquetes && val.paquetes.length > 0 && val.paquetes.map(paquete => (
+            <li key={paquete.Id_paquete} style={{ marginLeft: '20px', fontWeight: 'bold' }}>
+              {paquete.nombre_promocion}
+            </li>
           ))}
-        </td>
-        <td>
-          {val.productos.map((producto) => (
-            <li key={producto.Id_producto}>Cantidad: {parseInt(producto.cantidadVendida)}</li>
+          {val.productos && val.productos.length > 0 && val.productos.map(producto => (
+            <li key={producto.Id_producto} style={{ marginLeft: '20px' }}>
+              {producto.nombre_producto}
+            </li>
           ))}
-        </td>        
-        <td>
-          {val.productos.map((producto) => (
-            <li key={producto.Id_producto}>Precio del producto: {producto.precioVenta}</li>
+        </ul>
+      </td>
+      <td>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {val.paquetes && val.paquetes.length > 0 && val.paquetes.map(paquete => (
+            <li key={paquete.Id_paquete} style={{ marginLeft: '20px' }}>
+              {paquete.cantidadVendida}
+            </li>
           ))}
-        </td>        
-        <td>{new Date(val.fecha_registro).toLocaleString()}</td>
-        <td>{val.usuarios.nombre_usuario}</td>
-       
-      </tr>
-    ))}
-  </tbody>
+          {val.productos && val.productos.length > 0 && val.productos.map(producto => (
+            <li key={producto.Id_producto} style={{ marginLeft: '20px' }}>
+             <strong>{producto.cantidadVendida}</strong> 
+            </li>
+          ))}
+        </ul>
+      </td>
+      <td className='precio'>
+        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {val.paquetes && val.paquetes.length > 0 && val.paquetes.map(paquete => (
+            <li key={paquete.Id_paquete} style={{ marginLeft: '20px', fontWeight: 'bold' }}>
+              {formatCurrency(paquete.precio_paquete ? paquete.precio_paquete : '')}
+            </li>
+          ))}
+          {val.productos && val.productos.length > 0 && val.productos.map((producto) => (
+            <li key={producto.Id_producto} style={{ marginLeft: '20px' }}>
+               <strong>{formatCurrency(producto.precioVenta ? producto.precioVenta : '')}</strong>
+            </li>
+          ))}
+        </ul>
+      </td>             
+      <td>{val.cliente.nombre_cliente}</td>
+      <td>{val.metodoPago.tipo_metodoPago}</td>             
+      <td>{new Date(val.fecha_registro).toLocaleString()}</td>
+      <td className='empleado'>{val.usuarios.nombre_usuario}</td>
+    </tr>
+  ))}
+</tbody>
+
+
 </table>
 
-      </div>
-      <button onClick={exportToExcel}>Exportar a Excel</button><br /><br /><br />
+        </div>
+        <div style={{display:'flex',justifyContent:'center'}}>
+        <Paginacion productosPorPagina={productosPorPagina} 
+        actualPagina={actualPagina} 
+        setActualPagina={setActualPagina}
+        total={total}
+        />
+        </div>
+          
+        <button onClick={exportToExcel} className='btn btn-secondary'>Exportar a Excel</button><br /><br /><br />
+
     </>
   );
 };

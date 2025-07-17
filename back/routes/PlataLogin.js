@@ -2,16 +2,13 @@ const {Router} = require('express')
 const router = Router()
 
 
-const {VerPlataLogin, registrarPlataLogin,verPlataCajaLogin} = require('../controllers/LoginPlata')
+const { VerPlataLoginConUsuario, VerPlataLogin, registrarPlataLogin,verPlataCajaLogin} = require('../controllers/LoginPlata')
 
 
-
-
-
-router.get("/plataLogin", VerPlataLogin)
-router.get("/plataLogin/Ingreso/:Id_sucursal",verPlataCajaLogin)
-
-router.post("/plataLogin/post", registrarPlataLogin)
+router.get("/", VerPlataLogin)
+router.get("/:Id_usuario/:Id_caja/:fechaSeleccionada", VerPlataLoginConUsuario)
+router.get("/:Id_sucursal/:fechaSeleccionada",verPlataCajaLogin)
+router.post("/post", registrarPlataLogin)
 
 
 

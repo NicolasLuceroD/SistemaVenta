@@ -3,7 +3,7 @@ const  {connection} = require ('../database/config')
 
 
 const  verProveedores = (req,res) =>{
-    connection.query("SELECT * FROM Proveedores", (error,results) =>{
+    connection.query("SELECT * FROM proveedores WHERE Estado = 1", (error,results) =>{
         if(error) throw error
         res.json(results)
     })
@@ -11,12 +11,13 @@ const  verProveedores = (req,res) =>{
 
 
 const crearProveedores = (req,res) =>{
-    connection.query("INSERT INTO Proveedores  SET ?" ,
+    connection.query("INSERT INTO proveedores  SET ?" ,
     {
-            Id_proveedor : req.body.Id_proveedor,
             nombre_proveedor : req.body.nombre_proveedor,
             descripcion_proveedor :  req.body.descripcion_proveedor,
-            numTel_proveedor : req.body.numTel_proveedor
+            numTel_proveedor : req.body.numTel_proveedor,
+            Estado: 1,
+            montoCredito: 0
             
     },(error,results)=>{
         if(error)throw error
@@ -29,7 +30,7 @@ const editarProveedores = (req, res) => {
     const Id_proveedor = req.params.Id_proveedor;
     const { nombre_proveedor, descripcion_proveedor, numTel_proveedor } = req.body;
     connection.query(
-        `UPDATE Proveedores SET 
+        `UPDATE proveedores SET 
             nombre_proveedor = '${nombre_proveedor}',
             descripcion_proveedor = '${descripcion_proveedor}',       
             numTel_proveedor = '${numTel_proveedor}'
@@ -45,7 +46,7 @@ const editarProveedores = (req, res) => {
 const eliminarProveedor = (req,res) =>{
     const Id_proveedor = req.params.Id_proveedor
 
-    connection.query("DELETE FROM Proveedores WHERE Id_proveedor = " + Id_proveedor, 
+    connection.query("UPDATE proveedores SET Estado = 0 WHERE Id_proveedor = " + Id_proveedor, 
     (error,results)=>{
         if(error) throw error
         res.json(results)

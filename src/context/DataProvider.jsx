@@ -1,47 +1,55 @@
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
+import { DataContext } from "./DataContext";
+import axios from 'axios';
 
-import {  useEffect, useState } from "react";
-import { DataContext } from "./DataContext"
+const DataProvider = ({ children }) => {
+  const [productos, setProductos] = useState([]);
+  const [sucursales, setSucursales] = useState([]);
 
+// "https://bunkermarket.com.ar:9113/api/"    "http://localhost:2201/api/"
 
-const DataProvider = ({children}) => {
-
-    const [productos, setProductos] = useState([])
-    const [sucursales, setSucursales] = useState([])
-
-      
-    
-    const fetchProductos = async ()  =>{ 
-        const response = await fetch(`http://localhost:3001/productos`)
-        const data = await response.json()
-
-        setProductos(data)
-    };
-
-    
-
+  const URL =   "http://localhost:2201/api/"
  
-    const traerSucursales = async () =>{
-      const response = await fetch("http://localhost:3001/sucursales")
-      const data = await response.json()
-
-      setSucursales(data)
-    }
-
+  
+  const traerSucursales = () => {
+    axios.get(`${URL}sucursales`)
+      .then((response) => {
+        if (Array.isArray(response.data)) {
+          setSucursales(response.data);
+        } else {
+          console.error('Respuesta inesperada:', response.data);
+          setSucursales([]);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al traer las sucursales:', error);
+        setSucursales([]); 
+      });
+  };
 
   
 
+  const traerProductos = () =>{
+    axios.get(`${URL}productos`).then((response)=>{
+      setProductos(response.data)
+    }).catch((error)=>{
+      console.log('error al traer los productos', error)
+    })
+  }
 
-    useEffect(() => {
-        fetchProductos()
-        traerSucursales()
-        
-    }, [])
+
+  useEffect(()=>{
+    traerSucursales()
+    traerProductos()
+  },[])
+
 
   return (
-    <DataContext.Provider value = {{productos,sucursales}}>
-        {children}
+    <DataContext.Provider value={{ productos, sucursales,URL }}>
+      {children}
     </DataContext.Provider>
-  )
-}
+  );
+};
 
-export default DataProvider
+export default DataProvider;

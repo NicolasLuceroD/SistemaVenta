@@ -4,7 +4,7 @@ const {connection} = require('../database/config')
 
 const verCaja = (req,res)=>{
     const Id_sucursal = req.params.Id_sucursal
-    connection.query("SELECT * FROM Caja WHERE Id_sucursal = ?", [Id_sucursal], (error,results)=>{
+    connection.query("SELECT * FROM caja WHERE Id_sucursal = ?", [Id_sucursal], (error,results)=>{
         if(error) throw error
         res.json(results)
     })
@@ -17,7 +17,7 @@ const loginCaja = (req, res) => {
     const Id_sucursal = req.body.Id_sucursal;
     
     connection.query(
-        "SELECT Id_caja FROM Caja WHERE Id_caja = ? AND Id_sucursal = ?",
+        "SELECT Id_caja FROM caja WHERE Id_caja = ? AND Id_sucursal = ?",
         [Id_caja, Id_sucursal],
         (error, result) => {
             if (error) {

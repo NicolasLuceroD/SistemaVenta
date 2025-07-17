@@ -1,0 +1,14 @@
+.horizontal-list {
+  display: flex;
+}
+
+.horizontal-list div {
+  margin-right: 4px; /* Espacio entre elementos */
+}
+
+
+
+
+.table {
+ 
+  overflow-x: auto; }

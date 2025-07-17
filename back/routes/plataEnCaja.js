@@ -2,17 +2,19 @@ const {Router} = require('express')
 const router = Router()
 
 
-const {verPlataCaja, IngresarPlata,verUltimoIngreso,verCantidadTotal} = require("../controllers/plataCaja")
+const {verPlataCaja, IngresarPlata,verUltimoIngreso,verCantidadTotal,
+    verificarCajaAbierta,cerrarCaja
+} = require("../controllers/plataCaja")
 
 
-router.get("/plataCaja/:Id_sucursal", verPlataCaja)
+router.get("/:Id_sucursal/:fechaSeleccionada", verPlataCaja)
 
-router.post("/plataCaja/post",IngresarPlata)
-
+router.post("/verificarCajaAbierta", verificarCajaAbierta)
+router.post("/post",IngresarPlata)
 router.get("/plataCajaIngreso",verUltimoIngreso)
+router.get("/plataLogin/:Id_usuario/:Id_caja",verCantidadTotal)
 
-
-router.get("/plataCaja/:Id_usuario/:FechaRegistro",verCantidadTotal)
+router.put("/cerrarCaja",cerrarCaja)
 
 
 module.exports = router

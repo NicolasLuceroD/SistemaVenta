@@ -2,7 +2,7 @@ const {connection} = require('../database/config')
 
 
 const verMetodoPago = (req,res) =>{
-    connection.query("SELECT * FROM MetoPago", (error,results)=>{
+    connection.query("SELECT * FROM metopago", (error,results)=>{
         if(error) throw error
         res.json(results)
     })
@@ -10,7 +10,7 @@ const verMetodoPago = (req,res) =>{
 
 
 const crear = (req,res) =>{
-    connection.query("INSERT INTO MetoPago  set ? ",{
+    connection.query("INSERT INTO metopago  set ? ",{
         Id_metodoPago: req.body.Id_metodoPago,
         tipo_metodoPago: req.body.tipo_metodoPago
     },(error,results)=>{
@@ -22,7 +22,7 @@ const crear = (req,res) =>{
 const editar = (req,res) =>{
     const Id_metodoPago = req.params.Id_metodoPago;
     const tipo_metodoPago = req.body.tipo_metodoPago
-    connection.query(`UPDATE MetoPago SET
+    connection.query(`UPDATE metopago SET
     
                     tipo_metodoPago = '${tipo_metodoPago}'
 
@@ -35,7 +35,7 @@ const editar = (req,res) =>{
 
 const eliminar = (req, res) => {
     const Id_metodoPago = req.params.Id_metodoPago;
-    const query = "DELETE FROM MetoPago WHERE Id_metodoPago = ?";
+    const query = "DELETE FROM metopago WHERE Id_metodoPago = ?";
     
     connection.query(query, [Id_metodoPago], (error, results) => {
         if (error) {

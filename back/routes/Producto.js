@@ -1,17 +1,27 @@
+/* eslint-disable no-undef */
 const {Router}=require('express')
 const router= Router()
 
-const {verProductos,crearProductos,editarProductos,eliminarProductos,ProductoList,verPlataEnStock}=require('../controllers/Productos')
+const {crearProducs,verProductosYPromos,productoVencimiento,catalogo,modificarPrecioProducto,productoPorCategoria, verProductos,crearProductos,editarProductos,eliminarProductos,ProductoList,verPlataEnStock}=require('../controllers/Productos')
 
 
-router.get('/productos', verProductos)
+router.get('/', verProductos)
+router.get('/:Id_categoria', productoPorCategoria)
+router.get('/verPlataStock',verPlataEnStock)
+router.get('/nombre_producto', ProductoList)
+router.get('/ver/catalogo',catalogo)
+router.get("/ver/vencimineto",productoVencimiento)
+router.get("/harto/productosCompletos",verProductosYPromos)
 
-router.get('/productos/nombre_producto', ProductoList)
-router.post('/productos/post',crearProductos)
-router.put('/productos/put/:Id_producto',editarProductos)
-router.delete('/productos/delete/:Id_producto', eliminarProductos)
+router.put('/put/preciosXCategoria/:Id_categoria',modificarPrecioProducto)
+router.put('/put/:Id_producto',editarProductos)
 
-router.get('/productos/verPlataStock',verPlataEnStock)
+router.post('/post',crearProductos)
+router.post('/post/producs',crearProducs)
+
+router.put('/delete/:Id_producto', eliminarProductos)
+
+
 
 
 

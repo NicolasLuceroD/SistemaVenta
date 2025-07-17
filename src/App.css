@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+
+
+
 #root {
   /* max-width: 1280px; */
   margin: 0 auto;
@@ -77,7 +81,11 @@
   max-width: 600px; 
   margin-left: 0; 
 }
-
+.table{
+  max-height: 500px; /* Ajusta la altura máxima según tus necesidades */
+  overflow-y: auto; /* Agrega un scroll vertical si el contenido excede el tamaño del contenedor */
+  overflow-x: auto; /* Agrega un scroll horizontal si es necesario */
+}
  
 .content-wrapper {
   display: flex;
@@ -111,21 +119,59 @@
   margin-top: 10px;
 }
 
-
+.h3-clientes{
+  color: black;
+  font-family:"Montserrat", sans-serif;
+  letter-spacing: 1px;
+}
 /* Estilos para el botón del DatePicker */
 .btn-corte {
   margin-left: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #007bff; /* Color de fondo del botón */
+  background-color: #6d4c41; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
   cursor: pointer; /* Cursor al pasar sobre el botón */
+  transition: background-color 0.3s ease;
 }
 
+.btn-corte2 {
+  margin-left: 10px; /* Espaciado a la izquierda */
+  margin-top: 10px; /* Espaciado a la izquierda */
+  padding: 10px 20px; /* Espaciado interno */
+  font-size: 16px; /* Tamaño de la fuente */
+  background-color: #4b342c; /* Color de fondo del botón */
+  color: #fff; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 4px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor al pasar sobre el botón */
+  transition: background-color 0.3s ease;
+}
 .btn-corte:hover {
   background-color: #0056b3; /* Cambio de color al pasar sobre el botón */
+}
+.btn-corte2:hover{
+  background-color: rgb(25, 62, 122);
+}
+
+
+
+
+
+
+.btn-opciones-venta{
+  padding: 10px 20px;
+  background-color: #0979b0!important;
+  border: none !important;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease !important;
+}
+
+.btn-opciones-venta:hover{
+  background-color: rgb(25, 62, 122) !important;;
 }
 
 .lbl-corte{
@@ -136,17 +182,36 @@
   margin-left: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #5e02fe; /* Color de fondo del botón */
+  background-color: #496BA2; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
   cursor: pointer; /* Cursor al pasar sobre el botón */
   margin-top: 10px;
   width: 200px;
+  transition: background-color 0.3s ease;
 }
 
 .btn-imprimir:hover{
-  background-color: #3b00a1; 
+  background-color: #39547e; 
+}
+
+.btn-cerrar-turno{
+  margin-left: 10px; /* Espaciado a la izquierda */
+  padding: 10px 20px; /* Espaciado interno */
+  font-size: 16px; /* Tamaño de la fuente */
+  background-color: #0091a4; /* Color de fondo del botón */
+  color: #fff; /* Color del texto */
+  border: none; /* Sin borde */
+  border-radius: 4px; /* Bordes redondeados */
+  cursor: pointer; /* Cursor al pasar sobre el botón */
+  margin-top: 10px;
+  width: 200px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-cerrar-turno:hover{
+  background-color: #025d69;;
 }
 
 .custom-datepicker-wrapper {
@@ -173,33 +238,516 @@
 
 .datos{
   padding: 10px;
-  background-color:  #17a2b8;
+  padding-bottom: 0px;
+  background-color:  #2e1410;
   width:  100%;
   color: white;
 }
 
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .h3-ventas{
   text-align: start;
-  background-color: #007bff;
+  background: linear-gradient(135deg, #3e2723, #5d4037, #8d6e63, #d7ccc8);
   width: 100%;
-  font-size: 15px;
+  font-size: 13px;
+  padding: 7px;
+  padding-top: 13px;
   color: white;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family:"Montserrat", sans-serif;
+  animation: slideIn 1s ease-in-out;
 }
 
 .h3-ventas h1{
   margin-left: 10px;
 }
 
-.botones-venta{
+ /* .botones-venta{
+ 
   display: flex;
-  gap: 10px;
+  align-items: center;
+  justify-content: center;
+
+} 
+
+ .botones-venta .btn {
+  color: #fff;
+  border: none;
+  background-color: #0979b0;
+   width: 200px; 
+  margin: 10px;
+
+}  */
+
+.navbar-toggler-icon {  
+   background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'><path stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); 
+  
 }
 
-.botones-venta .btn {
-  flex: 1;
+.botones-total{
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.botones-total .btn {
+  margin: 10px;
+  width: 200px; 
+}
+
+.btn-reportes{
+  margin-top: 20px;
+  
+}
+
+
+.btn-reporte {
+  padding: 15px;
+  width: 230px;
+  background-color: #312aaf;
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease; /* Transición suave */
+  margin-bottom: 10px;
+  margin-right: 10px;
+  
+}
+.btn-reporte:hover {
+  background-color: #4037e3; /* Color de fondo al pasar el ratón */
+}
+
+.react-datepicker__input-container input {
+  /* Estilos para el input del DatePicker */
+  width: 300px;/* Ajusta el ancho del input al 100% */
+  padding: 10px; /* Ajusta el relleno del input */
+  border-radius: 5px; /* Bordes redondeados */
+  border: 1px solid #ccc; /* Borde del input */
+  font-size: 18px; /* Tamaño de fuente */
+}
+
+.react-datepicker__input-container input:focus {
+  /* Estilos para el input cuando está enfocado */
+  outline: none; /* Elimina el contorno */
+  border-color: #2a0285; /* Cambia el color del borde al enfocar */
+}
+
+/* Estilos para los números del DatePicker */
+.react-datepicker__day {
+  font-size: 15px; /* Tamaño de fuente de los números */
+}
+
+/* Estilos para el nombre del mes */
+.react-datepicker__current-month {
+  font-size: 18px !important; /* Tamaño de fuente del nombre del mes */
+  color: #312aaf !important; /* Color del texto del nombre del mes */
+}
+
+/* Estilo para los números de la paginación */
+.pagination .page-link {
+  color: black; /* Cambia el color de texto a negro */
+  background-color: white; /* Cambia el fondo a blanco */
+  border-color: #004173; /* Cambia el color del borde */
+}
+
+/* Estilo para el número activo en la paginación */
+.pagination .page-item.active .page-link {
+  color: white; /* Cambia el color de texto a blanco */
+  background-color: #004173; /* Cambia el fondo al color deseado */
+  border-color: #004173; /* Cambia el color del borde */
+}
+
+.custom-table-header th {
+  background: #74594f !important;
+  color: #fff!important;
+  border: 1px solid rgb(34, 34, 34) !important;
+}
+
+.custom-table td.precio {
+  background-color: #d4efff !important; /* Color pastel claro para la columna de precio */
+}
+
+.custom-table td.precio2 {
+  background-color: #a9f8e3 !important; /* Color pastel claro para la columna de precio */
+}
+
+.custom-table td.precioF {
+  background-color: #ff7373 !important; /* Color pastel claro para la columna de precio */
+}
+
+
+.custom-links {
+  background-color: #6d4c41; /* Color de fondo deseado */
+  padding: 10px; /* Ajuste el espaciado según sea necesario */ 
+  letter-spacing: 1px;
+  font-size: 20px;
+  animation: slideIn 1s ease-in-out;
+}
+
+.custom-links a {
+  color: white; /* Color de letra */
+  margin-right: 15px; /* Ajuste el margen derecho según sea necesario */
+  transition: color 0.3s ease; /* Agrega una transición suave de color */
+}
+
+.custom-links a {
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+
+.custom-links a:hover {
+  transform: translateY(-5px);
+}
+
+.container-fluid-custom{
+margin-top: -8px;
+
+}
+
+.custom-modal {
+  max-width: 1500px !important; /* Importante para priorizar estos estilos */
+}
+
+nav{
+  background-color: rgb(46, 46, 46) !important;
+}
+
+#icono-nav {
+  color: #fff;
+  display: none;
+}
+.contenido-header {
+  position:relative;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+}
+.imgg{
+  margin-top: 12px;
+}
+
+/*CSS REPORTES*/
+.datitos{
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.numeroVTD{
+  margin-top: 100px;
+}
+
+.montoPago{
+  margin-top: 150px;
+  margin-bottom: 150px;
+}
+
+.montoDepa{
+  margin-top: 150px;
+  margin-bottom: 150px;
+}
+
+.clienteVenta{
+  margin-top: 100px;
+  margin-bottom: 150px;
+}
+
+.numeroVXE{
+  margin-top: 150px;
+}
+
+.navbar-toggler-icon {  
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'><path stroke='rgba(255, 255, 255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); 
+ 
+}
+
+.btn-jsx {
+  background: #632f26 !important;
+  border: none;
+  color: white; /* Color del texto */
+  padding: 10px 20px; /* Ajuste del padding para mayor tamaño */
+  font-size: 17px; /* Tamaño de fuente */
+  border-radius: 7px; /* Bordes redondeados */
+  transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, box-shadow 0.1s ease;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+  overflow: hidden; /* Oculta el texto desbordado */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos al texto desbordado */
+  display: inline-block; /* Asegura que el tamaño del botón se ajuste al contenido */
+  max-width: 200px; /* Ajusta el ancho máximo para el texto */
+}
+
+.btn-jsx:hover {
+  filter: brightness(1.3); 
+  transition: filter 0.3s ease;
+}
+
+.btn-cerrarT{
+  background-color: #B93E3F; /* Color de fondo inicial */
+  border: 2px solid #903132; 
+  color: white; /* Color del texto */
+  padding: 10px 20px; /* Espaciado interno del botón */
+  font-size: 16px; /* Tamaño de fuente */
+  border-radius: 5px; /* Bordes redondeados */
+  transition: background-color 0.4s ease, border-color 0.4s ease, transform 0.2s ease, box-shadow 0.1s ease;
+}
+
+.btn-cerrarT:hover{
+  background-color: #882e2e; /* Color de fondo al pasar el ratón */
+  border: 2px solid #700808dc; 
+  transform: scale(1.00); /* Efecto de transformación (agrandar) */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra al pasar el ratón */
+}
+
+
+
+@media screen and (max-width: 800px) {
+  /* kl */
+   nav{
+       display: none;
+      
+   }
+   nav.responsive {
+    margin-top: -24px;
+       display: block;
+       background-color: rgb(46, 46, 46) !important;
+       width: 100%;
+       position: absolute;
+       top: 48px;
+       left: 0;
+       padding: 10px 0;
+   }
+   nav.responsive ul {
+       margin-top: 30px;
+       display: block !important;
+       text-align: center;
+   }
+   nav.responsive ul li {
+       margin: 5px 0;
+   }
+   #icono-nav {
+       display: block;
+       
+   }
+   .imgg{
+    margin-top: -12px;
+  }
+}
+
+.custom-table-header .paquete-header {
+  background-color: rgb(141, 25, 21) !important;
+}
+
+.precio-costo{
+  background-color: #a8d5ba !important; /* Color de fondo para 'PRECIO COSTO' */
+}
+
+.precio-venta{
+  background-color: #ffe0b2 !important;
+}
+
+.precio-mayoreo{
+  background-color: #b3e5fc !important;
+}
+
+.precio-venta-actual{
+  background-color: #ffccbc !important;
+}
+
+.precio-venta-nuevo{
+  background-color: #b9fbc0!important;
+}
+
+.precio-de-tabla{
+  background-color: #ffab73 !important;
+}
+.custom-table td.empleado{
+  background-color: #f8e1a9 !important;
+}
+
+
+.limite-credito{
+  background-color: #fff068 !important;
+}
+/* ESTILOS PARA TABLA DETALLE VENTA */
+.custom-table td {
+  padding: 12px 20px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.custom-table ul li {
+  padding: 8px 0;
+  position: relative;
+  line-height: 1.5;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  white-space: nowrap; /* Evita que el texto se vaya a la siguiente lÃ­nea */
+  overflow: hidden; /* Oculta el texto que se desborda */
+  text-overflow: ellipsis; /* Agrega puntos suspensivos al final del texto */
+}
+
+.custom-table ul li:first-letter {
+  text-transform: capitalize;
+}
+
+.custom-table th,
+.custom-table td {
+  border-right: 1px solid #ccc;
+}
+
+.custom-table th:nth-child(4),
+.custom-table td:nth-child(4) {
+  width: 150px;
+}
+
+.custom-table td, .custom-table th {
+  text-align: center;
+}
+
+.custom-table {
+  border-collapse: collapse;
+}
+
+.custom-table th, .custom-table td {
+  border: 3px solid #ddd;
+}
+
+.custom-table ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+
+.dropdown-menu-azul {
+  background-color: #632e26;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* También podés hacer que los botones combinen */
+.dropdown-menu-azul .btn-jsx {
+  background-color: #1f0f0c !important;
+  color: rgb(247, 244, 244);
+  border: none;
+}
+
+.dropdown-menu-azul .btn-jsx:hover {
+  background-color: #29120e !important;
+}
+
+.dropdown-toggle{
+  padding: 10px;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  background-color: #632e26 !important;
+  border: none;
+}
+
+.fondo-login {
+  background-image: url('/fondocafe.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.6);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+.fondo-login-usuario {
+  background-image: url('/fondousuarios.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.6);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/*CSS MESAS*/
+.mesa-card {
+  border-radius: 12px;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.mesa-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/*Scroll para el modal de buscar productos en mesas*/
+::-webkit-scrollbar {
+  width: 6px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #a1887f;
+  border-radius: 3px;
+}
+
+.total-destacado {
+  background-color: #f0e6dc; 
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 18px;
+  display: inline-block;
+  color: #4e342e; 
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-producto-cafe {
+  border: 1px solid #8d6e63;
+  color: #6d4c41;
+  background-color: transparent;
+  transition: 0.2s ease-in-out;
+  font-weight: 500;
+}
+
+.btn-producto-cafe:hover {
+  background-color: #d7ccc8;
+  border-color: #6d4c41;
+  color: #3e2723;
+}
+
+.subtotal {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 4px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.total {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #27ae60;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  margin-bottom: 12px;
+  font-family: 'Courier New', Courier, monospace;
+}
 
 
 

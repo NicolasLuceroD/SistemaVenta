@@ -12,12 +12,16 @@ export const app = "/app"
 export const metodoPago = "/metodoPago"
 export const credito= "/credito"
 export const testVenta = "/testVenta"
-export const plataEnCaja = "/plataCaja"
+export const plataEnCaja = "/movUsu"
 export const corte2 = "/corte2"
-
-
+export const stock = "/stock"
+export const corte = "/corte"
 export const loginUsuario = "/loginUsuario"
 export const usuarios = "/usuarios"
+export const paquete = "/paquete"
+export const creditoproveedores = "/creditoproveedores"
+export const auditoriacompra = "/auditoriaC"
+export const gestionMesas = "/gestionMesas"
 
 /*-----------------CRUD PRODUCTOS------------------------------------*/
 
