@@ -35,23 +35,23 @@ const GestionMesas = () => {
           { id: 4, nombre: 'Mesa A4', estado: 'libre', productos: [] },
           { id: 5, nombre: 'Mesa A5', estado: 'libre', productos: [] },
           { id: 6, nombre: 'Mesa A6', estado: 'libre', productos: [] },
-          { id: 7, nombre: 'Mesa 7', estado: 'libre', productos: [] },
-          { id: 8, nombre: 'Mesa 8', estado: 'libre', productos: [] },
-          { id: 9, nombre: 'Mesa 9', estado: 'libre', productos: [] },
-          { id: 10, nombre: 'Mesa 10', estado: 'libre', productos: [] },
-          { id: 11, nombre: 'Mesa 11', estado: 'libre', productos: [] },
-          { id: 12, nombre: 'Mesa 12', estado: 'libre', productos: [] },
-          { id: 13, nombre: 'Mesa 13', estado: 'libre', productos: [] },
-          { id: 14, nombre: 'Mesa 14', estado: 'libre', productos: [] },
-          { id: 15, nombre: 'Mesa 15', estado: 'libre', productos: [] },
-          { id: 16, nombre: 'Mesa 16', estado: 'libre', productos: [] },
-          { id: 17, nombre: 'Mesa 17', estado: 'libre', productos: [] },
-          { id: 18, nombre: 'Mesa 18', estado: 'libre', productos: [] },
-          { id: 19, nombre: 'Mesa 19', estado: 'libre', productos: [] },
-          { id: 20, nombre: 'Mesa 20', estado: 'libre', productos: [] },
-          { id: 21, nombre: 'Mesa 21', estado: 'libre', productos: [] },
-          { id: 22, nombre: 'Mesa 22', estado: 'libre', productos: [] },
-          { id: 23, nombre: 'Mesa 23', estado: 'libre', productos: [] },
+          { id: 7, nombre: 'Mesa A7', estado: 'libre', productos: [] },
+          { id: 8, nombre: 'Mesa A8', estado: 'libre', productos: [] },
+          { id: 9, nombre: 'Mesa A9', estado: 'libre', productos: [] },
+          { id: 10, nombre: 'Mesa C10', estado: 'libre', productos: [] },
+          { id: 11, nombre: 'Mesa C11', estado: 'libre', productos: [] },
+          { id: 12, nombre: 'Mesa C12', estado: 'libre', productos: [] },
+          { id: 13, nombre: 'Mesa C13', estado: 'libre', productos: [] },
+          { id: 14, nombre: 'Mesa C14', estado: 'libre', productos: [] },
+          { id: 15, nombre: 'Mesa C15', estado: 'libre', productos: [] },
+          { id: 16, nombre: 'Mesa C16', estado: 'libre', productos: [] },
+          { id: 17, nombre: 'Mesa C17', estado: 'libre', productos: [] },
+          { id: 18, nombre: 'Mesa C18', estado: 'libre', productos: [] },
+          { id: 19, nombre: 'Mesa C19', estado: 'libre', productos: [] },
+          { id: 20, nombre: 'Mesa C20', estado: 'libre', productos: [] },
+          { id: 21, nombre: 'Mesa C21', estado: 'libre', productos: [] },
+          { id: 22, nombre: 'Mesa P22', estado: 'libre', productos: [] },
+          { id: 23, nombre: 'Mesa P23', estado: 'libre', productos: [] },
         ];
   });
 
@@ -71,13 +71,14 @@ const GestionMesas = () => {
 
 const handleShowModal = () => {
   setShowModal(true);
-  setVuelto(''); 
+  setVuelto('');
+  setIntereses(0)
 }
     const handleCloseModal = () => {
       setShowModal(false);
       setId_Cliente(1)
       setMetodoPagoSeleccionado("")
-      
+      setIntereses(0)
     }
   
 //FUNCION PARA TRAER LOS METODOS DE PAGO
@@ -169,14 +170,43 @@ const handleShowModal = () => {
     cerrarModal();
   };
 
+
   const cancelarMesa = (idMesa) => {
-    setMesas((prev) =>
-      prev.map((m) =>
-        m.id === idMesa ? { ...m, productos: [], estado: 'libre' } : m
-      )
-    );
-    cerrarModal();
-  };
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: "Esto cancelará todos los productos de la mesa y pasará a estar disponible.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, cancelar',
+    cancelButtonText: 'No, mantener',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      setMesas((prev) =>
+        prev.map((m) =>
+          m.id === idMesa ? { ...m, productos: [], estado: 'libre' } : m
+        )
+      );
+      cerrarModal();
+      Swal.fire({
+        title: 'Cancelado',
+        text: 'La mesa fue cancelada correctamente.',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    }
+  });
+};
+  // const cancelarMesa = (idMesa) => {
+  //   setMesas((prev) =>
+  //     prev.map((m) =>
+  //       m.id === idMesa ? { ...m, productos: [], estado: 'libre' } : m
+  //     )
+  //   );
+  //   cerrarModal();
+  // };
 
 const FinalizarVenta = async () => {
   const mesa = mesas.find((m) => m.id === mesaSeleccionada);
@@ -654,7 +684,7 @@ const totalConIntereses = subtotal + (subtotal * interesesNum / 100);
                 <tr>
                   <th>PRODUCTO</th>
                   <th>CANTIDAD</th>
-                  <th>PRECIO</th>
+                  <th>PRECIO UNITARIO</th>
                   <th>TOTAL</th>
                   <th>ACCION</th>
                 </tr>

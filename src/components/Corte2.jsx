@@ -1153,7 +1153,7 @@ useEffect(()=>{
                       <tr key={index}>
                         <td>{p.nombre_cliente}</td>
                         <td>{p.tipo_metodoPago}</td>
-                        <td>${p.monto}</td>
+                        <td>{formatCurrency(p.monto)}</td>
                         <td>{new Date(p.fechaRegsitro).toLocaleString()}</td>
                       </tr>
                      ))}

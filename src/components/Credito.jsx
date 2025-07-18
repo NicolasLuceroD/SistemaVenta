@@ -247,7 +247,7 @@ useEffect(() => {
     
       doc.autoTable({
         startY: 80,
-        head: [["FOLIO", "FECHA", "PRODUCTOS", "TOTAL COMPRA"]],
+        head: [["FOLIO", "FECHA", "PRODUCTOS", "TOTAL VENTA"]],
         body: detalleOrdenes,
         theme: "grid",
         headStyles: {

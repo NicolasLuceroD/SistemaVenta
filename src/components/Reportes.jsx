@@ -293,7 +293,7 @@ useEffect(() =>{
   
   
     const Colors = [
-  "#4E342E", // marrón café oscuro
+  "#af8a81ff", // marrón café oscuro
   "#6D4C41", // marrón intermedio
   "#A1887F", // marrón claro, tipo cappuccino
   "#D7CCC8", // crema / beige suave
