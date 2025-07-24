@@ -58,8 +58,10 @@ function App(  ) {
 
 
 
- const calcularFaltante = () => {
-  return Math.max(total_cierre - parseFloat(cantidadPlataCaja || 0),);
+const calcularFaltante = () => {
+  const caja = parseFloat(cantidadPlataCaja || 0);
+  const diferencia = parseFloat((total_cierre - caja).toFixed(2));
+  return Math.max(diferencia, 0);
 };
 
 
@@ -69,7 +71,7 @@ function App(  ) {
     try {
         const response = await axios.get(`${URL}plataCaja/plataLogin/${id_usuario}/${IdCaja}`);
         if (response.data) {
-            setTotalCierre(response.data[0].total_cierre || 0);
+            setTotalCierre(parseFloat(response.data[0].total_cierre));
         }
     } catch (error) {
         console.error("Error al obtener datos de caja:", error);
@@ -80,7 +82,7 @@ function App(  ) {
 
 
 const cerrarCaja = async () => {
-  const plataIF = parseFloat(cantidadPlataCaja);
+  const plataIF = parseFloat(parseFloat(cantidadPlataCaja).toFixed(2));
 
   if (isNaN(plataIF) || plataIF < 0) {
       return alert('Por favor ingrese un monto válido.');
@@ -124,12 +126,14 @@ useEffect(() => {
   return () => clearInterval(intervalID);
 }, []);
 
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-  }).format(value);
-};
+ // FUNCION PARA PASAR A PESOS ARG
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+    }).format(value);
+  };
+
 
   return (
     <>
@@ -215,7 +219,8 @@ const formatCurrency = (value) => {
                 <Modal.Title>SALIR</Modal.Title>
             </Modal.Header>
     
-            <Modal.Body> 
+            <Modal.Body>
+            
         <h4>PLATA EN CAJA: <strong>{formatCurrency(total_cierre)}</strong></h4>
         <MDBInputGroup className="mb-3">
             <span className="input-group-text">

@@ -44,52 +44,50 @@ const verUltimoIngreso = (req,res) =>{
 }
 
    
-const verCantidadTotal = (req,res) =>{
-    const Id_usuario = req.params.Id_usuario
+const verCantidadTotal = (req, res) => {
+    const Id_usuario = req.params.Id_usuario;
     const Id_caja = req.params.Id_caja;
-    connection.query(` 
-SELECT 
-    pcl.cantidadPlataLogin AS montoInicial,
-    COALESCE(SUM(DISTINCT v.precioTotal_venta), 0) AS total_ventas,
-    COALESCE(SUM(DISTINCT i.montoTotalIngreso), 0) AS total_ingresos,
-    COALESCE(SUM(DISTINCT e.montoTotalEgreso), 0) AS total_egresos,
-    COALESCE(SUM(DISTINCT p.monto), 0) AS total_pagos,
-    (
-        pcl.cantidadPlataLogin 
-        + COALESCE(SUM(DISTINCT v.precioTotal_venta), 0)
-        + COALESCE(SUM(DISTINCT i.montoTotalIngreso), 0)
-        + COALESCE(SUM(DISTINCT p.monto), 0)
-        - COALESCE(SUM(DISTINCT e.montoTotalEgreso), 0)
-    ) AS total_cierre
-FROM plataencajalogin pcl
-LEFT JOIN venta v 
-    ON v.Id_caja = pcl.Id_caja 
-    AND v.Id_usuario = pcl.Id_usuario 
-    AND v.fecha_registro >= pcl.FechaRegistro
-    AND v.Id_metodoPago != 5
-LEFT JOIN ingreso i 
-    ON i.Id_caja = pcl.Id_caja 
-    AND i.Id_usuario = pcl.Id_usuario 
-    AND i.FechaRegistro >= pcl.FechaRegistro
-LEFT JOIN egreso e 
-    ON e.Id_caja = pcl.Id_caja 
-    AND e.Id_usuario = pcl.Id_usuario 
-    AND e.FechaRegistro >= pcl.FechaRegistro
-LEFT JOIN pagos p 
-    ON p.Id_metodoPago != 5
-    AND p.fechaRegsitro >= pcl.FechaRegistro
-WHERE pcl.Id_caja = ? 
-  AND pcl.Id_usuario = ?
-  AND pcl.estado = 1
 
-GROUP BY pcl.cantidadPlataLogin;
-                        
-     `,[Id_caja,Id_usuario], (error,results)=>{
-                            if(error) throw error
-                            res.json(results)
-                        })
-
-}
+    connection.query(`
+        SELECT 
+            pcl.cantidadPlataLogin AS montoInicial,
+            COALESCE(SUM(v.precioTotal_venta), 0) AS total_ventas,
+            COALESCE(SUM(i.montoTotalIngreso), 0) AS total_ingresos,
+            COALESCE(SUM(e.montoTotalEgreso), 0) AS total_egresos,
+            COALESCE(SUM(p.monto), 0) AS total_pagos,
+            ROUND(
+                pcl.cantidadPlataLogin 
+                + COALESCE(SUM(v.precioTotal_venta), 0)
+                + COALESCE(SUM(i.montoTotalIngreso), 0)
+                + COALESCE(SUM(p.monto), 0)
+                - COALESCE(SUM(e.montoTotalEgreso), 0),
+            2) AS total_cierre
+        FROM plataencajalogin pcl
+        LEFT JOIN venta v 
+            ON v.Id_caja = pcl.Id_caja 
+            AND v.Id_usuario = pcl.Id_usuario 
+            AND v.fecha_registro >= pcl.FechaRegistro
+            AND v.Id_metodoPago != 5
+        LEFT JOIN ingreso i 
+            ON i.Id_caja = pcl.Id_caja 
+            AND i.Id_usuario = pcl.Id_usuario 
+            AND i.FechaRegistro >= pcl.FechaRegistro
+        LEFT JOIN egreso e 
+            ON e.Id_caja = pcl.Id_caja 
+            AND e.Id_usuario = pcl.Id_usuario 
+            AND e.FechaRegistro >= pcl.FechaRegistro
+        LEFT JOIN pagos p 
+            ON p.Id_metodoPago != 5
+            AND p.fechaRegsitro >= pcl.FechaRegistro
+        WHERE pcl.Id_caja = ? 
+          AND pcl.Id_usuario = ?
+          AND pcl.estado = 1
+        GROUP BY pcl.cantidadPlataLogin;
+    `, [Id_caja, Id_usuario], (error, results) => {
+        if (error) throw error;
+        res.json(results);
+    });
+};
 
 const verificarCajaAbierta = async (req, res) => {
     const Id_usuario = req.body.Id_usuario

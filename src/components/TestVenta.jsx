@@ -639,6 +639,7 @@ const FinalizarVenta = () => {
                   Id_cliente: Id_Cliente,
                   montoCredito: totalParaTodo,
                   montoDebito: 0,
+                  Id_venta: Id_venta,
                   Saldo:  parseFloat(totalParaTodo) + parseFloat(creditoActaul)
                 });
               }).then(() => {
@@ -785,6 +786,7 @@ const FinalizarVentaSinTicket = () => {
           Id_cliente: Id_Cliente,
           montoCredito: totalParaTodo,
           montoDebito: 0,
+          Id_venta: Id_venta,
           Saldo:  parseFloat(totalParaTodo) + parseFloat(creditoActaul)
         });
       }).then(() => {

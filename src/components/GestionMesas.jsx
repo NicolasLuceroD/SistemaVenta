@@ -154,7 +154,8 @@ const handleShowModal = () => {
   }));
 
   const calcularTotal = (productos) =>
-    productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+    
+    productos.reduce((acc, p) => acc + parseFloat(p.precio) * p.cantidad, 0);
 
   const cerrarMesa = (idMesa) => {
     const mesa = mesas.find((m) => m.id === idMesa);

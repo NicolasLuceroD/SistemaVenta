@@ -20,7 +20,7 @@ app.options('*', cors()); // Habilita las solicitudes preflight
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const sequelize = new Sequelize('dbbunker', 'root', 'Lola2201', {
+const sequelize = new Sequelize('dbvarista', 'root', 'Lola2201', {
     host: 'localhost',
     dialect: 'mysql',
     port: 3306,
