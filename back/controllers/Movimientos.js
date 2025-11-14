@@ -47,7 +47,7 @@ const registrarIngreso = (req,res) =>{
 
 
 const retistrarMotivosEgresos = (req,res) =>{
-    connection.query("INSERT INTO motivosEgresos SET ?",{
+    connection.query("INSERT INTO motivosegresos SET ?",{
         Motivo: req.body.Motivo,
         Estado: 1
     },(error,results)=>{
@@ -58,7 +58,7 @@ const retistrarMotivosEgresos = (req,res) =>{
 
 
 const verMotivosEgresos = (req,res) =>{
-    connection.query("SELECT * FROM motivosEgresos where Estado = 1", (error,results)=>{
+    connection.query("SELECT * FROM motivosegresos where Estado = 1", (error,results)=>{
         if(error) throw error
         res.json(results)
     })
@@ -66,7 +66,7 @@ const verMotivosEgresos = (req,res) =>{
 
 const eliminarMotivosEgresos = (req,res) =>{
     const IdMotivoEgreso= req.params.IdMotivoEgreso
-    connection.query('UPDATE  motivosEgresos set  Estado  = 0 where IdMotivoEgreso = ? ',[IdMotivoEgreso],
+    connection.query('UPDATE  motivosegresos set  Estado  = 0 where IdMotivoEgreso = ? ',[IdMotivoEgreso],
     (error,results)=>{
         if(error) throw error
         res.json(results)
@@ -77,7 +77,7 @@ const eliminarMotivosEgresos = (req,res) =>{
 const editarMotivosEgresos = (req,res)=>{
     const IdMotivoEgreso=  req.body.IdMotivoEgreso
     const Motivo = req.body.Motivo
-    connection.query( `UPDATE motivosEgresos SET
+    connection.query( `UPDATE motivosegresos SET
 
                             Motivo='${Motivo}'
 

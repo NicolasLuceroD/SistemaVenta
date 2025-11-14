@@ -15,18 +15,17 @@ import { IoMdCloseCircle } from "react-icons/io";
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css'
 import es from 'date-fns/locale/es';
-import Pagination from "react-bootstrap/Pagination";
 import '../css/venta.css'
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar, faPencil, faPrint, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import Paginacion from './Paginacion.jsx';
-import logoticket from '../assets/fondo-varista.jpg'
+import logoticket from '../assets/logojuana.jpg'
+
 
 const TestVenta = () => {
     
-
   const inputRef = useRef(null);
     //VUELTO Y TOTAL
     const [vuelto, setVuelto] = useState(0);
@@ -326,34 +325,45 @@ const handleAgregar = (compra) => {
 
 
   
-  const handleAgregar3 = (nombre_promocion, precioProductoNuevo) => {
-    if (nombre_promocion.length === 0 || precioProductoNuevo.length === 0) {
-      alert("Debe cargar los datos");
-    } else {
-      const precioVenta = parseFloat(precioProductoNuevo) || 0;
-      const Id_producto = Math.random().toString(36).substr(2, 9);
-  
-      if (!cantidadesVendidas[Id_producto]) {
-        setCantidadesVendidas(prev => ({ ...prev, [Id_producto]: 1 }));
-      }
-  
-      setNombreProductoNuevo("");
-      setPrecioProductoNuevo("");
-  
-      const data = { Id_producto, nombre_promocion, precioVenta, cantidad: cantidadesVendidas }; 
-      agregarCompra(data);
-  
-      setProductoSeleccionado(productos);
-      setMostrarTablaProducto(true);
-      handleCloseModal1(true);
-      setBuscar("");
-      handleCloseModal12(true);
-  
-      setPreciosSeleccionados(prev => ({ ...prev, [Id_producto]: 'PrecioNuevoProducto' }));
-      setPrecioFinal(prev => ({ ...prev, [Id_producto]: precioVenta })); 
+
+const handleAgregar3 = (nombre_promocion, precioProductoNuevo) => {
+  if (nombre_promocion.length === 0 || precioProductoNuevo.length === 0) {
+    alert("Debe cargar los datos");
+  } else {
+    const precioVenta = parseFloat(precioProductoNuevo) || 0;
+    const Id_producto = Date.now();
+
+
+    if (!cantidadesVendidas[Id_producto]) {
+      setCantidadesVendidas(prev => ({ ...prev, [Id_producto]: 1 }));
     }
-  };
-  
+
+    const data = {
+      Id_producto,
+      nombre_promocion,
+      precioVenta,
+      cantidad: cantidadesVendidas,
+      productocomun: nombre_promocion, // ✅ guardar en el objeto mismo
+      precioproductocomun: precioVenta
+    };
+
+    agregarCompra(data);
+
+    // Estas líneas las podés dejar, no influyen negativamente ahora
+    setProductoSeleccionado(productos);
+    setMostrarTablaProducto(true);
+    handleCloseModal1(true);
+    setBuscar("");
+    handleCloseModal12(true);
+    setPreciosSeleccionados(prev => ({ ...prev, [Id_producto]: 'PrecioNuevoProducto' }));
+    setPrecioFinal(prev => ({ ...prev, [Id_producto]: precioVenta }));
+
+    // ✅ Limpiar después de agregar
+    setNombreProductoNuevo("");
+    setPrecioProductoNuevo("");
+  }
+};
+
   
   //FUNCION  PARA AGREGAR UN PRODUCTO A LA LISTACOMPRA DESDE EL MODDAL VERIFICADOR 
   const handleAgregar2 = (compra) => {
@@ -622,7 +632,9 @@ const FinalizarVenta = () => {
           Id_caja: IdCaja,
           IdEstadoCredito: 1,
           IdEstadoVenta: 1,
-          Id_paquete: producto.Id_paquete
+          Id_paquete: producto.Id_paquete,
+          productocomun: producto.productocomun || '',
+precioproductocomun: producto.precioproductocomun || 0
         }).then(() => {
           return axios.put(`${URL}ventas/descStock`, {
             Id_producto: producto.Id_producto,
@@ -754,6 +766,8 @@ const FinalizarVentaSinTicket = () => {
         IdEstadoCredito: 1,
         IdEstadoVenta: 1,
         Id_paquete: producto.Id_paquete,
+              productocomun: producto.productocomun || '',
+        precioproductocomun: producto.precioproductocomun || 0
       }).then(() => {
         return axios.put(`${URL}ventas/descStock`, {
           Id_sucursal: id_sucursal,
@@ -884,6 +898,7 @@ const imprimirTicket = (productos, totalParaTodo) => {
     };
   }
 };
+
 
 // Función para mostrar la alerta después de imprimir el ticket
 const mostrarAlertaTicket = () => {
@@ -1431,6 +1446,8 @@ const handlePrecioChange = (e, producto) => {
 return (
       <>
       <App/>
+      <div className="container-venta">
+          <div className="fondo-venta"></div>
       <div className='h3-ventas'>
         <h1>VENTAS</h1>
       </div>
@@ -1438,8 +1455,8 @@ return (
       
       <div className='container-fluid'>
             <div className='row'>
-            <div className='col'>
-                <h1 style={{marginTop: '40px'}}>A&L SOFTWARE</h1>
+            <div className='col'>     
+                <h1 style={{marginTop: '40px', color: 'white'}}>A&L SOFTWARE</h1>
                 <ContenedorBotones style={{marginTop: '50px'}}> 
                 <Button variant="dark" onClick={handleShowModal8}>
                     <Badge badgeContent={listaCompras.length} color="secondary">
@@ -1762,7 +1779,7 @@ return (
         <th scope="col">ELIMINAR</th>
       </tr>
     </thead>
-    <tbody>
+     <tbody>
       {listaCompras.map(producto => (
         <tr key={producto.Id_producto}>
           <td>{producto.nombre_promocion || producto.nombre_producto}</td>
@@ -1779,35 +1796,26 @@ return (
               />
             )}
           </td>
-          <td>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  checked={usarMayoreo[producto.Id_producto] || false}
-                  onChange={(e) => {
-                    const checked = e.target.checked; // esto me sirve para saber si esta marcado el check o no
-                    const nuevoPrecio = checked
-                      ? producto.PrecioMayoreo //ternario basico
-                      : producto.precioVenta;
-
-                    setUsarMayoreo({
-                      ...usarMayoreo,
-                      [producto.Id_producto]: checked
-                    });
-
-                    setPrecioFinal({
-                      ...precioFinal,
-                      [producto.Id_producto]: nuevoPrecio
-                    });
-                  }}
-                />
-                <label className="form-check-label">
+      <td>
+              {Number(producto.PrecioMayoreo) > 0 && !producto.productocomun && (
+            <div className="form-check">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={usarMayoreo[producto.Id_producto] || false}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  const nuevoPrecio = checked ? producto.PrecioMayoreo : producto.precioVenta;
+                  setUsarMayoreo({ ...usarMayoreo, [producto.Id_producto]: checked });
+                  setPrecioFinal({ ...precioFinal, [producto.Id_producto]: nuevoPrecio });
+                }}
+              />
+              <label className="form-check-label">
                 {formatCurrency(producto.PrecioMayoreo)}
-                </label>
-              </div>
-            </td>
-
+              </label>
+            </div>
+          )}
+        </td>
           <td>{producto.tipo_venta || "Promo"}</td>
           <td>
             <input
@@ -2384,7 +2392,7 @@ return (
             </Modal.Footer>
           </Modal>
 
-
+</div>
       </>
       )
     }
@@ -2400,4 +2408,3 @@ flex-wrap: wrap;
 justify-content: center;
 gap: 30px;
 `;
-

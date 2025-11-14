@@ -11,7 +11,6 @@ import {
 }
 from 'mdb-react-ui-kit';
 import Swal from 'sweetalert2'
-
 import { DataContext } from '../context/DataContext';
  
 const Login = () => {
@@ -84,7 +83,7 @@ const Login = () => {
               <MDBCardBody className='p-5 w-100 d-flex flex-column'>
 
                 <div className='d-flex justify-content-center'>
-                <h2>EL VARISTA</h2>
+                <h2>JUANA - APP</h2>
                 </div>
                 <br />
 
@@ -101,7 +100,7 @@ const Login = () => {
 
                 <input className='form-control mb-4 w-100' placeholder='Ingrese clave...' type='password' size="lg" value={clave} onChange={(e) => setClave(e.target.value)} />
 
-                <MDBBtn size='lg' onClick={comprobarLogin} style={{backgroundColor: '#411e19', border: 'none', cursor: 'pointer'}}>
+                <MDBBtn size='lg' onClick={comprobarLogin} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>
                   INGRESAR
                 </MDBBtn>
               </MDBCardBody>

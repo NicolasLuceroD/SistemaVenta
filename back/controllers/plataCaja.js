@@ -51,38 +51,84 @@ const verCantidadTotal = (req, res) => {
     connection.query(`
         SELECT 
             pcl.cantidadPlataLogin AS montoInicial,
-            COALESCE(SUM(v.precioTotal_venta), 0) AS total_ventas,
-            COALESCE(SUM(i.montoTotalIngreso), 0) AS total_ingresos,
-            COALESCE(SUM(e.montoTotalEgreso), 0) AS total_egresos,
-            COALESCE(SUM(p.monto), 0) AS total_pagos,
+            -- TOTAL VENTAS
+            COALESCE((
+                SELECT SUM(v.precioTotal_venta)
+                FROM venta v
+                WHERE v.Id_caja = pcl.Id_caja
+                AND v.Id_usuario = pcl.Id_usuario
+                AND v.fecha_registro >= pcl.FechaRegistro
+                AND v.Id_metodoPago != 5
+            ), 0) AS total_ventas,
+
+            -- TOTAL INGRESOS
+            COALESCE((
+                SELECT SUM(i.montoTotalIngreso)
+                FROM ingreso i
+                WHERE i.Id_caja = pcl.Id_caja
+                AND i.Id_usuario = pcl.Id_usuario
+                AND i.FechaRegistro >= pcl.FechaRegistro
+            ), 0) AS total_ingresos,
+
+            -- TOTAL EGRESOS
+            COALESCE((
+                SELECT SUM(e.montoTotalEgreso)
+                FROM egreso e
+                WHERE e.Id_caja = pcl.Id_caja
+                AND e.Id_usuario = pcl.Id_usuario
+                AND e.FechaRegistro >= pcl.FechaRegistro
+            ), 0) AS total_egresos,
+
+            -- TOTAL PAGOS (ENGANCHADO POR VENTA)
+            COALESCE((
+                SELECT SUM(p.monto)
+                FROM pagos p
+                INNER JOIN venta v2 ON v2.Id_venta = p.Id_venta
+                WHERE v2.Id_caja = pcl.Id_caja
+                AND v2.Id_usuario = pcl.Id_usuario
+                AND p.fechaRegsitro >= pcl.FechaRegistro
+                AND p.Id_metodoPago != 5
+            ), 0) AS total_pagos,
+
+            -- TOTAL CIERRE (USANDO LAS MISMAS SUBCONSULTAS)
             ROUND(
-                pcl.cantidadPlataLogin 
-                + COALESCE(SUM(v.precioTotal_venta), 0)
-                + COALESCE(SUM(i.montoTotalIngreso), 0)
-                + COALESCE(SUM(p.monto), 0)
-                - COALESCE(SUM(e.montoTotalEgreso), 0),
-            2) AS total_cierre
+                pcl.cantidadPlataLogin
+                + COALESCE((
+                    SELECT SUM(v.precioTotal_venta)
+                    FROM venta v
+                    WHERE v.Id_caja = pcl.Id_caja
+                    AND v.Id_usuario = pcl.Id_usuario
+                    AND v.fecha_registro >= pcl.FechaRegistro
+                    AND v.Id_metodoPago != 5
+                ), 0)
+                + COALESCE((
+                    SELECT SUM(i.montoTotalIngreso)
+                    FROM ingreso i
+                    WHERE i.Id_caja = pcl.Id_caja
+                    AND i.Id_usuario = pcl.Id_usuario
+                    AND i.FechaRegistro >= pcl.FechaRegistro
+                ), 0)
+                + COALESCE((
+                    SELECT SUM(p.monto)
+                    FROM pagos p
+                    INNER JOIN venta v2 ON v2.Id_venta = p.Id_venta
+                    WHERE v2.Id_caja = pcl.Id_caja
+                    AND v2.Id_usuario = pcl.Id_usuario
+                    AND p.fechaRegsitro >= pcl.FechaRegistro
+                    AND p.Id_metodoPago != 5
+                ), 0)
+                - COALESCE((
+                    SELECT SUM(e.montoTotalEgreso)
+                    FROM egreso e
+                    WHERE e.Id_caja = pcl.Id_caja
+                    AND e.Id_usuario = pcl.Id_usuario
+                    AND e.FechaRegistro >= pcl.FechaRegistro
+                ), 0)
+            , 2) AS total_cierre
         FROM plataencajalogin pcl
-        LEFT JOIN venta v 
-            ON v.Id_caja = pcl.Id_caja 
-            AND v.Id_usuario = pcl.Id_usuario 
-            AND v.fecha_registro >= pcl.FechaRegistro
-            AND v.Id_metodoPago != 5
-        LEFT JOIN ingreso i 
-            ON i.Id_caja = pcl.Id_caja 
-            AND i.Id_usuario = pcl.Id_usuario 
-            AND i.FechaRegistro >= pcl.FechaRegistro
-        LEFT JOIN egreso e 
-            ON e.Id_caja = pcl.Id_caja 
-            AND e.Id_usuario = pcl.Id_usuario 
-            AND e.FechaRegistro >= pcl.FechaRegistro
-        LEFT JOIN pagos p 
-            ON p.Id_metodoPago != 5
-            AND p.fechaRegsitro >= pcl.FechaRegistro
-        WHERE pcl.Id_caja = ? 
-          AND pcl.Id_usuario = ?
-          AND pcl.estado = 1
-        GROUP BY pcl.cantidadPlataLogin;
+        WHERE pcl.Id_caja = ?
+        AND pcl.Id_usuario = ?
+        AND pcl.estado = 1;
     `, [Id_caja, Id_usuario], (error, results) => {
         if (error) throw error;
         res.json(results);
@@ -154,5 +200,32 @@ const cerrarCaja = async (req, res) => {
 };
 
 
+const verMetodosPagos = (req,res) => {
+    const {Id_caja,Id_usuario} = req.params
+    connection.query(`
+   SELECT 
+        m.Id_metodoPago,
+        m.tipo_metodoPago,
+        COALESCE(SUM(v.precioTotal_venta), 0) AS total_ventas_metodo
+        FROM venta v
+        INNER JOIN metopago m 
+        ON m.Id_metodoPago = v.Id_metodoPago
+        WHERE v.Id_caja = ?
+        AND v.Id_usuario = ?
+ 
+        AND v.fecha_registro >= (
+            SELECT MAX(FechaRegistro)
+            FROM plataencajalogin
+            WHERE Id_caja = ? AND Id_usuario = ?  AND estado = 1
+        )
+        GROUP BY m.Id_metodoPago, m.tipo_metodoPago
+        ORDER BY total_ventas_metodo DESC;         
+        `,[Id_caja,Id_usuario,Id_caja,Id_usuario],(error,results)=>{ 
+            if(error) throw error
+            res.json(results)
+        })
+}
+
+
 module.exports = {verPlataCaja, IngresarPlata,verUltimoIngreso,
-    verCantidadTotal,verificarCajaAbierta,cerrarCaja}
+    verCantidadTotal,verificarCajaAbierta,cerrarCaja,verMetodosPagos}

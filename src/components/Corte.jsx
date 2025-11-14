@@ -218,7 +218,7 @@ useEffect(() => {
       <td>{val.cliente.nombre_cliente}</td>
       <td>{val.metodoPago.tipo_metodoPago}</td>             
       <td>{new Date(val.fecha_registro).toLocaleString()}</td>
-      <td className='empleado'>{val.usuarios.nombre_usuario}</td>
+      <td className='empleado'>{val.usuarios.nombre_usuario}</td>   
     </tr>
   ))}
 </tbody>

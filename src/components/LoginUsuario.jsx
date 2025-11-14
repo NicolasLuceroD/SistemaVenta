@@ -196,7 +196,7 @@ const LoginUsuario = () => {
                  <MDBCard className='bg-white my-5' style={{ borderRadius: '1rem', maxWidth: '500px', padding: '30px' }}>
                     <MDBCardBody className='p-5 w-100 d-flex flex-column'>
                         <div className='d-flex justify-content-center'>
-                          <h2>EL VARISTA</h2>
+                          <h2>JUANA - APP</h2>
                         </div>
                         <br />
                         <select className='form-select mb-4 w-100' value={nombre_usuario} onChange={(e) => setNombreUsuario(e.target.value)}>
@@ -206,7 +206,7 @@ const LoginUsuario = () => {
                             ))}
                         </select>
                         <input className='form-control mb-4 w-100' type='password' size="lg" placeholder='Ingrese clave...' value={clave_usuario} onChange={(e) => setClaveUsuario(e.target.value)} />
-                        <MDBBtn size='lg' onClick={ComprobarLogin} style={{backgroundColor: '#411e19', border: 'none', cursor: 'pointer'}}>
+                        <MDBBtn size='lg' onClick={ComprobarLogin} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>
                             INGRESAR
                         </MDBBtn>
                     </MDBCardBody>
@@ -228,7 +228,7 @@ const LoginUsuario = () => {
             )}
         </Form.Select>
         <br />
-        <Button onClick={comprobarLoginCaja} style={{backgroundColor: '#411e19', border: 'none', cursor: 'pointer'}}>ELEGIR</Button>
+        <Button onClick={comprobarLoginCaja} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>ELEGIR</Button>
     </Modal.Body>
     <Modal.Footer>
         <Button variant="danger" onClick={handleCloseModal1} >

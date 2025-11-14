@@ -47,7 +47,7 @@ const editarDetallePaquete = (req, res) => {
   const { Id_producto, Id_paquete, cantidadProducto } = req.body;
 
   connection.query(
-      `UPDATE detallePaquete SET
+      `UPDATE detallepaquete SET
           Id_producto = '${Id_producto}',
           Id_paquete = '${Id_paquete}',
           cantidadProducto = '${cantidadProducto}'
@@ -64,7 +64,7 @@ const editarDetallePaquete = (req, res) => {
 };
 
 const CrearDetallePaquete = (req,res) =>{
-    connection.query('INSERT INTO detallePaquete SET ?',{
+    connection.query('INSERT INTO detallepaquete SET ?',{
         Id_producto: req.body.Id_producto,
         Id_paquete:  req.body.Id_paquete,
         cantidadProducto: req.body.cantidadProducto
@@ -104,7 +104,7 @@ const ultimoPaquete = (req, res) => {
     FROM 
     paquete q
     INNER JOIN 
-    detallePaquete d ON q.Id_paquete = d.Id_paquete
+    detallepaquete d ON q.Id_paquete = d.Id_paquete
     INNER JOIN 
     producto p ON d.Id_producto = p.Id_producto
     WHERE q.estadoPaquete = 1;

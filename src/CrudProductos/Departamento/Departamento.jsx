@@ -145,14 +145,14 @@ const departamentosPaginados = verCategoria.slice(inicio, fin);
             <h4>Gestiona todos los departamentos de tu negocio</h4> <br /> 
             <MDBInputGroup className='mb-3'>
             <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Nombre"  value={nombre_categoria} onChange={(e)=> setNombreCategoria(e.target.value)} />
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_categoria} onChange={(e)=> setdescripcionCategoria(e.target.value)} />
           </MDBInputGroup>

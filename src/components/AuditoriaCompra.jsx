@@ -174,8 +174,7 @@ useEffect(()=> {
             <h3 className="card-title">PAGOS A PROVEEDORES</h3>
             <h2 style={{color: 'green'}}>{formatCurrency(montoscompras)}</h2>
             <br />
-            <h5 style={{textAlign: 'left'}}>SALDO AVELLANEDA:  <strong style={{color: '#b66900', marginLeft: '8px'}}>{formatCurrency(saldoavellaneda)}</strong> </h5>
-            <h5 style={{textAlign: 'left'}}>SALDO SAN MARTIN: <strong style={{color: '#b66900', marginLeft: '8px'}}>{formatCurrency(saldosanmartin)}</strong></h5>
+            <h5 style={{textAlign: 'left'}}>SALDO CHACABUCO 813:  <strong style={{color: '#b66900', marginLeft: '8px'}}>{formatCurrency(saldoavellaneda)}</strong> </h5>
           </div>
         </div>
       </div>

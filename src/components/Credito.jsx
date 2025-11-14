@@ -12,7 +12,8 @@ import Paginacion from './Paginacion';
 import "../css/credito.css"
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import logoticket from '../assets/fondo-varista.jpg'
+import logoticket from '../assets/logojuana.jpg'
+
 
 
 const Credito = () => {
@@ -193,8 +194,8 @@ useEffect(() => {
       const horaTexto = `HORA DE PAGO: ${fechaActual.toLocaleTimeString()}`;
     
       // Datos de la empresa
-      const empresaNombre = "El Varista";
-      const empresaDireccion = "Av. Alem 224 - Tafí Viejo - C.P: (4103)";
+      const empresaNombre = "JUANA - APP";
+      const empresaDireccion = "Batalla de Chacabuco 813 - San Miguel de Tucuman - C.P: (4000)";
     
       // Datos del proveedor
       const clienteNombre = nombreCliente || "Desconocido";
@@ -202,7 +203,7 @@ useEffect(() => {
     
       // Logo de la empresa
       try {
-        doc.addImage(logoticket, "PNG", 10, 10, 50, 30);
+        doc.addImage(logoticket, "PNG", 10, 10, 35, 30);
       } catch (error) {
         console.warn(
           "No se pudo cargar el logo. Asegúrate de que la ruta es válida.",
@@ -504,7 +505,7 @@ useEffect(() => {
                 <tr key={cliente.Id_cliente}>
                   <td>{cliente.nombre_cliente}</td>
                   <td>
-                  <Button onClick={() => obtenerDetalleClienteVenta(cliente.Id_cliente)} style={{ backgroundColor: '#6d4c41', color: 'white', border: 'none' }}>
+                  <Button onClick={() => obtenerDetalleClienteVenta(cliente.Id_cliente)} style={{ backgroundColor: '#FF914D', color: 'white', border: 'none' }}>
                     <FontAwesomeIcon icon={faEye} />
                   </Button>
                   </td>

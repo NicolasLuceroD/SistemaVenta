@@ -306,14 +306,14 @@ useEffect(() => {
                         
                         <MDBInputGroup className="mb-3">
                         <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D",}} />
                         </span>
                             <input className="form-control" type="number" placeholder="ID PRODUCTO" value={Id_producto} onChange={(e) => setId_producto(e.target.value)} />
                         </MDBInputGroup>
 
                         <MDBInputGroup className="mb-3">
                         <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                         </span>
                         <input className="form-control" type="number" placeholder="Cantidad" value={cantidad} onChange={(e) => setCantidad(e.target.value)} />
                         </MDBInputGroup>
@@ -322,13 +322,11 @@ useEffect(() => {
                         <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}} >SUCURSAL</h4>
                         <MDBInputGroup>
                         <span className="input-group-text">
-                            <FontAwesomeIcon icon={faShop} size="lg" style={{color: "#6d4c41",}} />
+                            <FontAwesomeIcon icon={faShop} size="lg" style={{color: "#FF914D",}} />
                         </span>
                         <Form.Select key={Id_sucursal} value={sucursal} onChange={(e)=> setSucursal(e.target.value)} aria-label="Nombre Categoria" id="suc">
                         <option value="0" disabled selected>--Seleccione una sucursal--</option>
-                        <option value="1" >Av Avellaneda - 99</option>
-                        <option value="2" >San Martin - 16</option>
-                         
+                        <option value="1" >Chacabuco 813</option>
                         </Form.Select>
                         </MDBInputGroup>
                         <br />
@@ -356,10 +354,10 @@ useEffect(() => {
                    
                 </div>
                 <div className='container'>
-            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - Av.Avellaneda 99</h2>
+            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - Chacabuco 813</h2>
             <MDBInputGroup>
             <span className="input-group-text">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#FF914D",}} />
                     </span>
             <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control'/><br />
             </MDBInputGroup>
@@ -405,54 +403,6 @@ useEffect(() => {
             <button onClick={exportToExcel} className='btn btn-secondary'>Exportar a Excel</button>
 
 <hr />
-
-            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - San martin 16</h2>
-            <MDBInputGroup>
-            <span className="input-group-text">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#012541",}} />
-                    </span>
-            <input value={buscar2} onChange={buscador2} type="text" placeholder='Busca un producto...' className='form-control'/>
-            </MDBInputGroup>
-            <div className='container table'>
-            <table className="table table-striped table-hover mt-5 shadow-lg">
-                <thead className='custom-table-header'>
-                    <tr>
-                        <th>ID</th>
-                        <th>NOMBRE</th>
-                        <th>DESCRIPCION</th>
-                        <th>TIPO VENTA</th>
-                        <th>CANTIDAD</th>
-                        <th>SUCURSAL</th>
-                        <th>EDITAR</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {resultado2.slice(primerIndex2, ultimoIndex2).map((val) => (
-                        <tr key={val.Id_stock}>
-                            <td>{val.Id_producto}</td>
-                            <td>{val.nombre_producto}</td>
-                            <td>{val.descripcion_producto}</td>
-                            <td>{val.tipo_venta}</td>
-                            <td>{val.tipo_venta === 'granel' ? parseFloat(val.cantidad).toFixed(2) : val.cantidad}</td>
-                            <td>{val.nombre_sucursal}</td>
-                            <td className=''  aria-label="Basic example">
-                                <Button type='button' className='btn btn-primary' onClick={()=>{seeStock(val)}}> SELECCIONAR </Button>
-                            </td>
-                        </tr>
-
-                    ))}
-                </tbody>
-            </table>
-            </div>
-            <div style={{display:'flex',justifyContent:'center'}}>
-            <Paginacion productosPorPagina={productosPorPagina2} 
-            actualPagina={actualPagina2} 
-            setActualPagina={setActualPagina2}
-            total={total2}
-            />
-            </div>
-
-            <button onClick={exportToExcel2} className='btn btn-secondary'>Exportar a Excel</button>
             </div>
             </div>
 

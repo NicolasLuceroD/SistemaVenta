@@ -20,8 +20,8 @@ app.options('*', cors()); // Habilita las solicitudes preflight
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const sequelize = new Sequelize('dbvarista', 'root', 'Lola2201', {
-    host: 'localhost',
+const sequelize = new Sequelize('dbjuanakiosco', 'root', 'Lola2201', {
+    host: '127.0.0.1',
     dialect: 'mysql',
     port: 3306,
 });

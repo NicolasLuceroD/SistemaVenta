@@ -770,7 +770,7 @@ useEffect(()=>{
 <div className='container' style={{ marginLeft: '15px', marginBottom: '50px', marginTop: '50px', textAlign: 'left' }}>
     {nombreEmpleado && (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faUser} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faUser} style={{ color: '#FF914D', marginRight: '8px' }} />
             CORTE DE CAJERO DEL EMPLEADO: {nombreEmpleado}
         </h3>
     )}
@@ -778,31 +778,31 @@ useEffect(()=>{
     <br />
     {mostrarVentaUsuario ? (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faDollar} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faDollar} style={{ color: '#FF914D', marginRight: '8px' }} />
             {isNaN(importeXusuario) ? (<>VENTAS TOTALES DEL EMPLEADO: $0,00</>) : (<>VENTAS TOTALES DEL EMPLEADO: {formatCurrency(importeXusuario)}</>)}
         </h3>
     ) : (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faDollar} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faDollar} style={{ color: '#FF914D', marginRight: '8px' }} />
             {isNaN(importe) ? (<>VENTAS PRODUCTOS: $0,00</>) : (<>VENTAS PRODUCTOS: {formatCurrency(importe)}</>)}
         </h3>
     )}
 
     {ganancia > 0 ? (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faChartSimple} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faChartSimple} style={{ color: '#FF914D', marginRight: '8px' }} />
             GANANCIA PRODUCTOS: {formatCurrency(ganancia)}
         </h3>
     ) : (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faChartSimple} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faChartSimple} style={{ color: '#FF914D', marginRight: '8px' }} />
             GANANCIA PRODUCTOS: {formatCurrency(gananciaUsuario)}
         </h3>
     )}
     
     {mostrarFondoCaja && (
         <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faCashRegister} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faCashRegister} style={{ color: '#FF914D', marginRight: '8px' }} />
             FONDO DE CAJA: {formatCurrency(fondoCajaImporte)}
         </h3>
     )}
@@ -815,7 +815,7 @@ useEffect(()=>{
         </h3> */}
 
         <h3 className='h3-clientes'>
-        <FontAwesomeIcon icon={faDollar} style={{ color: '#6d4c41', marginRight: '8px' }} />
+        <FontAwesomeIcon icon={faDollar} style={{ color: '#FF914D', marginRight: '8px' }} />
         GANANCIA PAQUETES X USUARIO: {formatCurrency(ganaciaPaqueteXusuarios)}
         </h3>
         </>
@@ -830,7 +830,7 @@ useEffect(()=>{
 </h3> */}
 
 <h3 className='h3-clientes'>
-            <FontAwesomeIcon icon={faDollar} style={{ color: '#6d4c41', marginRight: '8px' }} />
+            <FontAwesomeIcon icon={faDollar} style={{ color: '#FF914D', marginRight: '8px' }} />
            GANANCIA PAQUETES: {formatCurrency(costopaquete)}
 </h3>
 </>:
@@ -846,7 +846,7 @@ useEffect(()=>{
       <div className='container-fluid'>
         <div className='row'>
           <div className='col'>
-            <h3 className='h3-clientes'><FontAwesomeIcon icon={faSackDollar} style={{color: "#6d4c41"}} ></FontAwesomeIcon> VENTAS: </h3>
+            <h3 className='h3-clientes'><FontAwesomeIcon icon={faSackDollar} style={{color: "#FF914D"}} ></FontAwesomeIcon> VENTAS: </h3>
             <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'>
@@ -871,7 +871,7 @@ useEffect(()=>{
   <div className='col'>
     
     <h3 className='h3-clientes'>
-      <FontAwesomeIcon icon={faTags} style={{ color: "#6d4c41" }} /> VENTAS POR DEPARTAMENTOS:</h3>
+      <FontAwesomeIcon icon={faTags} style={{ color: "#FF914D" }} /> VENTAS POR DEPARTAMENTOS:</h3>
     <div className="container table">
       <Table striped bordered hover className='table-primary'>
         <thead className='custom-table-header'>
@@ -899,7 +899,7 @@ useEffect(()=>{
     <div className='col'>
 
       <h3 className='h3-clientes'>
-        <FontAwesomeIcon icon={faChartSimple} style={{ color: "#6d4c41" }} /> GANANCIA POR DEPARTAMENTO:</h3>
+        <FontAwesomeIcon icon={faChartSimple} style={{ color: "#FF914D" }} /> GANANCIA POR DEPARTAMENTO:</h3>
       <div className="container table">
         <Table striped bordered hover className='table-primary'>
           <thead className='custom-table-header'>
@@ -922,7 +922,7 @@ useEffect(()=>{
 
     <div className='col'>
       <h3 className='h3-clientes'>
-        <FontAwesomeIcon icon={faUsers} style={{ color: "#6d4c41" }} /> CLIENTES CON MAS VENTAS:</h3>
+        <FontAwesomeIcon icon={faUsers} style={{ color: "#FF914D" }} /> CLIENTES CON MAS VENTAS:</h3>
       <div className="container table">
         <Table striped bordered hover className='table-primary'>
           <thead className='custom-table-header'>
@@ -957,7 +957,7 @@ useEffect(()=>{
 <hr />  
 
     <h3 className='h3-clientes'>
-      <FontAwesomeIcon icon={faTags} style={{ color: "#6d4c41" }} /> VENTAS POR DEPARTAMENTOS:</h3>
+      <FontAwesomeIcon icon={faTags} style={{ color: "#FF914D" }} /> VENTAS POR DEPARTAMENTOS:</h3>
     <div className="container table">
       <Table striped bordered hover className='table-primary'>
         <thead className='custom-table-header'>
@@ -986,7 +986,7 @@ useEffect(()=>{
         <div className='row'>
         <hr />    
           <div className='col'>
-          <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket} rotation={180}  style={{color: "#6d4c41",}}></FontAwesomeIcon> ENTRADA DE EFECTIVO DEL DIA:</h3>
+          <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket} rotation={180}  style={{color: "#FF914D",}}></FontAwesomeIcon> ENTRADA DE EFECTIVO DEL DIA:</h3>
             <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'>
@@ -1013,7 +1013,7 @@ useEffect(()=>{
                  
 
           <div className='col'> 
-          <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket}  style={{color: "#6d4c41"}}></FontAwesomeIcon> SALIDA DE EFECTIVO DEL DIA:</h3>
+          <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket}  style={{color: "#FF914D"}}></FontAwesomeIcon> SALIDA DE EFECTIVO DEL DIA:</h3>
             <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'> 
@@ -1041,7 +1041,7 @@ useEffect(()=>{
       {tablaIngresoUsuario && (     
           <div className='row'>
             <div className='col'>
-            <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket} style={{color: "#6d4c41"}} rotation={180}></FontAwesomeIcon> ENTRADA DE EFECTIVO DE USUARIO: {nombreEmpleado}</h3>
+            <h3 className='h3-clientes'><FontAwesomeIcon icon={faArrowUpFromBracket} style={{color: "#FF914D"}} rotation={180}></FontAwesomeIcon> ENTRADA DE EFECTIVO DE USUARIO: {nombreEmpleado}</h3>
             <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'>
@@ -1063,7 +1063,7 @@ useEffect(()=>{
             </div>
 
            <div className='col'>
-            <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#6d4c41"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> SALIDA DE EFECTIVO DE USUARIO: {nombreEmpleado}</h3>
+            <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#FF914D"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> SALIDA DE EFECTIVO DE USUARIO: {nombreEmpleado}</h3>
             <div className="container table">
             <Table striped bordered hover className='table-primary'>
                   <thead className='custom-table-header'>
@@ -1092,7 +1092,7 @@ useEffect(()=>{
 
 {ventaEliminada ? 
 <>
-  <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#6d4c41"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> VENTAS ELIMINADAS</h3>
+  <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#FF914D"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> VENTAS ELIMINADAS</h3>
  <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'>
@@ -1137,7 +1137,7 @@ useEffect(()=>{
 {pagoCredito ? 
 <>
 <hr />
-  <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#6d4c41"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> PAGOS CREDITOS</h3>
+  <h3 className='h3-clientes'><FontAwesomeIcon style={{color: "#FF914D"}} icon={faArrowUpFromBracket}></FontAwesomeIcon> PAGOS CREDITOS</h3>
  <div className="container table">
                 <Table striped bordered hover className='table-primary'>
                     <thead className='custom-table-header'>
@@ -1172,7 +1172,7 @@ useEffect(()=>{
 
 <hr />
 <h3 className='h3-clientes'>
-      <FontAwesomeIcon icon={faTags} style={{ color: "#6d4c41" }} /> PRODUCTOS ELIMINADOS:</h3>
+      <FontAwesomeIcon icon={faTags} style={{ color: "#FF914D" }} /> PRODUCTOS ELIMINADOS:</h3>
     <div className="container table">
       <Table striped bordered hover className='table-primary'>
         <thead className='custom-table-header'>
@@ -1205,7 +1205,7 @@ useEffect(()=>{
             <Modal.Body >    
               <MDBInputGroup>
               <span className="input-group-text">
-                    <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#6d4c41"}} />
+                    <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D"}} />
               </span>
               <input className="form-control" type="password" placeholder="Ingrese el codigo" value={codigoMov} onChange={(e) => setCodigoMov(e.target.value)} />  
               </MDBInputGroup>

@@ -217,42 +217,42 @@ const Eliminar = (val) =>{
 
         <MDBInputGroup className='mb-3'>
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faUsers} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faUsers} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='text' placeholder="Nombre"  value={nombre_cliente} onChange={(e) => setNombreCliente(e.target.value)}/>
         </MDBInputGroup>
 
         <MDBInputGroup className='mb-3' >
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faUsers} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faUsers} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='text' placeholder="Apellido" value={apellido_cliente} onChange={(e) => setApellidoCliente(e.target.value)}/>
         </MDBInputGroup>
 
         <MDBInputGroup className='mb-3' >
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faPhone} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faPhone} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='number' placeholder="Telefono" value={telefono_cliente} onChange={(e) => setTelefonoCliente(e.target.value)}/>
         </MDBInputGroup>
         
         <MDBInputGroup className='mb-3' >
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faHouse} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faHouse} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='text' placeholder="Domicilio" value={domicilio_cliente} onChange={(e) => setDomicilioCliente(e.target.value)}/>
         </MDBInputGroup>
 
         <MDBInputGroup className='mb-3' textAfter='.00' >
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='number' placeholder="Credito"  value={montoCredito} onChange={(e) => setMontoCredito(e.target.value)}/>
         </MDBInputGroup>
 
         <MDBInputGroup className='mb-3' textAfter='.00' >
         <span className="input-group-text">
-          <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+          <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
         </span>
           <input className='form-control' type='number' placeholder="Limite de credito"  value={LimiteCredito} onChange={(e) => setLimiteCredito(e.target.value)}/>
         </MDBInputGroup>
@@ -283,7 +283,7 @@ const Eliminar = (val) =>{
               <br /><br />
               <MDBInputGroup>
               <span className="input-group-text">
-                      <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#6d4c41",}} />
+                      <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#FF914D",}} />
                   </span>
               <input value={buscar} onChange={buscador} type="text" placeholder='Busca un cliente...' className='form-control'/>
               </MDBInputGroup>

@@ -27,6 +27,8 @@ const crearDetalleVenta = (req, res) => {
     IdEstadoCredito: req.body.IdEstadoCredito,  
     IdEstadoVenta: req.body.IdEstadoVenta,
     Id_paquete: req.body.Id_paquete,
+    productocomun: req.body.productocomun,
+    precioproductocomun: req.body.precioproductocomun
 };
   detalleVentaData.Id_venta === req.body.Id_venta === null ? 1 : req.body.Id_venta;
   
@@ -79,7 +81,9 @@ const ultimoDetalle = (req, res) => {
       u.nombre_usuario,
       pa.nombre_promocion,
       pa.precio_paquete,
-      pa.Id_paquete
+      pa.Id_paquete,
+      dv.productocomun,
+      dv.precioproductocomun
     FROM 
       detalleventa dv
     LEFT JOIN 
@@ -150,6 +154,22 @@ const ultimoDetalle = (req, res) => {
           });
         }
   
+          // ✅ Productos comunes
+        if (!item.Id_producto && item.productocomun) {
+        venta.productos.push({
+          Id_producto: `comun-${item.Id_detalleVenta}`,
+          nombre_producto: item.productocomun,
+          descripcion_producto: 'Producto común',
+          precioVenta: parseFloat(item.precioproductocomun) || 0,
+          precioCompra: 0,
+          PrecioMayoreo: 0,
+          cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+          Id_detalleVenta: item.Id_detalleVenta,
+          descripcion_detalleVenta: item.descripcion_detalleVenta,
+        });
+      }
+
+
         // Agregar paquete si no está ya en la lista
         const paqueteExistente = venta.paquetes.find(p => p.Id_paquete === item.Id_paquete);
         if (!paqueteExistente && item.Id_paquete) {

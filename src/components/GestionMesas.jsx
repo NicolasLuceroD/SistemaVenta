@@ -6,7 +6,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import logoticket from '../assets/fondo-varista.jpg'
 
 const GestionMesas = () => {
   const { productos, URL } = useContext(DataContext);
@@ -379,7 +378,7 @@ const FinalizarVenta = async () => {
 //   mostrarAlertaTicket();
 // };
 const imprimirTicket = (productos, totalParaTodo, cliente, metodoPago) => {
-  const logoUrl = '/fondo-varista.jpg'
+  const logoUrl = '/logojuana.jpg'
   let ticketWindow = window.open('', 'PRINT', 'height=600,width=400');
 
   ticketWindow.document.write(`
@@ -400,7 +399,6 @@ const imprimirTicket = (productos, totalParaTodo, cliente, metodoPago) => {
           .logo {
             width: 80px;
             margin: 0 auto 10px;
-            filter: grayscale(100%);
           }
           h3 {
             margin: 0;

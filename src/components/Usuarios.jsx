@@ -158,14 +158,14 @@ const usuariosPaginados = usuarios.slice(inicio, fin);
         <div className="container">
        <MDBInputGroup className='mb-3'>
        <span className="input-group-text">
-                        <FontAwesomeIcon icon={faUser} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faUser} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Nombre" value={nombre_usuario} onChange={(e) => setNombreUsuario(e.target.value)}/>
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faLock} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faLock} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Clave"  value={clave_usuario} onChange={(e) => setClaveUsuario(e.target.value)} />
           </MDBInputGroup>
@@ -173,7 +173,7 @@ const usuariosPaginados = usuarios.slice(inicio, fin);
           <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> ROL </h4 >
           <MDBInputGroup>
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faUserGear} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faUserGear} size="lg" style={{color: "#FF914D",}} />
                 </span>
           <Form.Select aria-label="Tipo de venta"  value={rol} onChange={(e)=>setRol(e.target.value)}  key={Id_usuario} id="usuariosRol"  >
                 <option value="0" disabled selected>Selecciona un rol</option>

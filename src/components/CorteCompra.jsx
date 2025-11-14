@@ -386,14 +386,14 @@ const compraPaginados = compraVer.slice(inicio, fin);
 
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                     </span>
             <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_compra} onChange={(e) => setDescripcionComra(e.target.value)} />
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='number' placeholder="Total Compra " value={totalCompra} onChange={(e) => setTotalCompra(e.target.value)} />
           </MDBInputGroup>
@@ -407,14 +407,14 @@ const compraPaginados = compraVer.slice(inicio, fin);
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faPerson} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faPerson} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Persona que pide " value={personaPideCompra} onChange={(e) => setPersonaPide(e.target.value)} />
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faPersonWalking} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faPersonWalking} size="lg" style={{color: "#FF914D",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Persona que recibe " value={personaRecibeCompra} onChange={(e) => setPerosonaRecibe(e.target.value)} />
           </MDBInputGroup>
@@ -422,7 +422,7 @@ const compraPaginados = compraVer.slice(inicio, fin);
           <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}>PROVEEDORES</h4>
           <MDBInputGroup>
           <span className="input-group-text">
-           <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#6d4c41",}} />
+           <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#FF914D",}} />
           </span>
           <Form.Select aria-label="Nombre proveedor" id="proveedor" value={Id_proveedor} onChange={(e)=>setId_proveedor(e.target.value)}>
             <option value="0" disabled selected>Selecciona un proveedor</option>

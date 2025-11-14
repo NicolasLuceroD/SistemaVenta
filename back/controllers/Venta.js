@@ -65,6 +65,8 @@ const verLaVentaCompleta = (req, res) => {
       p.precioCompra,
       dv.Id_detalleVenta, 
       dv.CantidadVendida, 
+      dv.productocomun,
+      dv.precioproductocomun,
       u.nombre_usuario,
       pa.nombre_promocion,
       pa.precio_paquete,
@@ -94,9 +96,7 @@ const verLaVentaCompleta = (req, res) => {
       return;
     }
 
-    // Agrupar productos y paquetes por Id_venta
     const ventasAgrupadas = results.reduce((acc, item) => {
-      // Si no existe la venta en el acumulador, agregarla
       if (!acc[item.Id_venta]) {
         acc[item.Id_venta] = {
           Id_venta: item.Id_venta,
@@ -106,7 +106,6 @@ const verLaVentaCompleta = (req, res) => {
           cliente: {
             Id_cliente: item.Id_cliente,
             nombre_cliente: item.nombre_cliente,
-            domicilio_cliente: item.domicilio_cliente,
           },
           metodoPago: {
             Id_metodoPago: item.Id_metodoPago,
@@ -120,8 +119,9 @@ const verLaVentaCompleta = (req, res) => {
         };
       }
 
-      // Agregar producto si no está ya en la lista
       const venta = acc[item.Id_venta];
+
+      // ✅ Productos reales
       const productoExistente = venta.productos.find(p => p.Id_producto === item.Id_producto);
       if (!productoExistente && item.Id_producto) {
         venta.productos.push({
@@ -137,21 +137,35 @@ const verLaVentaCompleta = (req, res) => {
         });
       }
 
-      // Agregar paquete si no está ya en la lista
+      // ✅ Productos comunes
+      if (!item.Id_producto && item.productocomun) {
+        venta.productos.push({
+          Id_producto: `comun-${item.Id_detalleVenta}`,
+          nombre_producto: item.productocomun,
+          descripcion_producto: 'Producto común',
+          precioVenta: parseFloat(item.precioproductocomun) || 0,
+          precioCompra: 0,
+          PrecioMayoreo: 0,
+          cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+          Id_detalleVenta: item.Id_detalleVenta,
+          descripcion_detalleVenta: item.descripcion_detalleVenta,
+        });
+      }
+
+      // ✅ Paquetes
       const paqueteExistente = venta.paquetes.find(p => p.Id_paquete === item.Id_paquete);
       if (!paqueteExistente && item.Id_paquete) {
         venta.paquetes.push({
-            Id_paquete: item.Id_paquete,
-            nombre_promocion: item.nombre_promocion,
-            precio_paquete: item.precio_paquete,
-            cantidadVendida: parseFloat(item.CantidadVendida) || 0
+          Id_paquete: item.Id_paquete,
+          nombre_promocion: item.nombre_promocion,
+          precio_paquete: item.precio_paquete,
+          cantidadVendida: parseFloat(item.CantidadVendida) || 0
         });
       }
 
       return acc;
     }, {});
 
-    // Convertir el objeto agrupado en un array
     const ventas = Object.values(ventasAgrupadas);
     res.json(ventas);
   });

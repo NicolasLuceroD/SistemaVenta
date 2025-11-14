@@ -129,7 +129,7 @@
   margin-left: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #6d4c41; /* Color de fondo del botón */
+  background-color: #FF914D; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
@@ -142,7 +142,7 @@
   margin-top: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #4b342c; /* Color de fondo del botón */
+  background-color: #a35e32; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
@@ -239,7 +239,7 @@
 .datos{
   padding: 10px;
   padding-bottom: 0px;
-  background-color:  #2e1410;
+  background-color:  #FF914D   ;
   width:  100%;
   color: white;
 }
@@ -257,7 +257,7 @@
 
 .h3-ventas{
   text-align: start;
-  background: linear-gradient(135deg, #3e2723, #5d4037, #8d6e63, #d7ccc8);
+  background: linear-gradient(135deg, #D9BFA9, #FF914D, #FFF3E0);
   width: 100%;
   font-size: 13px;
   padding: 7px;
@@ -368,7 +368,7 @@
 }
 
 .custom-table-header th {
-  background: #74594f !important;
+  background: #FF914D  !important;
   color: #fff!important;
   border: 1px solid rgb(34, 34, 34) !important;
 }
@@ -387,7 +387,7 @@
 
 
 .custom-links {
-  background-color: #6d4c41; /* Color de fondo deseado */
+  background-color: #c97f52; /* Color de fondo deseado */
   padding: 10px; /* Ajuste el espaciado según sea necesario */ 
   letter-spacing: 1px;
   font-size: 20px;
@@ -475,7 +475,7 @@ nav{
 }
 
 .btn-jsx {
-  background: #632f26 !important;
+  background: #FF914D  !important;
   border: none;
   color: white; /* Color del texto */
   padding: 10px 20px; /* Ajuste del padding para mayor tamaño */
@@ -636,36 +636,36 @@ nav{
 
 
 .dropdown-menu-azul {
-  background-color: #632e26;
+  background-color: #FF914D ;
   padding: 10px;
   border-radius: 8px;
 }
 
 /* También podés hacer que los botones combinen */
 .dropdown-menu-azul .btn-jsx {
-  background-color: #1f0f0c !important;
+  background-color: #975e3a  !important;
   color: rgb(247, 244, 244);
   border: none;
 }
 
 .dropdown-menu-azul .btn-jsx:hover {
-  background-color: #29120e !important;
+  background-color: #FF914D  !important;
 }
 
 .dropdown-toggle{
   padding: 10px;
   font-size: 1.1rem;
   border-radius: 8px;
-  background-color: #632e26 !important;
+  background-color: #FF914D  !important;
   border: none;
 }
 
 .fondo-login {
-  background-image: url('/fondocafe.jpg');
+  background-image: url('/src/assets/fondo-super.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: brightness(0.6);
+  filter: brightness(0.4);
   position: absolute;
   width: 100%;
   height: 100%;
@@ -673,7 +673,7 @@ nav{
 }
 
 .fondo-login-usuario {
-  background-image: url('/fondousuarios.webp');
+  background-image: url('/src/assets/fondogondola.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -751,3 +751,25 @@ nav{
 
 
 
+.container-venta {
+  position: relative; 
+  width: 100%;
+  min-height: 100vh; 
+  overflow: hidden; 
+}
+
+.fondo-venta {
+  background-color: #ffffff;
+  background-image: url('/src/assets/logojuana.jpg');
+  background-size: 45vw auto; 
+  background-position: center 10%; 
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  transition: background-size 0.3s ease, background-position 0.3s ease;
+  opacity: 0.8; 
+}

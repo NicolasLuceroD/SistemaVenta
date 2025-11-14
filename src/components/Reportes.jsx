@@ -292,14 +292,13 @@ useEffect(() =>{
 },[fechaInicio,fechaFin]) 
   
   
-    const Colors = [
-  "#af8a81ff", // marrón café oscuro
-  "#6D4C41", // marrón intermedio
-  "#A1887F", // marrón claro, tipo cappuccino
-  "#D7CCC8", // crema / beige suave
-  "#FFF8E1", // casi blanco con un tinte cálido
-];
-
+const Colors = [
+  "#FF914D", 
+  "#FFB26B", 
+  "#FFD59A", 
+  "#FFE0B2", 
+  "#FFF3E0", 
+]
   return (
     <>
     <App />
@@ -463,7 +462,7 @@ useEffect(() =>{
                           <XAxis dataKey="tipo_metodo_pago" />
                           <YAxis domain={[0, Math.max(...ventaXmetodoPago.map(item => item.monto_total)) * 1.2]} />
                           <Legend />
-                          <Bar dataKey="monto_total" fill="#A1887F" barSize={50}>
+                          <Bar dataKey="monto_total" fill="#FFB26B" barSize={50}>
                               <LabelList dataKey="monto_total" position="top"   formatter={(value) => 
                               new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(value)
                               }  />
@@ -487,7 +486,7 @@ useEffect(() =>{
                           <XAxis dataKey="nombre_categoria" />
                           <YAxis domain={[0, Math.max(...ventatotalxcategoria.map(item => item.monto_total)) * 1.2]} />
                           <Legend />
-                          <Bar dataKey="monto_total" fill="#A1887F" barSize={50}>
+                          <Bar dataKey="monto_total" fill="#FFB26B" barSize={50}>
                               <LabelList dataKey="monto_total" position="top" formatter={(value) => 
                               new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" }).format(value)
                               }  />

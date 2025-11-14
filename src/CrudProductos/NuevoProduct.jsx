@@ -17,6 +17,7 @@ import { DataContext } from '../context/DataContext.jsx';
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import Paginacion from '../components/Paginacion.jsx';
+import Swal from 'sweetalert2';
 
 const NuevoProduct = ({ filename, sheetname }) => {
 
@@ -81,6 +82,32 @@ const NuevoProduct = ({ filename, sheetname }) => {
     function refreshPage() {
         window.location.reload();
       }
+
+
+    const verificarCodigoProducto = (codigobarras) =>{
+        const existe = producto.some((p)=>p.codProducto === codigobarras)
+        if(existe){
+            Swal.fire({
+                icon: 'error',
+                title: 'Codigo duplicado',
+                text: 'Este producto ya existe en el sistema'
+            })
+            return true
+        }
+        return false
+    }
+
+
+    const handleCodigoChange = (e) => {
+        const codigobarras = e.target.value
+        setCodProducto(codigobarras)
+        if(codigobarras.length === 13){
+            const existe = verificarCodigoProducto(codigobarras)
+            if(existe){
+                setCodProducto("")
+            }
+        }
+    }
 
     const crearProductos = () => {
         console.log(depto);
@@ -219,21 +246,21 @@ const NuevoProduct = ({ filename, sheetname }) => {
             <div className="container">
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D",}} />
                     </span>
-                    <input type="text" className="form-control" value={codProducto} onChange={(e) => setCodProducto(e.target.value)} placeholder="Escanea el codigo de barras"  />
+                    <input type="text" className="form-control" value={codProducto} onChange={handleCodigoChange} placeholder="Escanea el codigo de barras"  />
                 </MDBInputGroup>
 
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="text" placeholder="Nombre" value={nombre_producto} onChange={(e) => setNombre_Producto(e.target.value)} />
                 </MDBInputGroup>
 
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="text" placeholder="Descripcion" value={descripcion_producto} onChange={(e) => setDescripcion_Producto(e.target.value)} />
                 </MDBInputGroup>
@@ -241,7 +268,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO COSTO:</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio costo" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
                 </MDBInputGroup>
@@ -249,7 +276,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 <p style={{ textAlign: 'left', fontSize:'14px' }}>PORCENTAJE DE GANANCIA:</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Ganancia %" value={interesXGanancia} onChange={(e) => setInteresXGanacia(e.target.value)} />
                 </MDBInputGroup>
@@ -257,28 +284,28 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA:</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio venta" value={precioConGanancia} onChange={(e) => setPrecioConGanancia(e.target.value)} />
                 </MDBInputGroup>
 
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio mayoreo" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)} />
                 </MDBInputGroup>
 
                <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBalanceScale} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faBalanceScale} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Inventario Minimo" value={inventarioMinimo} onChange={(e) => setInventarioMinimo(e.target.value)} />
                 </MDBInputGroup>
 
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendar} size="lg" style={{ color: "#6d4c41", }} />
+                        <FontAwesomeIcon icon={faCalendar} size="lg" style={{ color: "#FF914D", }} />
                     </span>
                     <input
                         className="form-control"
@@ -296,7 +323,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
 
                 <MDBInputGroup>
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <Form.Select aria-label="Tipo de venta" value={tipo_venta} onChange={(e)=>setTipoVenta(e.target.value)}>
                         <option value="0" disabled selected>--Seleccione un tipo de venta--</option>
@@ -310,7 +337,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> CATEGORIA</h4>
                 <MDBInputGroup>
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#6d4c41",}} />
+                        <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#FF914D",}} />
                     </span>
                     <Form.Select key={Id_categoria} aria-label="Nombre Categoria" id="categoria" value={depto} onChange={(e) => setDepto(e.target.value)}>
                         <option value="0" disabled>--Seleccione una categoria--</option>
