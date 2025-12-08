@@ -12,7 +12,7 @@ import Paginacion from './Paginacion';
 import "../css/credito.css"
 import jsPDF from "jspdf";
 import "jspdf-autotable";
-import logoticket from '../assets/logojuana.jpg'
+import logoticket from '../assets/logo-chupito.jpg'
 
 
 

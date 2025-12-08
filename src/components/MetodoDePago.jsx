@@ -122,7 +122,7 @@ const MetodoDePago = () => {
   <br/>  <br/> 
   <MDBInputGroup className='mb-3'>
   <span className="input-group-text">
-                  <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                  <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
           </span>
       <input className='form-control' type='text' placeholder="Nombre" value={tipo_metodoPago} onChange={(e) => setTipoMetodoPago(e.target.value)}/>
     </MDBInputGroup>

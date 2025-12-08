@@ -129,7 +129,7 @@
   margin-left: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #FF914D; /* Color de fondo del botón */
+  background-color: #01992f; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
@@ -142,23 +142,21 @@
   margin-top: 10px; /* Espaciado a la izquierda */
   padding: 10px 20px; /* Espaciado interno */
   font-size: 16px; /* Tamaño de la fuente */
-  background-color: #a35e32; /* Color de fondo del botón */
+  background-color: #01531a; /* Color de fondo del botón */
   color: #fff; /* Color del texto */
   border: none; /* Sin borde */
   border-radius: 4px; /* Bordes redondeados */
   cursor: pointer; /* Cursor al pasar sobre el botón */
   transition: background-color 0.3s ease;
 }
+
 .btn-corte:hover {
-  background-color: #0056b3; /* Cambio de color al pasar sobre el botón */
-}
-.btn-corte2:hover{
-  background-color: rgb(25, 62, 122);
+  background-color: #017a26 !important;
 }
 
-
-
-
+.btn-corte2:hover {
+  background-color: #013d14 !important;
+}
 
 
 .btn-opciones-venta{
@@ -257,7 +255,8 @@
 
 .h3-ventas{
   text-align: start;
-  background: linear-gradient(135deg, #D9BFA9, #FF914D, #FFF3E0);
+  background: linear-gradient(135deg, #000000 0%, #121212 25%, #00CC3D 70%, #00FF4C 100%);
+
   width: 100%;
   font-size: 13px;
   padding: 7px;
@@ -368,7 +367,7 @@
 }
 
 .custom-table-header th {
-  background: #FF914D  !important;
+  background: #01992f  !important;
   color: #fff!important;
   border: 1px solid rgb(34, 34, 34) !important;
 }
@@ -387,7 +386,7 @@
 
 
 .custom-links {
-  background-color: #c97f52; /* Color de fondo deseado */
+  background-color: #008628; /* Color de fondo deseado */
   padding: 10px; /* Ajuste el espaciado según sea necesario */ 
   letter-spacing: 1px;
   font-size: 20px;
@@ -701,7 +700,7 @@ nav{
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #a1887f;
+  background-color: #02aa34;
   border-radius: 3px;
 }
 
@@ -772,4 +771,274 @@ nav{
   z-index: -1;
   transition: background-size 0.3s ease, background-position 0.3s ease;
   opacity: 0.8; 
+}
+
+/* ============== HEADER (versión clara, prolija) ============== */
+
+/* Paleta */
+:root{
+  --brand-1: #00FF4C;          /* verde neón */
+  --brand-1-hover: #00CC3D;    /* verde oscuro brillante */
+  --ink-1: #000000;            /* texto principal negro */
+  --ink-2: #2b2b2b;            /* texto secundario gris oscuro */
+  --hdr-bg-1: #0e0e0e;         /* header negro */
+  --hdr-bg-2: #1a1a1a;         /* header negro/gris */
+  --chip-bg: #0f0f0f;          /* chips negro suave */
+  --chip-br: #00FF4C;          /* bordes verde neón */
+  --btn-bg: #121212;           /* fondo botones negro */
+  --btn-br: #00FF4C;           /* borde verde neón */
+}
+
+/* Navbar */
+.app-navbar{
+  background: linear-gradient(90deg, #0e0e0e 0%, #1f1f1f 50%, #0e0e0e 100%) !important;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 6px 22px rgba(0,255,76,.25);
+}
+
+/* Marca */
+.brand-link{ display:flex; align-items:center; gap:.55rem; text-decoration:none; }
+.brand-badge{
+  background: #FFD500;       /* amarillo fuerte */
+  color:#000;
+  font-weight:800;
+  padding:.32rem .62rem;
+  border-radius:9px;
+  letter-spacing:.5px;
+  font-size:1rem;
+  box-shadow: 0 6px 16px rgba(255,213,0,.3);
+}
+.brand-text{
+  color: #FFFFFF;            /* blanco */
+  font-weight:800;
+  font-size:1.08rem;
+  letter-spacing:1.6px;
+}
+
+/* Toggler limpio */
+.toggler-clean{ border:none !important; }
+.toggler-clean:focus{ box-shadow:none !important; }
+
+/* ============== BOTONES DE NAVEGACIÓN ============== */
+.nav-actions{ align-items:center; }
+
+/* base */
+.nav-btn,
+.nav-dd-toggle{
+  background: var(--btn-bg) !important;
+  border: 2px solid var(--btn-br) !important;
+  color: #fff !important;
+  padding:.52rem .96rem !important;
+  border-radius:12px !important;
+  font-weight:700 !important;
+  letter-spacing:.3px;
+  transition: all .22s ease;
+  box-shadow: 0 2px 6px rgba(0,255,76,.18);
+}
+
+/* hover/active */
+.nav-btn:hover,
+.nav-dd-toggle:hover{
+  background: var(--brand-1-hover) !important;
+  border-color: var(--brand-1-hover) !important;
+  color:#000 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0,255,76,.45);
+}
+
+.nav-btn:active,
+.nav-dd-toggle:active{
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0,255,76,.30);
+}
+
+
+/* botón principal (cerrar turno) */
+.nav-btn-accent{
+  background: #FFD500 !important;
+  border: 2px solid #FFD500 !important;
+  color:#000 !important;
+  font-weight:800 !important;
+  border-radius:12px !important;
+  padding:.58rem 1.05rem !important;
+  box-shadow: 0 10px 24px rgba(255,213,0,.4);
+}
+.nav-btn-accent:hover{
+  background: #FFEA4D !important;
+  border-color: #FFEA4D !important;
+  color:#000 !important;
+}
+
+/* ============== DROPDOWN ============== */
+
+/* Botón que abre el dropdown */
+.nav-dd .dropdown-toggle.nav-dd-toggle {
+  background: var(--btn-bg) !important;
+  color: #fff !important;
+  border: 1px solid var(--btn-br) !important;
+  font-weight: 600;
+  padding: .6rem 1rem;
+  border-radius: 10px;
+}
+
+/* Contenedor del menú */
+.nav-dd-menu {
+  background: #121212 !important;
+  border: 1px solid var(--btn-br);
+  padding: .45rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+  min-width: 240px;
+}
+
+/* Estilo general para items tipo botón dentro del dropdown */
+.nav-dd-menu .nav-dd-item,
+.nav-dd-menu .nav-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #0f0f0f !important;
+  border: 1px solid transparent !important;
+  color: #fff !important;
+  padding: .52rem .8rem !important;
+  border-radius: 10px !important;
+  font-weight: 600;
+  box-shadow: none !important;
+  transition: background .2s ease, box-shadow .2s ease;
+}
+
+/* Hover (solo fondo, NO cambia texto) */
+.nav-dd-menu .nav-dd-item:hover,
+.nav-dd-menu .nav-btn:hover {
+  background: var(--brand-1-hover) !important;
+  color: #fff !important;
+  box-shadow: 0 0 8px rgba(0, 255, 76, 0.35) !important;
+}
+
+/* Asegurar que jamás cambie el color del texto */
+.nav-dd-menu .nav-dd-item *,
+.nav-dd-menu .nav-btn *,
+.nav-dd-menu .nav-dd-item:hover *,
+.nav-dd-menu .nav-btn:hover * {
+  color: #fff !important;
+}
+
+/* ============== BARRA SUPERIOR (usuario / sucursal / caja / hora) ============== */
+.top-info{
+  display:flex;
+  gap:.7rem;
+  flex-wrap: wrap;
+  align-items:center;
+  justify-content: space-between;
+  padding:.6rem 1rem;
+  background: #000; 
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.info-chip{
+  background: #0f0f0f;
+  border: 1px solid var(--chip-br);
+  color: #00FF4C;
+  padding:.42rem .7rem;
+  border-radius: 12px;
+  font-weight:700;
+  font-size:.92rem;
+  letter-spacing:.2px;
+  box-shadow: 0 2px 6px rgba(0,255,76,.25);
+}
+
+/* ============== MODAL (ajustes sutiles) ============== */
+.modal-content{ border-radius:16px !important; }
+.modal-header{ border-bottom: 1px solid rgba(0,0,0,.06) !important; }
+.modal-footer{ border-top: 1px solid rgba(0,0,0,.06) !important; }
+.table.table-sm{ border-radius:10px; overflow:hidden; }
+.table-light{ --bs-table-bg: #fefcf9 !important; }
+
+/* ============== RESPONSIVE ============== */
+@media (max-width: 992px){
+  .nav-btn, .nav-dd-toggle{ width:100%; }
+  .brand-text{ font-size:1rem; letter-spacing:1.3px; }
+  .brand-badge{ font-size:.95rem; }
+  .top-info{ gap:.5rem; }
+}
+@media (max-width: 576px){
+  .brand-text{ display:none; } /* en XS conservamos solo el badge */
+}
+
+.fondo-loginusuario{
+  background-color: #1F1F1F;
+}
+
+.fondo-loginsucursales{
+  background-color: #1F1F1F;
+}
+
+
+/*PRUEBA BOTONES EN VENTA*/
+
+:root {
+  --green-neon: #00FF4C;
+  --green-dark: #00CC3D;
+  --black-1: #000000;
+  --black-2: #0e0e0e;
+  --black-3: #1a1a1a;
+  --text-light: #ffffff;
+}
+
+/* Contenedor general */
+.dashboard-actions {
+  margin-top: 10px;
+}
+
+/* BOTONES NUEVOS */
+.action-btn {
+  width: 100%;
+  padding: 6px 8px; /* mucho más chico */
+  border-radius: 8px; /* menos redondeado */
+  font-weight: 700;
+  font-size: 0.8rem; /* más pequeño */
+  letter-spacing: 0.3px;
+  color: var(--text-light);
+  border: 1px solid transparent;
+  background: var(--black-2);
+  box-shadow: 0 2px 6px rgba(0, 255, 76, 0.12); /* sombra más suave */
+  transition: all 0.25s ease-in-out;
+}
+
+
+/* Hover general */
+.action-btn:hover {
+  transform: translateY(-3px);
+  border-color: var(--green-neon);
+  box-shadow: 0 0 20px rgba(0, 255, 76, 0.45);
+}
+
+/* ESTILOS ESPECÍFICOS */
+.action-btn.success {
+  background: linear-gradient(90deg, var(--green-dark), var(--green-neon));
+  color: #000;
+}
+
+.action-btn.primary {
+  background: var(--black-3);
+  border-color: var(--green-dark);
+}
+
+.action-btn.secondary {
+  background: #2b2b2b;
+}
+
+.action-btn.dark {
+  background: #111;
+}
+
+.action-btn.danger {
+  background: #cc0000;
+}
+
+/* Hover de danger */
+.action-btn.danger:hover {
+  background: red;
+  border-color: red;
+  box-shadow: 0 0 14px rgba(255, 0, 0, 0.5);
 }

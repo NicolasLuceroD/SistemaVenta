@@ -230,7 +230,7 @@ const buscador = (e) => {
         <div className="col">
             <MDBInputGroup className='mb-3'>
             <span className="input-group-text">
-                    <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#01992f",}} />
             </span>
             <input type="text" className="form-control" style={{width: '500px', margin: 'auto'}}placeholder="Escanea el codigo de barras"  value={codProducto} onChange={(e) => setCodProducto(e.target.value)}/>
             </MDBInputGroup>
@@ -242,42 +242,42 @@ const buscador = (e) => {
 <div className="container">
 <MDBInputGroup className='mb-3'>
 <span className="input-group-text">
-                    <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='text' placeholder="Nombre"  value={nombre_producto} onChange={(e) => setnombre_Producto(e.target.value)}/>
       </MDBInputGroup>
 
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
-                    <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_producto} onChange={(e) => setdescripcion_Producto(e.target.value)} />
       </MDBInputGroup>
 
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
-                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='number' placeholder="Precio costo" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
       </MDBInputGroup>
       
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
-                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='email' placeholder="Precio venta" value={precioVenta} onChange={(e) => setPrecioVenta(e.target.value)}/>
       </MDBInputGroup>
 
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
-                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='email' placeholder="Precio mayoreo" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)}/>
       </MDBInputGroup>
     
       <MDBInputGroup className="mb-3">
     <span className="input-group-text">
-            <FontAwesomeIcon icon={faCalendar} size="lg" style={{color: "#FF914D",}} />
+            <FontAwesomeIcon icon={faCalendar} size="lg" style={{color: "#01992f",}} />
     </span>
     <input 
     className="form-control" 
@@ -295,7 +295,7 @@ const buscador = (e) => {
      <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> TIPO DE VENTA</h4>
      <MDBInputGroup>
     <span className="input-group-text">
-            <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#FF914D",}} />
+            <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#01992f",}} />
     </span>
     <Form.Select aria-label="Tipo de venta" value={tipo_venta} onChange={(e)=>setTipoVenta(e.target.value)}>
     <option value="0" disabled selected>--Seleccione un tipo de venta--</option>
@@ -309,7 +309,7 @@ const buscador = (e) => {
     <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> CATEGORIA</h4>
     <MDBInputGroup>
     <span className="input-group-text">
-            <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#FF914D",}} />
+            <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#01992f",}} />
     </span>
     <Form.Select  aria-label="Nombre Categoria" id="categoria" value={Id_categoria} onChange={(e)=> setId_categoria(e.target.value)}>
     <option value="0" disabled selected>--Seleccione una categoria--</option>

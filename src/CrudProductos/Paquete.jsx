@@ -291,7 +291,7 @@ const handleAgregar = (compra) => {
 
           <MDBInputGroup className="mb-3">
           <span className="input-group-text">
-                  <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#6d4c41",}} />
+                  <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
           </span>
           <input className="form-control" type="text" placeholder="Nombre del paquete" value={nombre_promocion} onChange={(e)=> setNombrePromocion(e.target.value)}/>          
           </MDBInputGroup>
@@ -301,7 +301,7 @@ const handleAgregar = (compra) => {
 
               <MDBInputGroup className="mb-3">
     <span className="input-group-text">
-            <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#6d4c41",}} />
+            <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
     </span>
     <input className="form-control" type="number" placeholder="Precio del paquete" value={precio_paquete} onChange={(e)=> setPrecioPaquete(e.target.value)}/>  
     </MDBInputGroup>

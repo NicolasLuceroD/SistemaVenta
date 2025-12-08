@@ -6,7 +6,7 @@ const {connection} = require ('../database/config')
 
 
 const verProductos =(req,res)=>{
-  connection.query(`SELECT p.Id_producto,p.FechaVencimiento ,p.nombre_producto, p.descripcion_producto, p.precioCompra, p.precioVenta, p.tipo_venta,  p.FechaRegistro, p.codProducto, p.PrecioMayoreo ,c.Id_categoria, c.nombre_categoria, c.descripcion_categoria 
+  connection.query(`SELECT p.Id_producto ,p.nombre_producto, p.descripcion_producto, p.precioCompra, p.precioVenta, p.tipo_venta,  p.FechaRegistro, p.codProducto, p.PrecioMayoreo ,c.Id_categoria, c.nombre_categoria, c.descripcion_categoria 
                     FROM producto p  INNER JOIN categoria c  ON p.Id_categoria = c.Id_categoria 
                     WHERE p.Estado = 1;  
                     `,
@@ -28,7 +28,6 @@ const crearProducs = (req,res) =>{
     Id_categoria: req.body.Id_categoria, 
     Id_sucursal: req.body.Id_sucursal, 
     tipo_venta: req.body.tipo_venta, 
-    FechaVencimiento: req.body.FechaVencimiento, 
     codProducto: req.body.codProducto,
     Estado : 1,
     PrecioMayoreo:req.body.PrecioMayoreo,

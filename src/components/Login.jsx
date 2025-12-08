@@ -59,23 +59,17 @@ const Login = () => {
     });
   };
 
-  
-  useEffect(() => {
-    
-    document.body.style.backgroundColor = '#1F1F1F';
-
-    return () => {
-      document.body.style.backgroundColor = '';
-    };
-  }, []);
 
   useEffect(() => {
     console.log('Sucursales cargadas:', sucursales);
   }, [sucursales]);
 
   return (
-<>
-<div className="fondo-login"></div>
+<div className='fondo-loginsucursales'>
+  <a className="brand-link">
+        <span className="brand-badge">A&L</span>
+        <span className="brand-text">SOFTWARE</span>
+  </a>
        <MDBContainer fluid className='d-flex justify-content-center align-items-center min-vh-100'>
         <MDBRow className='w-100'>
           <MDBCol className='d-flex justify-content-center'>
@@ -83,7 +77,7 @@ const Login = () => {
               <MDBCardBody className='p-5 w-100 d-flex flex-column'>
 
                 <div className='d-flex justify-content-center'>
-                <h2>JUANA - APP</h2>
+                <h3>CHUPITO - APP</h3>
                 </div>
                 <br />
 
@@ -100,7 +94,7 @@ const Login = () => {
 
                 <input className='form-control mb-4 w-100' placeholder='Ingrese clave...' type='password' size="lg" value={clave} onChange={(e) => setClave(e.target.value)} />
 
-                <MDBBtn size='lg' onClick={comprobarLogin} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>
+                <MDBBtn size='lg' onClick={comprobarLogin} style={{backgroundColor: '#02962eff', border: 'none', cursor: 'pointer'}}>
                   INGRESAR
                 </MDBBtn>
               </MDBCardBody>
@@ -108,7 +102,7 @@ const Login = () => {
           </MDBCol>
         </MDBRow>
       </MDBContainer>
-    </>
+    </div>
 
   );
 };

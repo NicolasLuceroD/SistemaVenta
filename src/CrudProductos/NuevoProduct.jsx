@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 import  { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, ProgressBar } from 'react-bootstrap';
 import * as XLSX from 'xlsx';
 import { MDBInputGroup } from 'mdb-react-ui-kit';
 import Productos from '../components/Productos.jsx'
@@ -18,6 +18,7 @@ import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import Paginacion from '../components/Paginacion.jsx';
 import Swal from 'sweetalert2';
+import { icon } from '@fortawesome/fontawesome-svg-core';
 
 const NuevoProduct = ({ filename, sheetname }) => {
 
@@ -79,10 +80,6 @@ const NuevoProduct = ({ filename, sheetname }) => {
             console.log('Error al obtener el catalogo', error)
         })
     }
-    function refreshPage() {
-        window.location.reload();
-      }
-
 
     const verificarCodigoProducto = (codigobarras) =>{
         const existe = producto.some((p)=>p.codProducto === codigobarras)
@@ -112,8 +109,14 @@ const NuevoProduct = ({ filename, sheetname }) => {
     const crearProductos = () => {
         console.log(depto);
         console.log('nombre', nombre_producto.length, 'descripcion', descripcion_producto.length, 'precioC', precioCompra.length, 'categoria', Id_categoria.length, 'tipo venta', tipo_venta.length, 'fechaV', fechaVencimiento.length, 'codigo', codProducto.length, 'precioM', precioMayoreo.length);
-        if (!nombre_producto || depto === '0' || !descripcion_producto || !precioCompra || tipo_venta === '0' || !fechaVencimiento || !codProducto || !precioMayoreo) {
-            alert('Debe completar todos los campos');
+        if (!nombre_producto || depto === '0' || !descripcion_producto || !precioCompra || tipo_venta === '0' || !codProducto || !precioMayoreo) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atencion',
+                text: 'Por favor, debe completar todos los campos',
+                timerProgressBar: true,
+                timer: 2500
+            })
             return;
         } else {
             axios.post(`${URL}productos/post/producs`, {
@@ -123,17 +126,21 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 precioVenta: parseFloat(precioConGanancia),
                 Id_categoria: depto,
                 tipo_venta,
-                FechaVencimiento: fechaVencimiento ? fechaVencimiento.toString() : "",
                 codProducto: codProducto,
                 Id_sucursal: 1,
                 PrecioMayoreo: precioMayoreo,
                 inventarioMinimo: inventarioMinimo
             })
             .then(() => {
-                alert('Producto creado con éxito');
+                Swal.fire({
+                icon: 'success',
+                title: 'Exito',
+                text: 'Producto creado con exito',
+                timerProgressBar: true,
+                timer: 2500
+            })
                 LimpiarCampos();
                 trearLosProductos();
-                refreshPage();
             })
             .catch((error) => {
                 console.log('Error al crear el producto:', error);
@@ -244,68 +251,75 @@ const NuevoProduct = ({ filename, sheetname }) => {
             ))}  <br />
 
             <div className="container">
+                 <p style={{ textAlign: 'left', fontSize:'14px'}}>CODIGO DE BARRAS</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input type="text" className="form-control" value={codProducto} onChange={handleCodigoChange} placeholder="Escanea el codigo de barras"  />
                 </MDBInputGroup>
 
+                <p style={{ textAlign: 'left', fontSize:'14px'}}>NOMBRE PRODUCTO</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="text" placeholder="Nombre" value={nombre_producto} onChange={(e) => setNombre_Producto(e.target.value)} />
                 </MDBInputGroup>
 
+                <p style={{ textAlign: 'left', fontSize:'14px'}}>DESCRIPCION PRODUCTO</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="text" placeholder="Descripcion" value={descripcion_producto} onChange={(e) => setDescripcion_Producto(e.target.value)} />
                 </MDBInputGroup>
 
-                <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO COSTO:</p>
+                <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO COSTO</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio costo" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
                 </MDBInputGroup>
 
-                <p style={{ textAlign: 'left', fontSize:'14px' }}>PORCENTAJE DE GANANCIA:</p>
+                
+                <p style={{ textAlign: 'left', fontSize:'14px' }}>PORCENTAJE DE GANANCIA</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Ganancia %" value={interesXGanancia} onChange={(e) => setInteresXGanacia(e.target.value)} />
                 </MDBInputGroup>
 
-                <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA:</p>
+                <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio venta" value={precioConGanancia} onChange={(e) => setPrecioConGanancia(e.target.value)} />
                 </MDBInputGroup>
 
+                <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO HASTA 23HS</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Precio mayoreo" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)} />
                 </MDBInputGroup>
 
+                <p style={{ textAlign: 'left', fontSize:'14px'}}>INV MINIMO</p>
                <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBalanceScale} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faBalanceScale} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Inventario Minimo" value={inventarioMinimo} onChange={(e) => setInventarioMinimo(e.target.value)} />
                 </MDBInputGroup>
 
-                <MDBInputGroup className="mb-3">
+
+                {/* <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faCalendar} size="lg" style={{ color: "#FF914D", }} />
+                        <FontAwesomeIcon icon={faCalendar} size="lg" style={{ color: "#01992f", }} />
                     </span>
                     <input
                         className="form-control"
@@ -317,13 +331,13 @@ const NuevoProduct = ({ filename, sheetname }) => {
                             setFechaVencimineto(fecha);
                         }}
                     />
-                </MDBInputGroup>
+                </MDBInputGroup> */}
 
                 <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> TIPO DE VENTA</h4>
 
                 <MDBInputGroup>
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faScaleBalanced} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <Form.Select aria-label="Tipo de venta" value={tipo_venta} onChange={(e)=>setTipoVenta(e.target.value)}>
                         <option value="0" disabled selected>--Seleccione un tipo de venta--</option>
@@ -337,7 +351,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> CATEGORIA</h4>
                 <MDBInputGroup>
                     <span className="input-group-text">
-                        <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faTags} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <Form.Select key={Id_categoria} aria-label="Nombre Categoria" id="categoria" value={depto} onChange={(e) => setDepto(e.target.value)}>
                         <option value="0" disabled>--Seleccione una categoria--</option>
@@ -374,7 +388,6 @@ const NuevoProduct = ({ filename, sheetname }) => {
                             <th>TIPO VENTA</th>
                             <th>DEPARTAMENTO</th>
                             <th>FECHA DE CREACION</th>
-                            <th>FECHA VENCIMINETO</th>
                             <th>GANANCIA</th>
                             <th>ELIMINAR</th>
                         </tr>
@@ -391,7 +404,6 @@ const NuevoProduct = ({ filename, sheetname }) => {
                                 <td>{val.tipo_venta}</td>
                                 <td>{val.nombre_categoria}</td>
                                 <td>{new Date(val.FechaRegistro).toISOString().slice(0, 10)}</td>
-                                <td>{new Date(val.FechaVencimiento).toISOString().slice(0, 10)}</td>
                                 <td>${parseFloat(val.precioVenta - val.precioCompra).toFixed(2)}</td>
                                 <td><Button variant='danger' onClick={()=>{Eliminar(val)}}>ELIMINAR</Button></td>
 

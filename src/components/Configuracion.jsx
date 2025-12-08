@@ -166,21 +166,21 @@ useEffect(()=>{
             <div className="container-fluid">
             <MDBInputGroup className='mb-3'>
             <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                     </span>
             <input className='form-control' type='text' placeholder="Nombre"  value={nombre_proveedor} onChange={(e) => setNombre_proveedor(e.target.value)}/>
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                     </span>
             <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_proveedor} onChange={(e) => setdDescripcion_proveedor(e.target.value)} />
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faPhone} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faPhone} size="lg" style={{color: "#01992f",}} />
                     </span>
             <input className='form-control' type='number' placeholder="Telefono" value={numTel_proveedor} onChange={(e) => setNumTel_proveedor(e.target.value)} />
           </MDBInputGroup>
@@ -202,7 +202,7 @@ useEffect(()=>{
                 </div>
                 <MDBInputGroup>
                 <span className="input-group-text">
-                        <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#01992f",}} />
                     </span>
                   <input value={buscar} onChange={buscador} type="text" placeholder='Busca un porveedor...' className='form-control'/>
                   </MDBInputGroup>

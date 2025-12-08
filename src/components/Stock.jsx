@@ -306,14 +306,14 @@ useEffect(() => {
                         
                         <MDBInputGroup className="mb-3">
                         <span className="input-group-text">
-                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#01992f",}} />
                         </span>
                             <input className="form-control" type="number" placeholder="ID PRODUCTO" value={Id_producto} onChange={(e) => setId_producto(e.target.value)} />
                         </MDBInputGroup>
 
                         <MDBInputGroup className="mb-3">
                         <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                         </span>
                         <input className="form-control" type="number" placeholder="Cantidad" value={cantidad} onChange={(e) => setCantidad(e.target.value)} />
                         </MDBInputGroup>
@@ -322,11 +322,11 @@ useEffect(() => {
                         <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}} >SUCURSAL</h4>
                         <MDBInputGroup>
                         <span className="input-group-text">
-                            <FontAwesomeIcon icon={faShop} size="lg" style={{color: "#FF914D",}} />
+                            <FontAwesomeIcon icon={faShop} size="lg" style={{color: "#01992f",}} />
                         </span>
                         <Form.Select key={Id_sucursal} value={sucursal} onChange={(e)=> setSucursal(e.target.value)} aria-label="Nombre Categoria" id="suc">
                         <option value="0" disabled selected>--Seleccione una sucursal--</option>
-                        <option value="1" >Chacabuco 813</option>
+                        <option value="1" >Lavalle 87</option>
                         </Form.Select>
                         </MDBInputGroup>
                         <br />
@@ -354,10 +354,10 @@ useEffect(() => {
                    
                 </div>
                 <div className='container'>
-            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - Chacabuco 813</h2>
+            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - Lavalle 87</h2>
             <MDBInputGroup>
             <span className="input-group-text">
-                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#01992f",}} />
                     </span>
             <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control'/><br />
             </MDBInputGroup>

@@ -182,87 +182,87 @@ const iconMap = {
 
   return (
     <>
-    <Navbar bg="dark" expand="lg">
-      <Container fluid>
-        <Navbar.Brand href="#">
-          <a href="/testVenta">
-            <h3 style={{color: 'white'}}>A&L SOFTWARE</h3>
-          </a>
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbar-nav" />
-        <Navbar.Collapse id="navbar-nav">
-          <Nav className='me-auto flex-wrap'>
-            <Button onClick={() => navegar('/testVenta')} className='m-2 btn-jsx '>VENTAS</Button>
-            <Button onClick={() => navegar('/gestionMesas')} className='m-2 btn-jsx '>MESAS</Button>
-            <Dropdown className='m-2'>
-              <Dropdown.Toggle className = "dropdown-toggle">
-                CREDITOS
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="dropdown-menu-azul">
-                <Button onClick={() => navegar('/credito')} className='m-2 btn-jsx'>CLIENTES</Button>
-                <Button onClick={() => navegar('/creditoproveedores')} className='m-2 btn-jsx'>PROVEEDORES</Button>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Dropdown className='m-2'>
-              <Dropdown.Toggle className = "dropdown-toggle">
-                COMPRAS
-              </Dropdown.Toggle>
-              <Dropdown.Menu className="dropdown-menu-azul">
-                <Button onClick={() => navegar('/compra')} className='m-2 btn-jsx'>COMPRA</Button>
-                <Button onClick={() => navegar('/corteC')} className='m-2 btn-jsx'>CORTE COMPRA</Button>
-                <Button onClick={() => navegar('/auditoriaC')} className='m-2 btn-jsx'>AUDITORIA</Button>
-              </Dropdown.Menu>
-            </Dropdown>
-            <Button onClick={() => navegar('/corte2')} className='m-2 btn-jsx '>CORTE</Button>
-            <Button onClick={() => navegar('/clientes')} className='m-2 btn-jsx '>CLIENTES</Button>
-            {rolUsuario === 'admin' && (
-              <>
-                <Button onClick={() => navegar('/movUsu')} className='m-2 btn-jsx'>MOVIMIENTO USUARIOS</Button>
-                <Button onClick={() => navegar('/usuarios')} className='m-2 btn-jsx'>USUARIOS</Button>
-                <Button onClick={() => navegar('/reportes')} className='m-2 btn-jsx'>REPORTES</Button>
-                <Button onClick={() => navegar('/corte')} className='m-2 btn-jsx'>DETALLE VENTAS</Button>  
-                <Button onClick={() => navegar('/stock')} className='m-2 btn-jsx '>STOCK</Button>  
-                <Button onClick={() => navegar('/productos')} className='m-2 btn-jsx '>PRODUCTOS</Button>
-                <Button onClick={() => navegar('/configuracion')} className='m-2 btn-jsx '>PROVEEDORES</Button>
-                <Button onClick={() => navegar('/metodoPago')} className='m-2 btn-jsx '>METODO PAGO</Button>
-                
-              </>
-            )}
-            {rolUsuario === 'admin' ||  rolUsuario === 'encargado'  && (
-              <>      
-                <Button onClick={() => navegar('/corte')} className='m-2 btn-jsx'>DETALLE VENTAS</Button>    
-                <Button onClick={() => navegar('/corteC')} className='m-2 btn-jsx '>CORTE COMPRA</Button>      
-                <Button onClick={() => navegar('/productos')} className='m-2 btn-jsx '>PRODUCTOS</Button>
-                <Button onClick={() => navegar('/compra')} className='m-2 btn-jsx '>COMPRA</Button>
-                <Button onClick={() => navegar('/configuracion')} className='m-2 btn-jsx '>PROVEEDORES</Button>
-                <Button onClick={() => navegar('/metodoPago')} className='m-2 btn-jsx '>METODO PAGO</Button>
-                <Button onClick={() => navegar('/stock')} className='m-2 btn-jsx '>STOCK</Button> 
-              </>
-            )}
-          </Nav>
-          <Nav className='ms-auto'>
-            <Button onClick={handleShowModal} className='btn-cerrarT'>
-              <FontAwesomeIcon icon={faDoorOpen} style={{ marginRight: '5px', width: '30px' }} />CERRAR TURNO
-            </Button>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
-              <div className='container-fluid datos'>
-                <div className='row'>
-                  <div className='col'><h5>USUARIO: {nombreUsuario}</h5></div>
-                  <div className='col'><h5>SUCURSAL: {nombreSucursal}</h5></div>
-                  <div className='col'><h5>CAJA: {IdCaja}</h5></div>
-                  <div className='col'><h5>{time.toLocaleString()}</h5></div>        
-                </div>
-              </div>
+   <Navbar bg="dark" expand="lg" sticky="top" className="app-navbar shadow-sm">
+  <Container fluid>
+    <Navbar.Brand href="#" className="brand-link">
+      <a href="/testVenta" className="brand-link">
+        <span className="brand-badge">A&L</span>
+        <span className="brand-text">SOFTWARE</span>
+      </a>
+    </Navbar.Brand>
+
+    <Navbar.Toggle aria-controls="navbar-nav" className="toggler-clean" />
+    <Navbar.Collapse id="navbar-nav">
+      <Nav className="me-auto flex-wrap gap-2 nav-actions">
+        {/* Comunes para todos */}
+         <Dropdown className="nav-dd">
+          <Dropdown.Toggle className="nav-dd-toggle">VENTAS</Dropdown.Toggle>
+          <Dropdown.Menu className="nav-dd-menu">
+            <Button onClick={() => navegar('/testVenta')} className="nav-dd-item">VENTA</Button>
+             <Button onClick={() => navegar('/corte')} className="nav-btn">DETALLE VENTA</Button>
+          </Dropdown.Menu>
+        </Dropdown>
+        <Button onClick={() => navegar('/gestionMesas')} className="nav-btn">MESAS</Button>
+
+        {/* Dropdown COMPRAS (sin "Corte compra") */}
+        <Dropdown className="nav-dd">
+          <Dropdown.Toggle className="nav-dd-toggle">COMPRAS</Dropdown.Toggle>
+          <Dropdown.Menu className="nav-dd-menu">
+            <Button onClick={() => navegar('/compra')} className="nav-dd-item">COMPRA</Button>
+            <Button onClick={() => navegar('/auditoriaC')} className="nav-dd-item">AUDITORIA</Button>
+          </Dropdown.Menu>
+        </Dropdown>
+
+        <Button onClick={() => navegar('/corte2')} className="nav-btn">CORTE</Button>
+        <Button onClick={() => navegar('/clientes')} className="nav-btn">CLIENTES</Button>
+
+        {/* --- ADMIN ONLY --- */}
+        {rolUsuario?.toLowerCase() === 'admin' && (
+          <>
+            <Button onClick={() => navegar('/usuarios')} className="nav-btn">USUARIOS</Button>
+            <Button onClick={() => navegar('/reportes')} className="nav-btn">REPORTES</Button>
+            <Button onClick={() => navegar('/stock')} className="nav-btn">STOCK</Button>
+            <Button onClick={() => navegar('/productos')} className="nav-btn">PRODUCTOS</Button>
+            <Button onClick={() => navegar('/configuracion')} className="nav-btn">PROVEEDORES</Button>
+            <Button onClick={() => navegar('/metodoPago')} className="nav-btn">MÉTODO PAGO</Button>
+          </>
+        )}
+
+        {/* --- ENCARGADO ONLY (sin duplicar con admin) --- */}
+        {rolUsuario?.toLowerCase() === 'encargado' && (
+          <>
+            {/* Dejá sólo lo que quieras que vea el encargado, SIN "Detalle ventas",
+                SIN "Corte compra" y SIN "Compra" fuera del dropdown */}
+            <Button onClick={() => navegar('/productos')} className="nav-btn">PRODUCTOS</Button>
+            <Button onClick={() => navegar('/stock')} className="nav-btn">STOCK</Button>
+            <Button onClick={() => navegar('/configuracion')} className="nav-btn">PROVEEDORES</Button>
+            <Button onClick={() => navegar('/metodoPago')} className="nav-btn">MÉTODO PAGO</Button>
+          </>
+        )}
+      </Nav>
+
+      <Nav className="ms-auto">
+        <Button onClick={handleShowModal} className="btn-cerrarT nav-btn-accent">
+          <FontAwesomeIcon icon={faDoorOpen} className="me-2" /> CERRAR TURNO
+        </Button>
+      </Nav>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
+
+ <div className="top-info">
+     <div className="info-chip">USUARIO: <strong>{nombreUsuario}</strong></div>
+     <div className="info-chip">SUCURSAL: <strong>{nombreSucursal}</strong></div>
+     <div className="info-chip">CAJA: <strong>{IdCaja}</strong></div>
+     <div className="info-chip">{time.toLocaleString()}</div>
+ </div>
               
             
        
           <Modal show={showModal} onHide={handleCloseModal} centered>
   <Modal.Header closeButton className="border-0">
     <Modal.Title className="fw-bold" style={{ letterSpacing: "1px" }}>
-      SALIR
+      CONTROL DE CAJA
     </Modal.Title>
   </Modal.Header>
 
@@ -379,7 +379,7 @@ const iconMap = {
         }}
       >
         <FontAwesomeIcon icon={faDoorOpen} size="lg" />
-        SALIR
+        CERRAR TURNO
       </Button>
     </div>
   </Modal.Body>

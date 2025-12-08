@@ -21,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollar, faPencil, faPrint, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import Paginacion from './Paginacion.jsx';
-import logoticket from '../assets/logojuana.jpg'
+import logoticket from '../assets/logo-chupito.jpg'
 
 
 const TestVenta = () => {
@@ -157,8 +157,15 @@ const TestVenta = () => {
       setCodigoMov("")
     }
 
-    const handleShowModal10 = () => setShowModal10(true);
-    const handleCloseModal10 = () => setShowModal10(false);
+    const handleShowModal10 = () => {
+      setShowModal10(true);
+    }
+
+    const handleCloseModal10 = () => {
+      setShowModal10(false);
+      setPrecioProducto([])
+      setIdProducto_precio('')
+    }
 
     const handleShowModal11 = () => setShowModal11(true);
     const handleCloseModal11 = () => setShowModal11(false);
@@ -1447,7 +1454,6 @@ return (
       <>
       <App/>
       <div className="container-venta">
-          <div className="fondo-venta"></div>
       <div className='h3-ventas'>
         <h1>VENTAS</h1>
       </div>
@@ -1456,7 +1462,7 @@ return (
       <div className='container-fluid'>
             <div className='row'>
             <div className='col'>     
-                <h1 style={{marginTop: '40px', color: 'white'}}>A&L SOFTWARE</h1>
+                <h1 style={{marginTop: '40px', color: 'black'}}>A&L SOFTWARE</h1>
                 <ContenedorBotones style={{marginTop: '50px'}}> 
                 <Button variant="dark" onClick={handleShowModal8}>
                     <Badge badgeContent={listaCompras.length} color="secondary">
@@ -1489,15 +1495,15 @@ return (
     
           <Modal show={showModal} onHide={handleCloseModal}>
             <Modal.Header closeButton>
-              <Modal.Title>VER DETALLE VENTA</Modal.Title>
+              <Modal.Title>RESUMEN VENTA</Modal.Title>
             </Modal.Header>
 
     
-            <Modal.Body>
+            {/* <Modal.Body>
             <h3><b>SUBTOTAL: </b></h3>
             <h4><b>{formatCurrency(calcularTotal())}</b></h4>
             <h3><b>TOTAL: </b></h3>
-            <h4><b>{formatCurrency(SumarIntereses())}</b></h4>
+            <h4><b>{formatCurrency(SumarIntereses())}</b></h4><br />
           <label><b>ABONA CON:</b></label>
           <input type="number" placeholder='$ 0.00' className='form-control'onChange={(e) => setVuelto(e.target.value)} />
           <br/>
@@ -1549,20 +1555,154 @@ return (
        F4-FINALIZAR VENTA CON TICKET
       </Button>
     </div>
+
     <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button 
-        className="btn btn-primary" 
-        style={{ width: '400px', marginTop: '6px' }}  
-        onClick={FinalizarVentaSinTicket}
-        >
+      <button style={{ width: '400px', marginTop: '6px', backgroundColor: '#63c280ff', color: 'white', border: 'none' }}  onClick={FinalizarVentaSinTicket}>
        F2-FINALIZAR VENTA SIN TICKET
-      </Button>
+      </button>
     </div>
        
 
 
 
-            </Modal.Body>
+            </Modal.Body> */}
+            <Modal.Body>
+
+  {/* SUBTOTAL Y TOTAL */}
+  <div className="d-flex flex-column gap-2 mb-3">
+    <div className="d-flex justify-content-between align-items-center p-2 rounded bg-light">
+      <h5 className="m-0"><b>SUBTOTAL:</b></h5>
+      <h5 className="m-0 text-success"><b>{formatCurrency(calcularTotal())}</b></h5>
+    </div>
+
+    <div className="d-flex justify-content-between align-items-center p-2 rounded bg-light">
+      <h5 className="m-0"><b>TOTAL:</b></h5>
+      <h5 className="m-0 text-primary"><b>{formatCurrency(SumarIntereses())}</b></h5>
+    </div>
+  </div>
+
+  {/* ABONA CON */}
+  <div className="mb-3">
+    <label><b>Abona con:</b></label>
+    <input 
+      type="number" 
+      placeholder="$ 0.00" 
+      className="form-control"
+      onChange={(e) => setVuelto(e.target.value)} 
+    />
+  </div>
+
+  {/* METODO DE PAGO */}
+  <div className="mb-3">
+    <label><b>Método de Pago:</b></label>
+    <select id="metodoPago" className="form-select" onChange={TestMeto}>
+      {verMetodoPago.map(metodo => (
+        <option key={metodo.Id_metodoPago} value={metodo.Id_metodoPago}>
+          {metodo.tipo_metodoPago}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  {/* INTERESES */}
+  <div className="mb-3">
+    <label><b>Intereses (%):</b></label>
+    <input 
+      type="number" 
+      placeholder="% 0.00" 
+      className="form-control" 
+      onChange={(e) => setIntereses(e.target.value)} 
+    />
+  </div>
+
+  {/* CLIENTE */}
+  <div className="mb-3">
+    <label><b>Cliente:</b></label>
+    <select 
+      id="cliente" 
+      className="form-select"  
+      onChange={(e) => obtenerCreditoCliente(e.target.value)}
+    >
+      {verCliente.map(cliente => (
+        <option key={cliente.Id_cliente} value={cliente.Id_cliente}>
+          {cliente.nombre_cliente}
+        </option>
+      ))}
+    </select>
+  </div>
+
+  <hr />
+
+  {/* PAGO MIXTO */}
+  {metodoPagoSeleccionado === 6 && (
+    <div className="mt-3">
+      <label><b>Efectivo</b></label>
+      <input 
+        type="number" 
+        className="form-control" 
+        placeholder="$ 0.00"
+        value={efectivo}
+        onChange={(e) => setEfectivo(e.target.value)} 
+      />
+
+      <label className="mt-3"><b>Tarjeta</b></label>
+      <input 
+        type="number" 
+        className="form-control" 
+        placeholder="$ 0.00"
+        value={tarjeta}
+        onChange={(e) => setTarjeta(e.target.value)} 
+      />
+
+      <label className="mt-3"><b>Transferencia</b></label>
+      <input 
+        type="number" 
+        className="form-control" 
+        placeholder="$ 0.00"
+        value={transferencia}
+        onChange={(e) => setTransferencia(e.target.value)} 
+      />
+
+      <div className="text-end mt-2">
+        <b>Restante: ${restante()}</b>
+      </div>
+    </div>
+  )}
+
+  {/* CAMBIO */}
+  {metodoPagoSeleccionado !== 6 && (
+    <div className="mt-3 text-end">
+      <h5><b>Cambio: {formatCurrency(cambio())}</b></h5>
+    </div>
+  )}
+
+  {/* BOTONES */}
+  <div className="d-flex justify-content-center mt-4">
+    <Button 
+      className="btn btn-success w-100"
+      style={{ maxWidth: "380px" }}
+      onClick={FinalizarVenta}
+    >
+      F4 – Finalizar venta con ticket
+    </Button>
+  </div>
+
+  <div className="d-flex justify-content-center mt-2">
+    <button 
+      className="btn w-100" 
+      style={{ 
+        maxWidth: "380px",
+        backgroundColor: "#63c280ff",
+        color: "white"
+      }}
+      onClick={FinalizarVentaSinTicket}
+    >
+      F2 – Finalizar venta sin ticket
+    </button>
+  </div>
+
+</Modal.Body>
+
             <Modal.Footer>
               <Button variant="danger" onClick={handleCloseModal}>
                 CERRAR
@@ -1893,7 +2033,7 @@ return (
     </tbody>
   </Table>
 </div>
-<h3 style ={{color: '#6d4c41', textAlign: 'end', marginRight: '100px' }}><strong>SUBTOTAL: {formatCurrency(calcularTotal())}</strong></h3>
+<h3 style ={{color: '#1a1a1aff', textAlign: 'end', marginRight: '100px' }}><strong>SUBTOTAL: {formatCurrency(calcularTotal())}</strong></h3>
           <Modal show={showModal8} onHide={handleCloseModal8} size="lg" centered>
         <Modal.Header closeButton>
           <Modal.Title>PRODUCTOS</Modal.Title>
@@ -2109,7 +2249,7 @@ return (
                   precioProducto.map(produc=>((
                     <>
                     <h4><strong>Nombre:</strong> {produc.nombre_producto}</h4>
-                    <h4><strong>Precio:</strong> ${produc.precioVenta}</h4><br />
+                    <h4><strong>Precio:</strong> {formatCurrency(produc.precioVenta)}</h4><br />
                     <Button variant="secondary" onClick={() => handleAgregar2(produc)}>
                       AGREGAR AL CARITO
                     </Button>
@@ -2223,36 +2363,64 @@ return (
 
           
 
+<div className="dashboard-actions container">
+  <div className="row g-3">
 
-          <div className='container'>
-      <div className='row'>
-        <div className='col'><Button onClick={handleShowModal2} className='btn btn-danger'style={{width: '200px', marginTop:'10px', color: '#fff'}}>VENTAS DEL DIA</Button></div>
-        <div className='col'><Button onClick={handleShowModal} className='btn btn-success' style={{width: '200px', marginTop:'10px', color: '#fff'}}>F12-COBRAR</Button></div>  
-        
-        {rolUsuario === 'admin' | rolUsuario === 'encargado' ? (
-            <div className='col'><Button onClick={handleShowModal5}className='btn btn-primary' style={{width: '200px', marginTop:'10px', color: '#fff'}}>F8-MOVIMIENTOS</Button></div>
-           ) :  
-           <div className='col'><Button onClick={handleShowModal9}className='btn btn-primary' style={{width: '200px', marginTop:'10px', color: '#fff'}}>F8-MOVIMIENTOS</Button></div>
-        }  
-      
-        <div className='col'><Button onClick={handleShowModal10} className='btn btn-secondary'style={{width: '200px', marginTop:'10px', color: '#fff'}}>F9-VERIFICADOR</Button></div>
-
-      </div>
-    </div>
-    
-    <div className='container'>
-      <div className='row'>
-      
-      <div className='col'><Button onClick={handleShowModal3} className='btn btn-dark'style={{width: '200px', marginTop:'10px', color: '#fff'}}>F6-GUARDAR VENTA</Button></div>
-        <div className='col'><Button onClick={handleShowModal12} variant='dark' style={{width: '190px', marginTop:'10px', color: '#fff'}}>F11-AGREGAR</Button></div>
-        <div className='col'><Button onClick={limpiarTabla} variant='danger' style={{width: '190px', marginTop:'10px', color: '#fff'}}>F3-LIMPIAR TABLA</Button></div>
-      </div>
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={handleShowModal2} className="action-btn danger">
+        VENTAS DEL DÍA
+      </button>
     </div>
 
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={handleShowModal} className="action-btn success">
+        F12 - COBRAR
+      </button>
+    </div>
+
+    <div className="col-12 col-md-6 col-lg-3">
+      <button 
+        onClick={rolUsuario === 'admin' || rolUsuario === 'encargado' ? 
+        handleShowModal5 : handleShowModal9} 
+        className="action-btn primary"
+      >
+        F8 - MOVIMIENTOS
+      </button>
+    </div>
+
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={handleShowModal10} className="action-btn secondary">
+        F9 - VERIFICADOR
+      </button>
+    </div>
+
+  </div>
 
 
+  <div className="row g-3 mt-1">
 
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={handleShowModal3} className="action-btn dark">
+        F6 - GUARDAR VENTA
+      </button>
+    </div>
 
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={handleShowModal12} className="action-btn dark">
+        F11 - AGREGAR
+      </button>
+    </div>
+
+    <div className="col-12 col-md-6 col-lg-3">
+      <button onClick={limpiarTabla} className="action-btn danger">
+        F3 - LIMPIAR TABLA
+      </button>
+    </div>
+
+  </div>
+</div>
+
+      
     <Modal show={showModal12} onHide={handleCloseModal12}>
             <Modal.Header closeButton>
               <Modal.Title >CREAR PRODUCTO</Modal.Title>

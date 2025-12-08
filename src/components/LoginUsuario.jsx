@@ -186,17 +186,23 @@ const LoginUsuario = () => {
             console.error('Error fetching sucursales:', error);
           });
       }, []);
+
+
     
   return (
-    <>
-<div className='fondo-login-usuario'></div>
+<div className='fondo-loginusuario'>
+
+<a className="brand-link">
+        <span className="brand-badge">A&L</span>
+        <span className="brand-text">SOFTWARE</span>
+</a>
     <MDBContainer fluid className='d-flex justify-content-center align-items-center min-vh-100'>
         <MDBRow className='w-100'>
             <MDBCol className='d-flex justify-content-center'>
                  <MDBCard className='bg-white my-5' style={{ borderRadius: '1rem', maxWidth: '500px', padding: '30px' }}>
                     <MDBCardBody className='p-5 w-100 d-flex flex-column'>
                         <div className='d-flex justify-content-center'>
-                          <h2>JUANA - APP</h2>
+                          <h3>CHUPITO - APP</h3>
                         </div>
                         <br />
                         <select className='form-select mb-4 w-100' value={nombre_usuario} onChange={(e) => setNombreUsuario(e.target.value)}>
@@ -206,7 +212,7 @@ const LoginUsuario = () => {
                             ))}
                         </select>
                         <input className='form-control mb-4 w-100' type='password' size="lg" placeholder='Ingrese clave...' value={clave_usuario} onChange={(e) => setClaveUsuario(e.target.value)} />
-                        <MDBBtn size='lg' onClick={ComprobarLogin} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>
+                        <MDBBtn size='lg' onClick={ComprobarLogin} style={{backgroundColor: '#02962eff', border: 'none', cursor: 'pointer'}}>
                             INGRESAR
                         </MDBBtn>
                     </MDBCardBody>
@@ -228,7 +234,7 @@ const LoginUsuario = () => {
             )}
         </Form.Select>
         <br />
-        <Button onClick={comprobarLoginCaja} style={{backgroundColor: '#FF914D', border: 'none', cursor: 'pointer'}}>ELEGIR</Button>
+        <Button onClick={comprobarLoginCaja} style={{backgroundColor: '#02962eff', border: 'none', cursor: 'pointer'}}>ELEGIR</Button>
     </Modal.Body>
     <Modal.Footer>
         <Button variant="danger" onClick={handleCloseModal1} >
@@ -257,7 +263,7 @@ const LoginUsuario = () => {
             </Button>
         </Modal.Footer>
     </Modal>
-</>
+</div>
   )
 }
 
