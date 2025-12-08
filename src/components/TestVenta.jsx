@@ -1462,7 +1462,7 @@ return (
       <div className='container-fluid'>
             <div className='row'>
             <div className='col'>     
-                <h1 style={{marginTop: '40px', color: 'black'}}>A&L SOFTWARE</h1>
+                <h1 style={{marginTop: '40px', color: 'black'}}>A&L SOFTWARE.</h1>
                 <ContenedorBotones style={{marginTop: '50px'}}> 
                 <Button variant="dark" onClick={handleShowModal8}>
                     <Badge badgeContent={listaCompras.length} color="secondary">
