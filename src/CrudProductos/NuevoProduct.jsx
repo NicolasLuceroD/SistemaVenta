@@ -305,7 +305,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
                     <span className="input-group-text">
                         <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
-                    <input className="form-control" type="number" placeholder="Precio mayoreo" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)} />
+                    <input className="form-control" type="number" placeholder="Precio hasta 23hs" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)} />
                 </MDBInputGroup>
 
                 <p style={{ textAlign: 'left', fontSize:'14px'}}>INV MINIMO</p>

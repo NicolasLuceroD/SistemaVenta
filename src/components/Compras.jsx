@@ -209,14 +209,14 @@ return (
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_compra} onChange={(e) => setDescripcionComra(e.target.value)} />
           </MDBInputGroup>
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                 </span>
             <input className='form-control' type='number' placeholder="Total Compra " value={totalCompra} onChange={(e) => setTotalCompra(e.target.value)} />
           </MDBInputGroup>
@@ -230,14 +230,14 @@ return (
 
           <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faPerson} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faPerson} size="lg" style={{color: "#01992f",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Persona que pide " value={personaPideCompra} onChange={(e) => setPersonaPide(e.target.value)} />
           </MDBInputGroup>
 
           {/* <MDBInputGroup className='mb-3' >
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faPersonWalking} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faPersonWalking} size="lg" style={{color: "#01992f",}} />
                 </span>
             <input className='form-control' type='text' placeholder="Persona que recibe " value={personaRecibeCompra} onChange={(e) => setPerosonaRecibe(e.target.value)} />
           </MDBInputGroup> */}
@@ -245,7 +245,7 @@ return (
 
         <MDBInputGroup className='mb-3'>
               <span className="input-group-text">
-                <FontAwesomeIcon icon={faCalendarAlt} size="lg" style={{ color: "#FF914D" }} />
+                <FontAwesomeIcon icon={faCalendarAlt} size="lg" style={{ color: "#01992f" }} />
               </span>
               <DatePicker
                 selected={fechaLlegada}
@@ -260,7 +260,7 @@ return (
           <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}>PROVEEDORES</h4>
           <MDBInputGroup className='mb-3'>
           <span className="input-group-text">
-                        <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#FF914D",}} />
+                        <FontAwesomeIcon icon={faTruck} size="lg" style={{color: "#01992f",}} />
                 </span>
           <Form.Select  key={Id_proveedor} aria-label="Nombre proveedor" id="proveedor" value={Id_proveedor}  onChange={(e) => obtenerCreditoProveedor(e.target.value)}>
           <option value='0' disabled selected >Seleccione Proveedor</option>
