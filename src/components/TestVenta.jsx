@@ -93,6 +93,9 @@ const TestVenta = () => {
     //SPINNER
     const [loading, setLoading] = useState(false);
 
+    //RECORDATORIO BEBIDAS 23HS
+    const [mostrarRecordatorio, setMostrarRecordatorio] = useState(false)
+
 
 
     //MODALES
@@ -1466,6 +1469,30 @@ const handlePrecioChange = (e, producto) => {
       dato.nombre_usuario.toLowerCase().includes(buscar.toLowerCase())
     )
   }
+
+  useEffect(() => {
+  const verificarRecordatorio = () => {
+    const hoy = new Date();
+    const dia = hoy.getDay();
+    const hora = hoy.getHours();
+
+    if ((dia === 5 || dia === 6) && hora < 23) {
+      setMostrarRecordatorio(true);
+    } else {
+      setMostrarRecordatorio(false);
+    }
+  };
+
+  // Ejecutar ahora mismo al montar el componente
+  verificarRecordatorio();
+
+  // Ejecutar cada 1 minuto para actualizar automáticamente
+  const intervalo = setInterval(verificarRecordatorio, 60000);
+
+  // Limpiar el intervalo al desmontar el componente
+  return () => clearInterval(intervalo);
+}, []);
+
   
 
 return (
@@ -1475,12 +1502,47 @@ return (
       <div className='h3-ventas'>
         <h1>VENTAS</h1>
       </div>
-       {loading && (
+       
+    {loading && (
       <div className="loader-overlay">
         <div className="spinner-border text-primary" role="status"></div>
         <p>Procesando venta...</p>
       </div>
     )}
+
+{/* Tira recordatoria */}
+    {mostrarRecordatorio && (
+  <div style={{
+    width: '100%',
+    background: '#e24902ff',
+    color: 'white',
+    padding: '8px',
+    textAlign: 'center',
+    fontSize: '18px',
+    fontWeight: 'bold',
+    position: 'sticky',
+    top: 0,
+    zIndex: 999
+  }}>
+    ⚠️ Recordatorio: aplicar precio de bebidas con alcohol hasta las 23:00 hs.
+  </div>
+)}
+
+{/* Boton recordatorio */}
+{mostrarRecordatorio && (
+  <div style={{
+    position: 'fixed',
+    bottom: '20px',
+    right: '20px',
+    background: '#e24902ff',
+    padding: '12px 15px',
+    borderRadius: '50px',
+    boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+    fontWeight: 'bold'
+  }}>
+    🍻 Recordar aplicar descuento alcohol hasta 23hs.
+  </div>
+)}
 
       
       <div className='container-fluid'>
