@@ -132,7 +132,12 @@ const TestVenta = () => {
     const handleCloseModal5 = () => setShowModal5(false);
 
     const handleShowModal6 = () => setShowModal6(true);
-    const handleCloseModal6 = () => setShowModal6(false);
+    
+    const handleCloseModal6 = () => {
+      setShowModal6(false);
+      setDescripcionIgreso('')
+      setMontoTotalIngreso('')
+    }
 
     const handleShowModal7 = () => setShowModal7(true);
     const handleCloseModal7 = () => {
@@ -530,6 +535,8 @@ const validarCodigo = () =>{
         timer:3000
       })     
       setShowModal6(false);
+      setMontoTotalIngreso('')
+      setDescripcionIgreso('')
     }).catch((error)=>{
       alert('Ingreso no registrado')
       console.log(error)
@@ -562,7 +569,8 @@ const RegistrarEngreso = () => {
     });
     setDescripcionParaEgreso("");
     setMontoTotalEgreso("");
-    setMotivoEgreso(""); 
+    setMotivoEgreso("");
+    setDescripcionEgreso('')
     handleCloseModal7(); 
   }).catch((error) => {
     alert('Egreso no registrado');

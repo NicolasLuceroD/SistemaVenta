@@ -51,7 +51,13 @@ const LoginUsuario = () => {
 
     const regristroPlata = () => {
         if (!ingresoPlata || isNaN(ingresoPlata) || ingresoPlata <= 0) {
-            Swal.fire("Ingrese un monto válido.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atencion',
+                text: 'Debe ingresar un fondo de caja, por favor',
+                timerProgressBar: true,
+                timer: 2500
+            });
             return;
         }
     
@@ -128,7 +134,13 @@ const LoginUsuario = () => {
     const comprobarLoginCaja = async () => {
         const selectedCaja = document.getElementById('Caja').value;
         if (!selectedCaja) {
-            Swal.fire("Debe seleccionar una caja.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atencion',
+                text: 'Debe ingresar una caja antes de ingresar',
+                timerProgressBar: true,
+                timer: 2500
+            });
             return;
         }
         try {
