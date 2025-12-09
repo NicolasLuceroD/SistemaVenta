@@ -13,6 +13,7 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from '../context/DataContext.jsx';
+import Swal from 'sweetalert2';
 
 
 
@@ -65,14 +66,25 @@ export default function Configuracion() {
 
    const crearProveedores = () =>{
     if(nombre_proveedor.length === 0 || descripcion_proveedor === 0 || numTel_proveedor === 0){
-        alert('Debe completar todos los campos')
+       Swal.fire({
+                 icon: 'warning',
+                 title: 'Atencion',
+                 text: 'Por favor debe completar todos los campos',
+                 timerProgressBar: true,
+                 timer: 2500
+               })
     }else{
       axios.post(`${URL}proveedores/post`,{
         nombre_proveedor: nombre_proveedor,
         descripcion_proveedor: descripcion_proveedor,
         numTel_proveedor: numTel_proveedor
       }).then(()=>{
-        alert('Proveedor agregado con exito')
+        Swal.fire({
+                 title: " <strong>Agregacion exitosa!</strong>",
+                 html: "<i>El proveedor <strong> "+nombre_proveedor+" </strong> fue agregado con exito</i>",
+                 icon: 'success',
+                 timer:3000
+               })   
         verLosProveedores()
         limpiarCampos()
       }).catch(()=>{

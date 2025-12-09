@@ -96,9 +96,21 @@ const clientesPaginados = resultado.slice(inicio, fin);
     if (nombre_cliente.length === 0 ||  apellido_cliente.length === 0 ||  telefono_cliente.length === 0 
       ||  domicilio_cliente.length === 0  || montoCredito.length === 0 || LimiteCredito.length === 0
     ){
-        alert('Debe completar todos los campos')
+        Swal.fire({
+          icon: 'warning',
+          title: 'Atencion',
+          text: 'Por favor debe completar todos los campos',
+          timerProgressBar: true,
+          timer: 2500
+        })
     }else if(LimiteCredito.length > 6){
-          alert('El limite de credito es demasiado grande')
+          Swal.fire({
+          icon: 'warning',
+          title: 'Atencion',
+          text: 'El limite de credito es muy grande',
+          timerProgressBar: true,
+          timer: 2500
+        })
     }else{
     const sucursalId = localStorage.getItem('sucursalId');
       axios.post(`${URL}clientes/crear`,{
@@ -114,7 +126,7 @@ const clientesPaginados = resultado.slice(inicio, fin);
         verClientes()
         limpiarCampos()
         Swal.fire({
-          title: " <strong>Agregacion exsitosa!</strong>",
+          title: " <strong>Agregacion exitosa!</strong>",
           html: "<i>El cliente <strong> "+nombre_cliente+" </strong> fue agregado con exito</i>",
           icon: 'success',
           timer:3000

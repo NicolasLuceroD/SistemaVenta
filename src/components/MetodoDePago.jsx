@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from '../context/DataContext.jsx';
+import Swal from "sweetalert2";
 
 const MetodoDePago = () => {
 
@@ -30,13 +31,24 @@ const MetodoDePago = () => {
 
   const crearMetodo = () =>{
     if(tipo_metodoPago.length === 0){
-      alert("Debes insertar un metodo de pago")
+      Swal.fire({
+               icon: 'warning',
+               title: 'Atencion',
+               text: 'Por favor debe completar todos los campos',
+               timerProgressBar: true,
+               timer: 2500
+             })
     }else{
       axios.post(`${URL}metodopago/post`,{
         tipo_metodoPago: tipo_metodoPago
       }).then(()=>{
         verMetodos()
-        alert("Metodo de pago creado con exito")
+        Swal.fire({
+                 title: " <strong>Agregacion exitosa!</strong>",
+                 html: "<i>El metodo de pago<strong> "+tipo_metodoPago+" </strong> fue agregado con exito</i>",
+                 icon: 'success',
+                 timer:3000
+               })    
         limpiarCampos()
       })
     }

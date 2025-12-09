@@ -15,6 +15,7 @@ import { faUserGear } from "@fortawesome/free-solid-svg-icons";
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
 import { faBan } from "@fortawesome/free-solid-svg-icons";
 import { DataContext } from "../context/DataContext";
+import Swal from "sweetalert2";
 
 const Usuarios = () => {
 
@@ -43,7 +44,13 @@ const Usuarios = () => {
 const crearUsuarios = () =>{ 
    const rol = (document.getElementById("usuariosRol").value) 
     if  (!nombre_usuario || !clave_usuario || rol <= 0 ){ 
-        alert('Debe complertar todos los campos')
+       Swal.fire({
+          icon: 'warning',
+          title: 'Atencion',
+          text: 'Por favor debe completar todos los campos',
+          timerProgressBar: true,
+          timer: 2500
+        })
     } else
     {
         axios.post(`${URL}usuarios/post`,{
@@ -52,7 +59,12 @@ const crearUsuarios = () =>{
         rol_usuario: rol,
         Id_sucursal: Id_sucursal
         }).then(()=>{
-            alert('Usuario creado con exito')
+           Swal.fire({
+                     title: " <strong>Agregacion exitosa!</strong>",
+                     html: "<i>El usuario <strong> "+nombre_usuario+" </strong> fue agregado con exito</i>",
+                     icon: 'success',
+                     timer:3000
+                   })    
             limpiarCampos()
             verUsuarios()
         }).catch((error)=>{

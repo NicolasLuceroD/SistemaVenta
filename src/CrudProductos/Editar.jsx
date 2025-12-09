@@ -439,7 +439,6 @@ const buscador = (e) => {
                     <th>PRECIO MAYOREO</th>
                     <th>TIPO DE VENTA</th>
                     <th>DEPARTAMENTO</th>
-                    <th>FECHA VENCIMIENTO</th>
                     <th>GANANCIA</th>
                     <th>EDITAR</th>
                 </tr>
@@ -457,7 +456,6 @@ const buscador = (e) => {
                             <td className="precio-mayoreo"><strong>{formatCurrency(val.PrecioMayoreo)}</strong></td>
                             <td>{val.tipo_venta}</td>
                             <td>{val.nombre_categoria}</td>
-                            <td>{new Date(val.FechaVencimiento).toISOString().slice(0, 10)}</td>
                             <td>${parseFloat( val.precioVenta - val.precioCompra ).toFixed(2) }</td>
                             <td><Button className="btn btn-primary" onClick={()=>seeProductos(val)}> SELECCIONAR</Button></td>
                         </tr>
