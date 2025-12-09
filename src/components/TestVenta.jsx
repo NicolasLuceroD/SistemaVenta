@@ -90,6 +90,10 @@ const TestVenta = () => {
     const [usarMayoreo, setUsarMayoreo] = useState({});
     const [productoActivo, setProductoActivo] = useState(null);
 
+    //SPINNER
+    const [loading, setLoading] = useState(false);
+
+
 
     //MODALES
     const [estadoModal1, setEstadoModal1] = useState(false);
@@ -586,6 +590,7 @@ const FinalizarVenta = () => {
     alert("Debes cargar al menos 1 producto");
     return;
   }
+
   const Id_metodoPago = parseInt(document.getElementById("metodoPago").value); 
   const Id_Cliente = document.getElementById("cliente").value;
   const totalParaTodo = SumarIntereses();
@@ -624,6 +629,8 @@ const FinalizarVenta = () => {
 
       imprimirTicket(productosConCantidad, totalParaTodo);
     }
+
+     setLoading(true); // ← mostrar loader
 
     axios.post(`${URL}ventas/crear`, {
       descripcion_venta: 'XDD',
@@ -692,6 +699,7 @@ precioproductocomun: producto.precioproductocomun || 0
       return Promise.all(promesas);
     })
     .finally(() => {
+      setLoading(false);  // ← ocultar loader
       listaCompras.length = 0;
       setCantidadesVendidas({});
       setPreciosSeleccionados({});
@@ -729,6 +737,7 @@ const formatCurrency = (value) => {
 
 // FUNCION PARA FINALIZAR VENTA SIN TICKET
 const FinalizarVentaSinTicket = () => {
+  setLoading(true); 
   const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
 
   if (listaCompras.length === 0) {
@@ -829,6 +838,7 @@ const FinalizarVentaSinTicket = () => {
     console.log('Hubo un error:', error);
   })
   .finally(() => {
+    setLoading(false);  // ← ocultar spinner
     listaCompras.length = 0;
     setCantidadesVendidas({});
     setPreciosSeleccionados({});
@@ -1465,6 +1475,12 @@ return (
       <div className='h3-ventas'>
         <h1>VENTAS</h1>
       </div>
+       {loading && (
+      <div className="loader-overlay">
+        <div className="spinner-border text-primary" role="status"></div>
+        <p>Procesando venta...</p>
+      </div>
+    )}
 
       
       <div className='container-fluid'>
@@ -1505,75 +1521,6 @@ return (
             <Modal.Header closeButton>
               <Modal.Title>RESUMEN VENTA</Modal.Title>
             </Modal.Header>
-
-    
-            {/* <Modal.Body>
-            <h3><b>SUBTOTAL: </b></h3>
-            <h4><b>{formatCurrency(calcularTotal())}</b></h4>
-            <h3><b>TOTAL: </b></h3>
-            <h4><b>{formatCurrency(SumarIntereses())}</b></h4><br />
-          <label><b>ABONA CON:</b></label>
-          <input type="number" placeholder='$ 0.00' className='form-control'onChange={(e) => setVuelto(e.target.value)} />
-          <br/>
-          <label>Metodo de Pago:</label>
-          <select id="metodoPago" className='form-select' onChange={TestMeto}>
-            {verMetodoPago.map(metodo => (
-              <option key={metodo.Id_metodoPago} value={metodo.Id_metodoPago}>{metodo.tipo_metodoPago}</option>
-            ))}
-          </select>
-          <br/>
-          <label>Intereses</label>
-          <input type="number" placeholder='% 0.00' className='form-control' onChange={(e) => setIntereses(e.target.value)} />
-          <br/>
-          <label><b>Cliente:</b></label>
-          <select id="cliente" className='form-select'  onChange={(e) => obtenerCreditoCliente(e.target.value)}> 
-              {verCliente.map(cliente => (
-                  <option key={cliente.Id_cliente} value={cliente.Id_cliente}>{cliente.nombre_cliente}</option>
-              ))}
-          </select><br />
-          
-        
-            <hr />
-            {
-  metodoPagoSeleccionado === 6 && (
-    <>
-      <label style={{marginTop: '20px'}}>EFECTIVO</label>
-      <input type="number" className='form-control' placeholder='$ 0.00' value={efectivo} onChange={(e) => setEfectivo(e.target.value)} />
-      <label style={{marginTop: '20px'}}>TARJETA</label>
-      <input  type="number" className='form-control' placeholder='$ 0.00' value={tarjeta} onChange={(e) => setTarjeta(e.target.value)} />
-      <label style={{marginTop: '20px'}}>TRANSFERENCIA</label>
-      <input type="number" className='form-control' placeholder='$ 0.00' value={transferencia} onChange={(e) => setTransferencia(e.target.value)} />
-      <label style={{marginTop: '20px'}}><b>RESTANTE: ${restante()}</b></label> <br />
-    </>
-  )
-}
-{
-  metodoPagoSeleccionado !== 6 && (
-    <label><b>CAMBIO: {formatCurrency(cambio())}</b></label>
-  )
-}
-<br /><br />
-
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Button 
-        className="btn btn-success" 
-        style={{ width: '400px', marginTop: '6px' }}  
-        onClick={FinalizarVenta}
-        >
-       F4-FINALIZAR VENTA CON TICKET
-      </Button>
-    </div>
-
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <button style={{ width: '400px', marginTop: '6px', backgroundColor: '#63c280ff', color: 'white', border: 'none' }}  onClick={FinalizarVentaSinTicket}>
-       F2-FINALIZAR VENTA SIN TICKET
-      </button>
-    </div>
-       
-
-
-
-            </Modal.Body> */}
             <Modal.Body>
 
   {/* SUBTOTAL Y TOTAL */}
