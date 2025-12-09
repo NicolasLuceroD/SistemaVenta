@@ -616,6 +616,22 @@ const FinalizarVenta = () => {
     return;
   }
 
+  // 2️⃣ Validación bebidas con alcohol hasta 23hs
+if (mostrarRecordatorio) { // ← solo cuando el recordatorio está activo
+  const alcoholSinPrecio = listaCompras.some(producto => {
+    return producto.Id_categoria === 12 && !usarMayoreo[producto.Id_producto];
+  });
+
+  if (alcoholSinPrecio) {
+    Swal.fire({
+      icon: "warning",
+      title: "Atención",
+      text: "Hay productos con alcohol sin precio hasta las 23:00 hs. No se puede finalizar la venta.",
+    });
+    setLoading(false); // ocultar spinner
+    return; // bloquea la venta
+  }
+}
 
   Swal.fire({
     title: '¿Deseas imprimir el ticket?',
@@ -736,29 +752,27 @@ const formatCurrency = (value) => {
 
 
 
-
-
-// FUNCION PARA FINALIZAR VENTA SIN TICKET
 const FinalizarVentaSinTicket = () => {
   setLoading(true); 
   const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
 
   if (listaCompras.length === 0) {
     alert("Debes cargar al menos 1 producto");
+    setLoading(false);
     return;
   }
 
   if (Id_metodoPago === 5 && totalConCredito() > limiteCredito) {
     alert('No se puede vender a este cliente porque superó su límite de crédito');
+    setLoading(false);
     return;
   }
 
   const Id_Cliente = document.getElementById("cliente").value;
-
-
   const totalParaTodo = SumarIntereses();
   const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
 
+  // 1️⃣ Validación de cantidades
   const tieneCantidadInvalida = listaCompras.some(producto => {
     const cantidad = cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete];
     if (!cantidad || cantidad <= 0) {
@@ -768,8 +782,30 @@ const FinalizarVentaSinTicket = () => {
     return false;
   });
   
-  if (tieneCantidadInvalida) return;
+  if (tieneCantidadInvalida) {
+    setLoading(false);
+    return;
+  }
 
+// 2️⃣ Validación bebidas con alcohol hasta 23hs
+if (mostrarRecordatorio) { // ← solo cuando el recordatorio está activo
+  const alcoholSinPrecio = listaCompras.some(producto => {
+    return producto.Id_categoria === 12 && !usarMayoreo[producto.Id_producto];
+  });
+
+  if (alcoholSinPrecio) {
+    Swal.fire({
+      icon: "warning",
+      title: "Atención",
+      text: "Hay productos con alcohol sin precio hasta las 23:00 hs. No se puede finalizar la venta.",
+    });
+    setLoading(false); // ocultar spinner
+    return; // bloquea la venta
+  }
+}
+
+
+  // 3️⃣ Crear venta
   axios.post(`${URL}ventas/crear`, {
     descripcion_venta: 'XDD',
     precioTotal_venta: totalParaTodo,
@@ -793,7 +829,7 @@ const FinalizarVentaSinTicket = () => {
         IdEstadoCredito: 1,
         IdEstadoVenta: 1,
         Id_paquete: producto.Id_paquete,
-              productocomun: producto.productocomun || '',
+        productocomun: producto.productocomun || '',
         precioproductocomun: producto.precioproductocomun || 0
       }).then(() => {
         return axios.put(`${URL}ventas/descStock`, {
@@ -822,7 +858,7 @@ const FinalizarVentaSinTicket = () => {
       return axios.put(`${URL}ventas/aumentarCredito`, {
         Id_cliente: Id_Cliente,
         montoCredito: credito || totalParaTodo
-      }).then(()=>{
+      }).then(()=> {
         axios.post(`${URL}creditos/movimientoClientes`, {
           Id_cliente: Id_Cliente,
           montoCredito: totalParaTodo,
@@ -841,17 +877,17 @@ const FinalizarVentaSinTicket = () => {
     console.log('Hubo un error:', error);
   })
   .finally(() => {
-    setLoading(false);  // ← ocultar spinner
+    setLoading(false);  // ocultar spinner
     listaCompras.length = 0;
     setCantidadesVendidas({});
     setPreciosSeleccionados({});
-    setPrecioFinal({})
+    setPrecioFinal({});
     setUsarMayoreo({});
-    setDescUnidad({})
-    setIncrementoUnidad({})
+    setDescUnidad({});
+    setIncrementoUnidad({});
     Swal.fire({
       title: "<strong>Venta exitosa!</strong>",
-      html: "<i>La venta <strong> </strong> fue agregada con éxito</i>",
+      html: "<i>La venta fue agregada con éxito</i>",
       icon: 'success',
       timer: 3000
     });

@@ -117,7 +117,6 @@ const formatFecha = (fecha) => {
             precioCompra: precioCompra,
             precioVenta: precioVenta,
             Id_categoria: catXproducto,
-            FechaVencimiento: fechaVencimiento,
             tipo_venta: tipo_venta,
             codProducto: codProducto,
             PrecioMayoreo: precioMayoreo

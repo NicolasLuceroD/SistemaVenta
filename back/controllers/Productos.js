@@ -143,7 +143,7 @@ const crearProductos = (req, res) => {
 
 const editarProductos = (req,res)=>{
     const Id_producto= req.params.Id_producto
-    const{nombre_producto,tipo_venta,descripcion_producto,precioCompra,Id_categoria,precioVenta,FechaVencimiento,codProducto,PrecioMayoreo} = req.body
+    const{nombre_producto,tipo_venta,descripcion_producto,precioCompra,Id_categoria,precioVenta,codProducto,PrecioMayoreo} = req.body
     connection.query( `UPDATE producto SET
 
                             nombre_producto='${nombre_producto}',
@@ -151,7 +151,6 @@ const editarProductos = (req,res)=>{
                             precioVenta= '${precioVenta}',
                             descripcion_producto='${descripcion_producto}',
                             Id_categoria = '${Id_categoria}',
-                            FechaVencimiento = '${FechaVencimiento}',
                             tipo_venta = '${tipo_venta}',
                             codProducto = '${codProducto}',
                             PrecioMayoreo  = '${PrecioMayoreo}'
