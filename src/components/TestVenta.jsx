@@ -2419,57 +2419,64 @@ return (
 <div className="dashboard-actions container">
   <div className="row g-3">
 
+    {/* VENTAS DEL DÍA */}
     <div className="col-12 col-md-6 col-lg-3">
       <button onClick={handleShowModal2} className="action-btn danger">
         VENTAS DEL DÍA
       </button>
     </div>
 
+    {/* COBRAR */}
     <div className="col-12 col-md-6 col-lg-3">
       <button onClick={handleShowModal} className="action-btn success">
         F12 - COBRAR
       </button>
     </div>
 
+    {/* MOVIMIENTOS*/}
     <div className="col-12 col-md-6 col-lg-3">
-      <button 
-        onClick={rolUsuario === 'admin' || rolUsuario === 'encargado' ? 
-        handleShowModal5 : handleShowModal9} 
-        className="action-btn primary"
-      >
+      <button
+        onClick ={rolUsuario === 'admin' || rolUsuario === 'encargado' ? handleShowModal5 : handleShowModal9} className="action-btn primary">
         F8 - MOVIMIENTOS
       </button>
     </div>
 
-    <div className="col-12 col-md-6 col-lg-3">
-      <button onClick={handleShowModal10} className="action-btn secondary">
-        F9 - VERIFICADOR
-      </button>
-    </div>
+    {/* VERIFICADOR → SOLO admin / encargado */}
+    {(rolUsuario === 'admin' || rolUsuario === 'encargado') && (
+      <div className="col-12 col-md-6 col-lg-3">
+        <button onClick={handleShowModal10} className="action-btn secondary">
+          F9 - VERIFICADOR
+        </button>
+      </div>
+    )}
 
   </div>
 
-
   <div className="row g-3 mt-1">
+    {/* GUARDAR VENTA → SOLO admin / encargado */}
+    {(rolUsuario === 'admin' || rolUsuario === 'encargado') && (
+      <div className="col-12 col-md-6 col-lg-3">
+        <button onClick={handleShowModal3} className="action-btn dark">
+          F6 - GUARDAR VENTA
+        </button>
+      </div>
+    )}
 
-    <div className="col-12 col-md-6 col-lg-3">
-      <button onClick={handleShowModal3} className="action-btn dark">
-        F6 - GUARDAR VENTA
-      </button>
-    </div>
+    {/* AGREGAR → SOLO admin / encargado */}
+    {(rolUsuario === 'admin' || rolUsuario === 'encargado') && (
+      <div className="col-12 col-md-6 col-lg-3">
+        <button onClick={handleShowModal12} className="action-btn dark">
+          F11 - AGREGAR
+        </button>
+      </div>
+    )}
 
-    <div className="col-12 col-md-6 col-lg-3">
-      <button onClick={handleShowModal12} className="action-btn dark">
-        F11 - AGREGAR
-      </button>
-    </div>
-
+    {/* LIMPIAR TABLA (todos) */}
     <div className="col-12 col-md-6 col-lg-3">
       <button onClick={limpiarTabla} className="action-btn danger">
         F3 - LIMPIAR TABLA
       </button>
     </div>
-
   </div>
 </div>
 
