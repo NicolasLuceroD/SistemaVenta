@@ -15,6 +15,8 @@ import Nav from 'react-bootstrap/Nav';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from './context/DataContext';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { icon } from '@fortawesome/fontawesome-svg-core';
+import Swal from 'sweetalert2';
 
 function App(  ) {
 
@@ -120,11 +122,18 @@ const cerrarCaja = async () => {
         Id_usuario: id_usuario,
         Id_caja: IdCaja
     });
-
-
-      alert('Caja cerrada correctamente. ¡Hasta pronto!');
-      localStorage.removeItem('idCaja');  
-      navigate('/');
+      Swal.fire({
+        icon: 'success',
+        title: 'Éxito',
+        text: 'Caja cerrada correctamente!',
+        timer: 1500,
+        timerProgressBar: true,
+        allowOutsideClick: false,
+        allowEscapeKey: false
+      }).then(() => {
+        localStorage.removeItem('idCaja');
+        navigate('/');
+      });
 
   } catch (error) {
       console.log('Error al cerrar la caja:', error);
@@ -195,36 +204,59 @@ const iconMap = {
     <Navbar.Collapse id="navbar-nav">
       <Nav className="me-auto flex-wrap gap-2 nav-actions">
         {/* Comunes para todos */}
-         <Dropdown className="nav-dd">
+         {/* <Dropdown className="nav-dd">
           <Dropdown.Toggle className="nav-dd-toggle">VENTAS</Dropdown.Toggle>
           <Dropdown.Menu className="nav-dd-menu">
             <Button onClick={() => navegar('/testVenta')} className="nav-dd-item">VENTA</Button>
              <Button onClick={() => navegar('/corte')} className="nav-btn">DETALLE VENTA</Button>
           </Dropdown.Menu>
-        </Dropdown>
-        <Button onClick={() => navegar('/gestionMesas')} className="nav-btn">MESAS</Button>
+        </Dropdown> */}
+
+             {/* --- EMPLEADO ONLY --- */}
+              {rolUsuario?.toLowerCase() === 'empleado' && (
+                <>
+                  <Dropdown className='nav-dd'>
+                    <Dropdown.Toggle className='nav-dd-toggle'>VENTAS</Dropdown.Toggle>
+                    <Dropdown.Menu className='nav-dd-menu'>
+                      <Button onClick={() => navegar('/testVenta')} className='nav-dd-item'>
+                        VENTA
+                      </Button>
+                      <Button onClick={() => navegar('/corte')} className='nav-btn'>
+                        DETALLE VENTA
+                      </Button>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </>
+              )}
 
         {/* Dropdown COMPRAS (sin "Corte compra") */}
-        <Dropdown className="nav-dd">
-          <Dropdown.Toggle className="nav-dd-toggle">COMPRAS</Dropdown.Toggle>
-          <Dropdown.Menu className="nav-dd-menu">
-            <Button onClick={() => navegar('/compra')} className="nav-dd-item">COMPRA</Button>
-            <Button onClick={() => navegar('/auditoriaC')} className="nav-dd-item">AUDITORIA</Button>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <Button onClick={() => navegar('/corte2')} className="nav-btn">CORTE</Button>
-        <Button onClick={() => navegar('/clientes')} className="nav-btn">CLIENTES</Button>
+      
 
         {/* --- ADMIN ONLY --- */}
         {rolUsuario?.toLowerCase() === 'admin' && (
           <>
+            <Dropdown className="nav-dd">
+              <Dropdown.Toggle className="nav-dd-toggle">VENTAS</Dropdown.Toggle>
+              <Dropdown.Menu className="nav-dd-menu">
+                <Button onClick={() => navegar('/testVenta')} className="nav-dd-item">VENTA</Button>
+                <Button onClick={() => navegar('/corte')} className="nav-btn">DETALLE VENTA</Button>
+              </Dropdown.Menu>
+            </Dropdown>
             <Button onClick={() => navegar('/usuarios')} className="nav-btn">USUARIOS</Button>
             <Button onClick={() => navegar('/reportes')} className="nav-btn">REPORTES</Button>
             <Button onClick={() => navegar('/stock')} className="nav-btn">STOCK</Button>
             <Button onClick={() => navegar('/productos')} className="nav-btn">PRODUCTOS</Button>
             <Button onClick={() => navegar('/configuracion')} className="nav-btn">PROVEEDORES</Button>
             <Button onClick={() => navegar('/metodoPago')} className="nav-btn">MÉTODO PAGO</Button>
+          <Dropdown className="nav-dd">
+            <Dropdown.Toggle className="nav-dd-toggle">COMPRAS</Dropdown.Toggle>
+            <Dropdown.Menu className="nav-dd-menu">
+              <Button onClick={() => navegar('/compra')} className="nav-dd-item">COMPRA</Button>
+              <Button onClick={() => navegar('/auditoriaC')} className="nav-dd-item">AUDITORIA</Button>
+            </Dropdown.Menu>
+        </Dropdown>
+        <Button onClick={() => navegar('/corte2')} className="nav-btn">CORTE</Button>
+        <Button onClick={() => navegar('/clientes')} className="nav-btn">CLIENTES</Button>
           </>
         )}
 
@@ -240,7 +272,6 @@ const iconMap = {
           </>
         )}
       </Nav>
-
       <Nav className="ms-auto">
         <Button onClick={handleShowModal} className="btn-cerrarT nav-btn-accent">
           <FontAwesomeIcon icon={faDoorOpen} className="me-2" /> CERRAR TURNO
