@@ -13,6 +13,7 @@ import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import { faShop } from '@fortawesome/free-solid-svg-icons';
 import { faFloppyDisk } from '@fortawesome/free-regular-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import Paginacion from './Paginacion.jsx';
 import { Modal, Table} from 'react-bootstrap';
@@ -81,11 +82,11 @@ const Stock = ({ filename, sheetname }) => {
 
   
 
-  const limpiarInput = () =>{
-    setBuscarProductos('')
-    setProductosPaginados('')
-  }
-
+const limpiarInput = () => {
+  setBuscarProductos('');
+  setProductosPaginados([]);  
+  setActualPaginaProduct3(1); 
+};
 
   
     const crearStock = async () => {
@@ -160,7 +161,7 @@ const Stock = ({ filename, sheetname }) => {
 
 
     const seeStock = (val) =>{
-       
+        setNombreProducto(val.nombre_producto)
         setEditarStock(true)
         setSucursal(val.nombre_sucursal)
         setId_stock(val.Id_stock)
@@ -172,6 +173,7 @@ const Stock = ({ filename, sheetname }) => {
 
     const limpiarCampos = () =>{
         setEditarStock(false)
+        setNombreProducto("")
         setId_stock("")
         setCantidad("")
         setId_producto("")
@@ -272,7 +274,7 @@ const primerIndex2 = ultimoIndex2 - productosPorPagina2;
 
 
 
-const productPorPagina3 = 6;
+const productPorPagina3 = 10;
 const [actualPaginaProduct3, setActualPaginaProduct3] = useState(1);
 
 const ultimoIndexProduc3 = actualPaginaProduct3 * productPorPagina3;
@@ -289,6 +291,21 @@ useEffect(() => {
   setProductosPaginados(productosFiltrados.slice(primerIndexProduc3, ultimoIndexProduc3));
   setTotalProductos(productosFiltrados.length);
 }, [buscarProductos, productos, primerIndexProduc3, ultimoIndexProduc3]);
+
+
+
+
+
+
+const [nombreProducto,setNombreProducto] = useState("")
+const seleccionarProducto = (producto) =>{
+  setId_producto(producto.Id_producto)
+  setNombreProducto(producto.nombre_producto)
+  handleCloseModal8()
+  setBuscarProductos("")
+}
+
+
 
 
   return (
@@ -308,7 +325,7 @@ useEffect(() => {
                         <span className="input-group-text">
                         <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#01992f",}} />
                         </span>
-                            <input className="form-control" type="number" placeholder="ID PRODUCTO" value={Id_producto} onChange={(e) => setId_producto(e.target.value)} />
+                            <input className="form-control" type="text" placeholder="Nombre Producto" value={nombreProducto}  readOnly  />
                         </MDBInputGroup>
 
                         <MDBInputGroup className="mb-3">
@@ -327,6 +344,7 @@ useEffect(() => {
                         <Form.Select key={Id_sucursal} value={sucursal} onChange={(e)=> setSucursal(e.target.value)} aria-label="Nombre Categoria" id="suc">
                         <option value="0" disabled selected>--Seleccione una sucursal--</option>
                         <option value="1" >Lavalle 87</option>
+                        <option value="2" >Lavalle Guillermina </option>
                         </Form.Select>
                         </MDBInputGroup>
                         <br />
@@ -408,7 +426,57 @@ useEffect(() => {
 
 
 
+                <div className='container'>
+            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - GUILLERMINA</h2>
+            <MDBInputGroup>
+            <span className="input-group-text">
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#01992f",}} />
+                    </span>
+            <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control'/><br />
+            </MDBInputGroup>
+            <div className='container table'><br />
+                <table className="table table-striped table-hover mt-5 shadow-lg">
+                    <thead className='custom-table-header'>
+                        <tr>
+                            <th>ID</th>
+                            <th>NOMBRE</th>
+                            <th>DESCRIPCION</th>
+                            <th>TIPO VENTA</th>
+                            <th>CANTIDAD </th>
+                            <th>SUCURSAL</th>
+                            <th>EDITAR</th>
+                        
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {resultado2.slice(primerIndex, ultimoIndex).map((val) => (
+                            <tr key={val.Id_stock}>
+                                <td>{val.Id_producto}</td>
+                                <td>{val.nombre_producto}</td>
+                                <td>{val.descripcion_producto}</td>
+                                <td>{val.tipo_venta}</td>
+                                <td>{val.tipo_venta === 'granel' ? parseFloat(val.cantidad).toFixed(2) : val.cantidad}</td>
+                                <td>{val.nombre_sucursal}</td>
+                                <td className=''  aria-label="Basic example">
+                                    <Button type='button' className='btn btn-primary' onClick={()=>{seeStock(val)}}> SELECCIONAR </Button>
+                                </td>
+                            </tr>
 
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div style={{display:'flex',justifyContent:'center'}}>
+            <Paginacion productosPorPagina={productosPorPagina} 
+            actualPagina={actualPagina} 
+            setActualPagina={setActualPagina}
+            total={total}
+            />
+            </div>
+            <button onClick={exportToExcel} className='btn btn-secondary'>Exportar a Excel</button>
+
+<hr />
+            </div>
 
             
           <Modal show={showModal8} onHide={handleCloseModal8} size="lg" centered>
@@ -427,26 +495,28 @@ useEffect(() => {
           <Table striped bordered hover className='custom-table'>
           <thead className='custom-table-header'>
               <tr>
-                <th>ID</th>
                 <th>COD PRODUCTO</th>
                 <th>NOMBRE</th>
-                <th>DESCRIPCIÓN</th>
-                <th>PRECIO</th>
+                <th>PRECIO VENTA</th>
                 <th>PRECIO MAYOREO</th>
                 <th>TIPO VENTA</th>
+                <th>SELECCIONAR</th>
               </tr>
             </thead>
             <tbody>
               {buscarProductos && productosPaginados.length > 0 ? (
                 productosPaginados.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.Id_producto}</td>
+                <tr key={item.Id_producto || index}>
                     <td>{item.codProducto}</td>
                     <td>{item.nombre_producto}</td>
-                    <td>{item.descripcion_producto}</td>
                     <td  className='precio-venta-nuevo'><strong>${item.precioVenta}</strong></td>
                     <td className='precio'><strong>{item.PrecioMayoreo}</strong></td>
                     <td>{item.tipo_venta}</td> 
+                    <td>
+                      <button onClick={()=>seleccionarProducto(item)}>
+                       <FontAwesomeIcon icon={faCheck} size="lg" style={{color: "#01992f",}} />
+                      </button>
+                    </td> 
                   </tr>
                 ))
               ) : buscar && productosPaginados.length === 0 ? (

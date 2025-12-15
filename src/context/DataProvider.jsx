@@ -8,9 +8,9 @@ const DataProvider = ({ children }) => {
   const [sucursales, setSucursales] = useState([]);
   const [loading, setLoading] = useState(true); 
 
-  // "https://juanakiosco.com.ar:9005/api/"    "http://localhost:2201/api/"
+  // "/api/"    "http://localhost:2201/api/"
 
-  const URL =   "http://localhost:2201/api/"
+  const URL = "http://localhost:2201/api/"
   
   const traerSucursales = useCallback(async () => {
     try {

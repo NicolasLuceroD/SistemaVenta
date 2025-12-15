@@ -5,9 +5,17 @@ import  axios from 'axios'
 import { Modal} from 'react-bootstrap';
 import { MDBInputGroup } from 'mdb-react-ui-kit';
 import { useContext, useEffect, useState } from 'react';
-import { format } from 'date-fns';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightArrowLeft, faCarAlt, faCreditCard, faDoorOpen, faHandHoldingUsd, faMobile, faMobileAlt, faMoneyBillWave, faPhone, faPhoneSlash, faUser, faWallet } from '@fortawesome/free-solid-svg-icons';
+import {
+  faMoneyBillWave , 
+  faArrowRightArrowLeft, 
+  faCreditCard, 
+  faDoorOpen, 
+  faHandHoldingUsd, 
+  faMobileAlt, 
+  faUser, 
+  faWallet 
+} from '@fortawesome/free-solid-svg-icons';
 
 
 import Container  from 'react-bootstrap/Container';

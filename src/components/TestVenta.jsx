@@ -1288,56 +1288,40 @@ const  limpiarTabla = () =>{
 
 
 useEffect(() => {
-  setPrecioFinal((prevPrecioFinal) => {
-    const nuevosPreciosFinales = { ...prevPrecioFinal };
+  setPrecioFinal((prev) => {
+    const next = {};
 
-    listaCompras.forEach((producto) => {
-      const idProducto = producto.Id_producto || producto.Id_paquete;
+    for (const producto of listaCompras) {
+      const id = producto.Id_paquete || producto.Id_producto;
+      const tipoSel = preciosSeleccionados[id] || 'Unitario';
 
-      // Mantener el precio final si el producto ya existía en prevPrecioFinal
-      if (!(idProducto in nuevosPreciosFinales)) {
-        nuevosPreciosFinales[idProducto] = prevPrecioFinal[idProducto] ?? producto.precioVenta;
-      }
-    });
+      // 1) Precio base según selección / paquete
+      let base =
+        producto.precio_paquete > 0
+          ? Number(producto.precio_paquete)
+          : tipoSel === 'Mayoreo'
+            ? Number(producto.PrecioMayoreo ?? producto.precioVenta ?? 0)
+            : Number(producto.precioVenta ?? 0);
 
-    listaCompras.forEach((producto) => {
-      const idProducto = producto.Id_producto || producto.Id_paquete;
-      const tipoPrecioSeleccionado = preciosSeleccionados[idProducto] || 'Unitario';
-      
-      let precioBase = parseFloat(producto.precioVenta) || 0;
-      const incremento = parseFloat(incrementoUnidad[idProducto]) || 0;
-      const descuento = parseFloat(descUnidad[idProducto]) || 0;
+      const inc = Number(incrementoUnidad[id] || 0);
+      const desc = Number(descUnidad[id] || 0);
 
-      if (producto.tipo_venta === 'granel' && prevPrecioFinal[idProducto]) {
-        return;
-      }
-
-      if (tipoPrecioSeleccionado === 'Unitario') {
-        precioBase = parseFloat(producto.precioVenta) || precioBase;
-      } else if (tipoPrecioSeleccionado === 'Mayoreo') {
-        precioBase = parseFloat(producto.PrecioMayoreo) || precioBase;
-      } else if (tipoPrecioSeleccionado === 'PrecioNuevoProducto') {
-        precioBase = parseFloat(producto.precioVenta) || precioBase;
-      } else if (producto.precio_paquete > 0) {
-        precioBase = parseFloat(producto.precio_paquete) || precioBase;
+      // 2) Granel: si el user editó el precio a mano, NO lo pises
+      if (producto.tipo_venta === 'granel') {
+        // si hay inc/desc aplicalos al base; si no, conservá lo que el user escribió (prev[id]) o el base
+        next[id] = inc !== 0 || desc !== 0 ? +(base + inc - desc).toFixed(2) : Number(prev[id] ?? base);
+        continue;
       }
 
-      // Aquí aplicamos correctamente el incremento y descuento
-      const precioCalculado = (precioBase + incremento - descuento).toFixed(2);
+      // 3) No granel: SIEMPRE recalcular desde base (así vuelve solo al precio original cuando inc/desc = 0)
+      next[id] = +(base + inc - desc).toFixed(2);
+    }
 
-      if (
-        prevPrecioFinal[idProducto] !== undefined &&
-        (incremento !== 0 || descuento !== 0)
-      ) {
-        nuevosPreciosFinales[idProducto] = precioCalculado;
-      } else {
-        nuevosPreciosFinales[idProducto] = prevPrecioFinal[idProducto] ?? precioCalculado;
-      }
-    });
-
-    return nuevosPreciosFinales;
+    return next;
   });
 }, [listaCompras, preciosSeleccionados, incrementoUnidad, descUnidad]);
+
+
 
 
 
@@ -1989,26 +1973,30 @@ return (
               />
             )}
           </td>
-      <td>
-              {Number(producto.PrecioMayoreo) > 0 && !producto.productocomun && (
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                checked={usarMayoreo[producto.Id_producto] || false}
-                onChange={(e) => {
-                  const checked = e.target.checked;
-                  const nuevoPrecio = checked ? producto.PrecioMayoreo : producto.precioVenta;
-                  setUsarMayoreo({ ...usarMayoreo, [producto.Id_producto]: checked });
-                  setPrecioFinal({ ...precioFinal, [producto.Id_producto]: nuevoPrecio });
-                }}
-              />
-              <label className="form-check-label">
-                {formatCurrency(producto.PrecioMayoreo)}
-              </label>
-            </div>
-          )}
-        </td>
+            <td>
+            {Number(producto.PrecioMayoreo) > 0 && !producto.productocomun && (
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  checked={!!usarMayoreo[producto.Id_paquete || producto.Id_producto]}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    const id = producto.Id_paquete || producto.Id_producto;
+                    setUsarMayoreo(prev => ({ ...prev, [id]: checked }));
+                    setPreciosSeleccionados(prev => ({
+                      ...prev,
+                      [id]: checked ? 'Mayoreo' : 'Unitario'
+                    }));
+                  }}
+                />
+                <label className="form-check-label">
+                  {formatCurrency(producto.PrecioMayoreo)}
+                </label>
+              </div>
+              )}
+          </td>
+
           <td>{producto.tipo_venta || "Promo"}</td>
           <td>
             <input
