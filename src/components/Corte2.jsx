@@ -29,7 +29,7 @@ import { MDBInputGroup } from 'mdb-react-ui-kit';
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
+import ScrollToTopButton from "../components/utils/ScrollToTopButton.jsx"
 
 
 const Corte2 = () => {
@@ -1222,6 +1222,7 @@ useEffect(()=>{
              
             </Modal.Footer>
           </Modal>
+          <ScrollToTopButton/>
 
 </>
   )
