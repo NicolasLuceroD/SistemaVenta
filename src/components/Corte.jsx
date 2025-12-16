@@ -8,6 +8,9 @@ import '../index.css';
 import Pagination from "react-bootstrap/Pagination";
 import { DataContext } from '../context/DataContext.jsx';
 import Paginacion from './Paginacion.jsx';
+import ScrollToTopButton from "../components/utils/ScrollToTopButton.jsx"
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export const Corte = ({ filename, sheetname }) => {
@@ -147,13 +150,29 @@ useEffect(() => {
       <h5>Sucursal: {nombreSuc}</h5>
       <br /><br />
 
-        <div className='container'>
-          <input value={buscar} onChange={buscador} type="text" placeholder='Busca una venta...' className='form-control' />
-          <div style={{marginTop: '10px'}}><h4>SUMA TOTAL DE VENTAS: <strong>{formatCurrency(sumaTotal)}</strong></h4></div>
-        </div>
+       <div className="container">
+  <div className="input-group mb-3">
+    <span className="input-group-text text-success">
+      <FontAwesomeIcon icon={faSearch} />
+    </span>
+    <input
+      value={buscar}
+      onChange={buscador}
+      type="text"
+      placeholder="Busca una venta..."
+      className="form-control"
+    />
+  </div>
+
+  <div style={{ marginTop: '10px' }}>
+    <h4>
+      SUMA TOTAL DE VENTAS: <strong>{formatCurrency(sumaTotal)}</strong>
+    </h4>
+  </div>
+</div>
 
 
-        <div className='container table'>
+      
         <table className='table table-striped table-hover mt-5 shadow-lg custom-table'>
           <thead className='custom-table-header'>
             <tr className='table-success'>
@@ -222,11 +241,9 @@ useEffect(() => {
     </tr>
   ))}
 </tbody>
-
-
 </table>
 
-        </div>
+
         <div style={{display:'flex',justifyContent:'center'}}>
         <Paginacion productosPorPagina={productosPorPagina} 
         actualPagina={actualPagina} 
@@ -236,7 +253,7 @@ useEffect(() => {
         </div>
           
         <button onClick={exportToExcel} className='btn btn-secondary'>Exportar a Excel</button><br /><br /><br />
-
+    <ScrollToTopButton/>
     </>
   );
 };

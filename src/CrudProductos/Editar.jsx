@@ -8,7 +8,7 @@ import {
   } from 'mdb-react-ui-kit';
   import Form from 'react-bootstrap/Form';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
-import { faDollar } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faDollar, faPenToSquare, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,8 @@ import { Modal, Table} from 'react-bootstrap';
 import { DataContext } from '../context/DataContext.jsx';
 import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import Paginacion from '../components/Paginacion.jsx';
+import ScrollToTopButton, { scrollToTop } from "../components/utils/ScrollToTopButton.jsx"
+import Swal from "sweetalert2";
 
 const Editar = () => {
 
@@ -37,6 +39,7 @@ const Editar = () => {
     const [codProducto, setCodProducto] = useState("")
     const [depto,setDepto] = useState("0")
     const [precioMayoreo, setPrecioMayoreo] = useState("");
+    const [editarProductos, setEditarProductos] = useState(false)
 
     const {  URL } = useContext(DataContext);
 
@@ -121,14 +124,18 @@ const formatFecha = (fecha) => {
             codProducto: codProducto,
             PrecioMayoreo: precioMayoreo
         }).then(()=>{
-            alert('Producto editado con exito!')
+            Swal.fire({
+              icon: 'success',
+              title: 'Exito!',
+              text: 'Se ha editado el producto correctamente.',
+              timerProgressBar: true,
+              timer: 2000
+            })
             limpiarCampos()
-            refreshPage()
         }).catch((error)=>{
           console.log('Error al editar el producto', error)
         })
-      }
-        
+      }     
     }
 
     const verCategorias = () =>{
@@ -152,6 +159,8 @@ const formatFecha = (fecha) => {
         setCodProducto(val.codProducto)
         setPrecioMayoreo(val.PrecioMayoreo)
         setFechaVencimineto(formatFecha(val.FechaVencimiento)); 
+        scrollToTop()
+        setEditarProductos(true)
     }
     const limpiarCampos = () =>{
 
@@ -166,6 +175,7 @@ const formatFecha = (fecha) => {
         setCodProducto('')
         setFechaVencimineto('')
         setPrecioMayoreo('')
+        setEditarProductos(false)
     }
 
     useEffect(()=>{
@@ -227,6 +237,7 @@ const buscador = (e) => {
             <h4>Modifica y gestiona todos los productos de tu negocio</h4><br /> 
     <div className="row">
         <div className="col">
+            <p style={{ textAlign: 'left', fontSize:'14px'}}>CODIGO DE BARRAS</p>
             <MDBInputGroup className='mb-3'>
             <span className="input-group-text">
                     <FontAwesomeIcon icon={faBarcode} size="lg" style={{color: "#01992f",}} />
@@ -239,13 +250,15 @@ const buscador = (e) => {
 
 <div className="container-fluid">
 <div className="container">
+<p style={{ textAlign: 'left', fontSize:'14px'}}>NOMBRE PRODUCTO</p>
 <MDBInputGroup className='mb-3'>
 <span className="input-group-text">
                     <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
             </span>
         <input className='form-control' type='text' placeholder="Nombre"  value={nombre_producto} onChange={(e) => setnombre_Producto(e.target.value)}/>
-      </MDBInputGroup>
+</MDBInputGroup>
 
+<p style={{ textAlign: 'left', fontSize:'14px'}}>DESCRIPCION</p>
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
                     <FontAwesomeIcon icon={faClipboard} size="lg" style={{color: "#01992f",}} />
@@ -253,6 +266,7 @@ const buscador = (e) => {
         <input className='form-control' type='text' placeholder="Descripcion" value={descripcion_producto} onChange={(e) => setdescripcion_Producto(e.target.value)} />
       </MDBInputGroup>
 
+      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO COSTO</p>
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
                     <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
@@ -260,6 +274,7 @@ const buscador = (e) => {
         <input className='form-control' type='number' placeholder="Precio costo" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
       </MDBInputGroup>
       
+      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO VENTA</p>
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
                     <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
@@ -267,14 +282,15 @@ const buscador = (e) => {
         <input className='form-control' type='email' placeholder="Precio venta" value={precioVenta} onChange={(e) => setPrecioVenta(e.target.value)}/>
       </MDBInputGroup>
 
+      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO HASTA 23HS</p>
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
                     <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
             </span>
-        <input className='form-control' type='email' placeholder="Precio mayoreo" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)}/>
+        <input className='form-control' type='email' placeholder="Precio hasta 23hs" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)}/>
       </MDBInputGroup>
     
-      <MDBInputGroup className="mb-3">
+      {/* <MDBInputGroup className="mb-3">
     <span className="input-group-text">
             <FontAwesomeIcon icon={faCalendar} size="lg" style={{color: "#01992f",}} />
     </span>
@@ -289,7 +305,7 @@ const buscador = (e) => {
         setFechaVencimineto(fecha);
     }} 
     />
-    </MDBInputGroup>
+    </MDBInputGroup> */}
   
      <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> TIPO DE VENTA</h4>
      <MDBInputGroup>
@@ -413,19 +429,38 @@ const buscador = (e) => {
            
           </Modal>
 
-    <div className="container">
+   
         <div className="row">
             <div className="col">
             <br />
-            <Button className="btn btn-success" style={{margin: '15px',}} onClick={editarProducto}><FontAwesomeIcon icon={faFloppyDisk} style={{color: '#2fd11a'}} size="lg"></FontAwesomeIcon> GUARDAR PRODUCTO</Button>        
+            { editarProductos ? 
+            <div>
+            <Button className="btn btn-warning" style={{margin: '15px',}} onClick={editarProducto}><FontAwesomeIcon icon={faFloppyDisk} style={{color: '#dbc606ff'}} size="lg"></FontAwesomeIcon> EDITAR PRODUCTO</Button>        
+            <Button className="btn btn-danger" onClick={limpiarCampos}><FontAwesomeIcon icon={faBan} size="lg" style={{color: "#970c0c"}}></FontAwesomeIcon> CANCELAR</Button>
+            </div> 
+              :
+            <div>
             <Button onClick={handleShowModal}className='btn btn-primary' style={{margin: '15px', color:'#ffff'}}>MODIFICAR POR CATEGORIA</Button>
             </div>
-        </div>
+          }
+      
 
         <br />
-        <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control'/>
+        <div className="container">
+          <MDBInputGroup className="mb-3">
+            <span className="input-group-text">
+              <FontAwesomeIcon icon={faSearch} style={{ color: "#01992f" }} />
+            </span>
+            <input
+              value={buscar}
+              onChange={buscador}
+              type="text"
+              placeholder="Busca un producto..."
+              className="form-control"
+            />
+          </MDBInputGroup>
         </div>
-        
+      </div>
         <div className="container-fluid table">
          <table className='table table-striped table-hover mt-5 shadow-lg'>
             <thead className='custom-table-header'>
@@ -446,7 +481,6 @@ const buscador = (e) => {
             {
                     resultado.slice(primerIndex, ultimoIndex).map((val) => (
                         <tr key={val.Id_producto}>
-          
                             <td>{val.codProducto}</td>
                             <td>{val.nombre_producto}</td>
                             <td>{val.descripcion_producto}</td>
@@ -455,8 +489,16 @@ const buscador = (e) => {
                             <td className="precio-mayoreo"><strong>{formatCurrency(val.PrecioMayoreo)}</strong></td>
                             <td>{val.tipo_venta}</td>
                             <td>{val.nombre_categoria}</td>
-                            <td>${parseFloat( val.precioVenta - val.precioCompra ).toFixed(2) }</td>
-                            <td><Button className="btn btn-primary" onClick={()=>seeProductos(val)}> SELECCIONAR</Button></td>
+                            <td>{formatCurrency( val.precioVenta - val.precioCompra )}</td>
+                            <td className="text-center">
+                              <Button
+                                className="btn btn-warning"
+                                onClick={() => seeProductos(val)}
+                                title="Editar producto"
+                              >
+                                <FontAwesomeIcon icon={faPenToSquare} />
+                              </Button>
+                            </td>
                         </tr>
                     ))
                 }
@@ -470,8 +512,8 @@ const buscador = (e) => {
           total={total}
           />
           </div>
-
-
+        <ScrollToTopButton/>
+      </div>
 </>
   )
 }

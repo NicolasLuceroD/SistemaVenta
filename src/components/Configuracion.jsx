@@ -9,11 +9,12 @@ import Pagination from "react-bootstrap/Pagination";
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
-import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faPhone, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from '../context/DataContext.jsx';
 import Swal from 'sweetalert2';
+import ScrollToTopButton, { scrollToTop } from "../components/utils/ScrollToTopButton.jsx"
 
 
 
@@ -49,7 +50,9 @@ export default function Configuracion() {
   setNombre_proveedor(val.nombre_proveedor)
   setdDescripcion_proveedor(val.descripcion_proveedor)
   setNumTel_proveedor(val.numTel_proveedor)
+  scrollToTop()
  }
+
  const limpiarCampos= () =>{
   setEditarProveedores(false)
   setId_proveedor("")
@@ -114,14 +117,44 @@ export default function Configuracion() {
    }
 
 
-   const Eliminar = (val) =>{
-    axios.put(`${URL}proveedores/delete/${val.Id_proveedor}`).then(()=>{
-      alert("Proveedor eliminado con exito")
-      verLosProveedores()
-    }).catch((error)=>{
-      console.log('Error al eliminar un proveedor', error)
-    })
-   }
+   const Eliminar = (val) => {
+  Swal.fire({
+    title: '¿Eliminar proveedor?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios
+        .put(`${URL}proveedores/delete/${val.Id_proveedor}`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Proveedor eliminado',
+            text: 'El proveedor fue eliminado correctamente.',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          verLosProveedores();
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar el proveedor.'
+          });
+          console.log('Error al eliminar un proveedor', error);
+        });
+    }
+  });
+};
+
 
 const [paginaActual, setPaginaActual] = useState(1);
 const elementosPorPagina = 3;
@@ -210,7 +243,7 @@ useEffect(()=>{
                     <Button className="btn btn-success m-2" onClick={crearProveedores}><FontAwesomeIcon icon={faFloppyDisk} style={{color: '#2fd11a'}} size="lg"></FontAwesomeIcon> GUARDAR PROVEEDOR</Button>
                   </div> 
                   }
-
+<br />
                 </div>
                 <MDBInputGroup>
                 <span className="input-group-text">
@@ -237,11 +270,25 @@ useEffect(()=>{
                                   <td>{val.nombre_proveedor}</td>
                                   <td>{val.descripcion_proveedor}</td>
                                   <td>{val.numTel_proveedor}</td>               
-                                  <td  aria-label="Basic example">
-                                       <Button type='button' className='btn btn-primary' onClick={()=>{seeProveedores(val)}}> SELECCIONAR </Button>
+                                  <td className="text-center">
+                                    <Button
+                                      variant="warning"
+                                      size="md"
+                                      onClick={() => seeProveedores(val)}
+                                      title="Editar proveedor"
+                                    >
+                                      <FontAwesomeIcon icon={faPenToSquare} />
+                                    </Button>
                                   </td>
-                                  <td>
-                                    <Button variant='danger' onClick={()=>Eliminar(val)}>ELIMINAR</Button>
+                                  <td className="text-center">
+                                    <Button
+                                      variant="danger"
+                                      size="md"
+                                      onClick={() => Eliminar(val)}
+                                      title="Editar proveedor"
+                                    >
+                                      <FontAwesomeIcon icon={faTrash} />
+                                    </Button>
                                   </td>
                               </tr>
                           ))
@@ -257,6 +304,7 @@ useEffect(()=>{
         <br />
       </div>
       </div>
+      <ScrollToTopButton/>
       </>
     )
   

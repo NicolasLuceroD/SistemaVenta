@@ -9,9 +9,10 @@ import Pagination from "react-bootstrap/Pagination";
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
-import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from '../context/DataContext.jsx';
 import Swal from "sweetalert2";
+import ScrollToTopButton, { scrollToTop } from '../components/utils/ScrollToTopButton.jsx'
 
 const MetodoDePago = () => {
 
@@ -75,6 +76,7 @@ const MetodoDePago = () => {
     setEditarmetodoPago(true)
     setId_metodoPago(metodos.Id_metodoPago)
     setTipoMetodoPago(metodos.tipo_metodoPago)
+    scrollToTop()
   }
   const limpiarCampos = () =>{
     setEditarmetodoPago(false)
@@ -167,7 +169,7 @@ const MetodoDePago = () => {
               <tr>
                   <th>FOLIO</th>
                   <th>NOMBRE METODO PAGO</th>                    
-                  <th>OPCION</th>                    
+                  <th>EDITAR</th>                    
               </tr>
           </thead>
           <tbody>
@@ -175,9 +177,17 @@ const MetodoDePago = () => {
               <tr  key={metodos.Id_metodoPago}>
                <td>{metodos.Id_metodoPago}</td>
                 <td>{metodos.tipo_metodoPago}</td>
-                <td><Button className="btn btn-primary" onClick={()=>verLosMetodos(metodos)}>SELECCIONAR</Button></td>
-              </tr>
-                  
+                <td className="text-center">
+                  <Button
+                    variant="warning"
+                    size="md"
+                    onClick={() => verLosMetodos(metodos)}
+                    title="Editar método"
+                  >
+                    <FontAwesomeIcon icon={faPenToSquare} />
+                  </Button>
+                </td>
+              </tr>              
                ))}
           </tbody>
       </table>
@@ -188,7 +198,7 @@ const MetodoDePago = () => {
   <Pagination size='xl'>{items}</Pagination>
   <br />
 </div>
-
+<ScrollToTopButton/>
 </>
   )
 }

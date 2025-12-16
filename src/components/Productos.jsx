@@ -29,7 +29,7 @@ export default function Productos() {
               <Link to="/nuevoProducto" style={{ color: 'white' }}>NUEVO</Link>
               <Link to="/editarProducto" style={{ color: 'white' }}>MODIFICAR</Link>
               <Link to="/departamentos" style={{ color: 'white' }}>DEPARTAMENTOS</Link>
-              <Link to="/inventario" style={{ color: 'white' }}>INVENTARIO</Link>
+              {/* <Link to="/inventario" style={{ color: 'white' }}>INVENTARIO</Link> */}
               <Link to="/paquete" style={{ color: 'white' }}>PAQUETES</Link>
               <Link to="/importar" style={{ color: 'white' }}>IMPORTAR</Link>
             </div>

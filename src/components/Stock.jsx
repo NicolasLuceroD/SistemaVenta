@@ -9,7 +9,7 @@ import { DataContext } from '../context/DataContext.jsx';
 import App from '../App.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
-import { faBarcode } from "@fortawesome/free-solid-svg-icons";
+import { faBarcode, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faShop } from '@fortawesome/free-solid-svg-icons';
 import { faFloppyDisk } from '@fortawesome/free-regular-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import { faBan } from '@fortawesome/free-solid-svg-icons';
 import Paginacion from './Paginacion.jsx';
 import { Modal, Table} from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import ScrollToTopButton, { scrollToTop } from "../components/utils/ScrollToTopButton.jsx"
 
 
 const Stock = ({ filename, sheetname }) => {
@@ -169,6 +170,7 @@ const limpiarInput = () => {
         setId_producto(val.Id_producto)
         setId_sucursal(val.Id_sucursal)
         setInvMinimo(val.InventarioMinimo)
+        scrollToTop()
     }
 
     const limpiarCampos = () =>{
@@ -306,7 +308,12 @@ const seleccionarProducto = (producto) =>{
 }
 
 
-
+  const formatCurrency = (value) => {
+        return new Intl.NumberFormat('es-AR', {
+          style: 'currency',
+          currency: 'ARS',
+        }).format(value);
+      };
 
   return (
     <>
@@ -356,15 +363,13 @@ const seleccionarProducto = (producto) =>{
                   {
                   editarStock ? 
                   <div >
-                  <Button className="btn btn-warning m-2" onClick={updateStock}><FontAwesomeIcon icon={faFloppyDisk} size="lg" style={{color: "#AB8512"}}></FontAwesomeIcon>  EDITAR STOCK</Button>
-                
+                  <Button className="btn btn-warning m-2" onClick={updateStock}><FontAwesomeIcon icon={faFloppyDisk} size="lg" style={{color: "#AB8512"}}></FontAwesomeIcon>  EDITAR STOCK</Button> 
                   <Button className="btn btn-danger m-2" onClick={limpiarCampos}><FontAwesomeIcon icon={faBan} size="lg" style={{color: "#970c0c"}}></FontAwesomeIcon> CANCELAR</Button>
                   </div> 
                   :
-                
                       <div > 
                       <Button className="btn btn-success m-2" onClick={crearStock}> <FontAwesomeIcon icon={faFloppyDisk} style={{color: '#2fd11a'}} size="lg"></FontAwesomeIcon> GUARDAR STOCK</Button>
-                      <Button className="btn btn-primary m-2" onClick={handleShowModal8}>PRODUCTOS</Button>
+                      <Button className="btn btn-primary m-2" onClick={handleShowModal8}> BUSCAR PRODUCTOS</Button>
                       </div> 
                   }
 
@@ -402,8 +407,15 @@ const seleccionarProducto = (producto) =>{
                                 <td>{val.tipo_venta}</td>
                                 <td>{val.tipo_venta === 'granel' ? parseFloat(val.cantidad).toFixed(2) : val.cantidad}</td>
                                 <td>{val.nombre_sucursal}</td>
-                                <td className=''  aria-label="Basic example">
-                                    <Button type='button' className='btn btn-primary' onClick={()=>{seeStock(val)}}> SELECCIONAR </Button>
+                                <td className="text-center">
+                                  <Button
+                                    variant="warning"
+                                    size="md"
+                                    onClick={() => seeStock(val)}
+                                    title="Editar stock"
+                                  >
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                  </Button>
                                 </td>
                             </tr>
 
@@ -457,9 +469,16 @@ const seleccionarProducto = (producto) =>{
                                 <td>{val.tipo_venta}</td>
                                 <td>{val.tipo_venta === 'granel' ? parseFloat(val.cantidad).toFixed(2) : val.cantidad}</td>
                                 <td>{val.nombre_sucursal}</td>
-                                <td className=''  aria-label="Basic example">
-                                    <Button type='button' className='btn btn-primary' onClick={()=>{seeStock(val)}}> SELECCIONAR </Button>
-                                </td>
+                               <td className="text-center">
+                                <Button
+                                  variant="warning"
+                                  size="md"
+                                  onClick={() => seeStock(val)}
+                                  title="Editar stock"
+                                >
+                                  <FontAwesomeIcon icon={faPenToSquare} />
+                                </Button>
+                              </td>
                             </tr>
 
                         ))}
@@ -479,7 +498,7 @@ const seleccionarProducto = (producto) =>{
             </div>
 
             
-          <Modal show={showModal8} onHide={handleCloseModal8} size="lg" centered>
+          <Modal show={showModal8} onHide={handleCloseModal8} size="xl" centered>
         <Modal.Header closeButton>
           <Modal.Title>PRODUCTOS</Modal.Title>
         </Modal.Header>
@@ -509,8 +528,8 @@ const seleccionarProducto = (producto) =>{
                 <tr key={item.Id_producto || index}>
                     <td>{item.codProducto}</td>
                     <td>{item.nombre_producto}</td>
-                    <td  className='precio-venta-nuevo'><strong>${item.precioVenta}</strong></td>
-                    <td className='precio'><strong>{item.PrecioMayoreo}</strong></td>
+                    <td className='precio-venta-nuevo'><strong>{formatCurrency(item.precioVenta)}</strong></td>
+                    <td className='precio'><strong>{formatCurrency(item.PrecioMayoreo)}</strong></td>
                     <td>{item.tipo_venta}</td> 
                     <td>
                       <button onClick={()=>seleccionarProducto(item)}>
@@ -545,6 +564,7 @@ const seleccionarProducto = (producto) =>{
           <Button variant="danger" onClick={handleCloseModal8}>CERRAR</Button>
         </Modal.Footer>
       </Modal>
+      <ScrollToTopButton/>
     </>
 
   )

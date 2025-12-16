@@ -7,7 +7,7 @@ import {
   MDBInputGroup,
 } from 'mdb-react-ui-kit';
 import Pagination from "react-bootstrap/Pagination";
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare, faTrash, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faHouse } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +16,7 @@ import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from '../context/DataContext.jsx';
-
+import ScrollToTopButton, { scrollToTop } from "../components/utils/ScrollToTopButton.jsx"
 
 
  const Clientes = () =>{
@@ -170,6 +170,7 @@ const seeClientes = (val) =>{
   setDomicilioCliente(val.domicilio_cliente)
   setMontoCredito(val.montoCredito)
   setLimiteCredito(val.LimiteCredito)
+  scrollToTop()
 }
 
 const limpiarCampos = () =>{
@@ -327,10 +328,28 @@ const Eliminar = (val) =>{
                               <td>{val.domicilio_cliente}</td>
                               <td><strong>{formatCurrency(val.montoCredito)}</strong></td>
                               <td><strong>{formatCurrency(val.LimiteCredito)}</strong></td>              
-                              <td className=''  aria-label="Basic example">
-                                   <Button className='btn btn-primary m-2' onClick={()=>{seeClientes(val)}}> SELECCIONAR </Button>
-                              </td>
-                              <td><Button variant='danger' onClick={()=>Eliminar(val)}>ELIMINAR </Button></td>
+                              <td className="text-center">
+                                  <Button
+                                    variant="warning"
+                                    size="md"
+                                    className="m-1"
+                                    onClick={() => seeClientes(val)}
+                                    title="Editar cliente"
+                                  >
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                  </Button>
+                                </td>
+
+                                <td className="text-center">
+                                  <Button
+                                    variant="danger"
+                                    size="md"
+                                    onClick={() => Eliminar(val)}
+                                    title="Eliminar cliente"
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                  </Button>
+                                </td>
                           </tr>
                       ))
                   }
@@ -346,6 +365,7 @@ const Eliminar = (val) =>{
       <br />
     </div>
     </div>
+    <ScrollToTopButton/>
   </>
   )
 

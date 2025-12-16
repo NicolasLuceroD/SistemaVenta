@@ -9,9 +9,10 @@ import Pagination from "react-bootstrap/Pagination";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
-import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { faBan, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { DataContext } from "../../context/DataContext";
-
+import ScrollToTopButton, { scrollToTop } from "../../components/utils/ScrollToTopButton"
+import Swal from "sweetalert2";
 
 const Departamento = () => {
 
@@ -72,15 +73,44 @@ const Departamento = () => {
     })
   }
 
-  const Eliminar = (val) =>{
-    axios.put(`${URL}categorias/delete/${val.Id_categoria}`).then(()=>{
-      alert("Categoria Eliminada con exito")
-      seeCategoria()
-      refreshPage()
-    }).catch((error)=>{
-      console.log("Error al eliminar ", error)
-    })
-  }
+  const Eliminar = (val) => {
+  Swal.fire({
+    title: '¿Eliminar categoría?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios
+        .put(`${URL}categorias/delete/${val.Id_categoria}`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Categoría eliminada',
+            text: 'La categoría fue eliminada correctamente.',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          seeCategoria();
+        })
+        .catch((error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar la categoría.'
+          });
+          console.log('Error al eliminar ', error);
+        });
+    }
+  });
+};
+
 
 
   const updateCategoria = (val) =>{
@@ -88,6 +118,7 @@ const Departamento = () => {
    setIdCategoria(val.Id_categoria)
    setNombreCategoria(val.nombre_categoria)
    setdescripcionCategoria(val.descripcion_categoria)
+   scrollToTop()
   }
 
   const limpiarCampos = () =>{
@@ -196,11 +227,15 @@ const departamentosPaginados = verCategoria.slice(inicio, fin);
                       <td>{val.Id_categoria}</td>
                       <td>{val.nombre_categoria}</td>
                       <td>{val.descripcion_categoria}</td>
-                        <td className="col">
-                          <Button onClick={()=>{updateCategoria(val)}}>SELECCIONAR</Button>               
+                       <td className="text-center">
+                          <Button variant="warning" size="md" onClick={() => updateCategoria(val)} title="Editar categoría">
+                            <FontAwesomeIcon icon={faPenToSquare} />
+                          </Button>
                         </td>
-                        <td className="col">
-                          <Button variant="danger" onClick={()=>{Eliminar(val)}}>ELIMINAR</Button>               
+                        <td className="text-center">
+                          <Button variant="danger" size="md" onClick={() => Eliminar(val)} title="Editar categoría">
+                            <FontAwesomeIcon icon={faTrash} />
+                          </Button>
                         </td>
                     </tr>
                   ))
@@ -214,6 +249,7 @@ const departamentosPaginados = verCategoria.slice(inicio, fin);
         <Pagination size='xl'>{items}</Pagination>
         <br />
       </div>
+      <ScrollToTopButton/>
     </>
   )
 }

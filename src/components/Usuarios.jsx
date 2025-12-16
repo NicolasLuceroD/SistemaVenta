@@ -8,7 +8,7 @@ import {
   } from 'mdb-react-ui-kit';
   import Form from 'react-bootstrap/Form';
   import Pagination from "react-bootstrap/Pagination";
-import { faLock } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faUserGear } from "@fortawesome/free-solid-svg-icons";
@@ -16,6 +16,7 @@ import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
 import { faBan } from "@fortawesome/free-solid-svg-icons";
 import { DataContext } from "../context/DataContext";
 import Swal from "sweetalert2";
+import ScrollToTopButton, { scrollToTop } from "../components/utils/ScrollToTopButton"
 
 const Usuarios = () => {
 
@@ -92,14 +93,44 @@ const crearUsuarios = () =>{
         }
     }
 
-    const Eliminar = (val) =>{
-        axios.put(`${URL}usuarios/delete/${val.Id_usuario}`).then(()=>{
-            alert("Usuario Eliminado con exito")
-            verUsuarios()
-        }).catch((error)=>{
-            console.log('Error al eliminar el usuario', error)
+const Eliminar = (val) => {
+  Swal.fire({
+    title: '¿Eliminar usuario?',
+    text: 'Esta acción no se puede deshacer.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios
+        .put(`${URL}usuarios/delete/${val.Id_usuario}`)
+        .then(() => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Usuario eliminado',
+            text: 'El usuario fue eliminado correctamente.',
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          verUsuarios();
         })
+        .catch((error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo eliminar el usuario.'
+          });
+          console.log('Error al eliminar el usuario', error);
+        });
     }
+  });
+};
+
 
 
     const seeUsuarios = (val) =>{
@@ -108,6 +139,7 @@ const crearUsuarios = () =>{
         setIdUsuario(val.Id_usuario)
         setNombreUsuario(val.nombre_usuario),
         setClaveUsuario(val.clave_usuario)
+        scrollToTop()
     }
 
     const limpiarCampos = () =>{
@@ -235,8 +267,24 @@ const usuariosPaginados = usuarios.slice(inicio, fin);
                                 <td>{val.nombre_usuario}</td>
                                 <td>{val.clave_usuario}</td>
                                 <td>{val.rol_usuario}</td>
-                                <td><Button className="btn btn-primary" onClick={()=>seeUsuarios(val)}>SELECCIONAR</Button></td>
-                                <td><Button variant="danger" onClick={()=>Eliminar(val)}>ELIMINAR</Button></td>
+                               <td className="text-center">
+                                <Button
+                                    variant="warning"
+                                    size="md"
+                                    onClick={() => seeUsuarios(val)}
+                                >
+                                    <FontAwesomeIcon icon={faPenToSquare} />
+                                </Button>
+                                </td>
+                                <td className="text-center">
+                                <Button
+                                    variant="danger"
+                                    size="md"
+                                    onClick={() => Eliminar(val)}
+                                >
+                                    <FontAwesomeIcon icon={faTrash} />
+                                </Button>
+                                </td>
                             </tr>
                         ))
                     }
@@ -247,6 +295,7 @@ const usuariosPaginados = usuarios.slice(inicio, fin);
       <Pagination size='xl'>{items}</Pagination>
       </div>
       </div>
+      <ScrollToTopButton/>
     </>
   )
 }

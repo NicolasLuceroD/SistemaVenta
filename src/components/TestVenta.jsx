@@ -22,6 +22,7 @@ import { faDollar, faPencil, faPrint, faTrash } from '@fortawesome/free-solid-sv
 import { faBarcode } from "@fortawesome/free-solid-svg-icons";
 import Paginacion from './Paginacion.jsx';
 import logoticket from '../assets/logo-chupito.jpg'
+import ScrollToTopButton from "../components/utils/ScrollToTopButton.jsx"
 
 
 const TestVenta = () => {
@@ -2607,8 +2608,8 @@ return (
              
             </Modal.Footer>
           </Modal>
-
 </div>
+<ScrollToTopButton/>
       </>
       )
     }

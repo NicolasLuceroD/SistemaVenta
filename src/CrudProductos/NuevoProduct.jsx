@@ -8,7 +8,7 @@ import * as XLSX from 'xlsx';
 import { MDBInputGroup } from 'mdb-react-ui-kit';
 import Productos from '../components/Productos.jsx'
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
-import { faBalanceScale, faDollar } from '@fortawesome/free-solid-svg-icons';
+import { faBalanceScale, faDollar, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk } from "@fortawesome/free-regular-svg-icons";
 import { faScaleBalanced } from '@fortawesome/free-solid-svg-icons';
@@ -19,6 +19,7 @@ import { faCalendar } from '@fortawesome/free-regular-svg-icons';
 import Paginacion from '../components/Paginacion.jsx';
 import Swal from 'sweetalert2';
 import { icon } from '@fortawesome/fontawesome-svg-core';
+import ScrollToTopButton from "../components/utils/ScrollToTopButton.jsx"
 
 const NuevoProduct = ({ filename, sheetname }) => {
 
@@ -175,16 +176,50 @@ const NuevoProduct = ({ filename, sheetname }) => {
         })
     }
 
-    const Eliminar = (val) =>{
-        console.log(val.Id_producto)
-        axios.put(`${URL}productos/delete/${val.Id_producto}`).then(()=>{
-            alert("Producto Eliminado con Exito")
-            console.log('Producto', val.Id_producto, 'eliminado')
-            trearLosProductos()
-        }).catch((error)=>{
-            console.log('Error al eliminar el producto', error)
-        })
-    }
+    const Eliminar = (val) => {
+        Swal.fire({
+            title: '¿Eliminar producto?',
+            text: 'Esta acción no se puede deshacer',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+            Swal.fire({
+                title: 'Eliminando...',
+                text: 'Por favor espere',
+                timer: 2000,
+                timerProgressBar: true,
+                didOpen: () => {
+                Swal.showLoading();
+                },
+            });
+
+            axios.put(`${URL}productos/delete/${val.Id_producto}`).then(() => {
+                Swal.fire({
+                    title: '¡Eliminado!',
+                    text: 'El producto fue eliminado con éxito',
+                    icon: 'success',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                });
+                trearLosProductos();
+                }).catch((error) => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudo eliminar el producto',
+                    icon: 'error',
+                });
+                console.log('Error al eliminar el producto', error);
+                });
+            }
+        });
+};
 
 
     useEffect(() => {
@@ -370,9 +405,20 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 </div>
             </div>
             <br />
-            <div className='container'>
-                <input value={buscar} onChange={buscador} type="text" placeholder='Busca un producto...' className='form-control'/>
-            </div>
+            <div className="container">
+                <MDBInputGroup className="mb-3">
+                    <span className="input-group-text">
+                    <FontAwesomeIcon icon={faSearch} style={{ color: "#01992f" }} />
+                    </span>
+                    <input
+                    value={buscar}
+                    onChange={buscador}
+                    type="text"
+                    placeholder="Busca un producto..."
+                    className="form-control"
+                    />
+                </MDBInputGroup>
+                </div>
             <br />
 
             <div className="container-fluid table">
@@ -404,9 +450,12 @@ const NuevoProduct = ({ filename, sheetname }) => {
                                 <td>{val.tipo_venta}</td>
                                 <td>{val.nombre_categoria}</td>
                                 <td>{new Date(val.FechaRegistro).toISOString().slice(0, 10)}</td>
-                                <td>${parseFloat(val.precioVenta - val.precioCompra).toFixed(2)}</td>
-                                <td><Button variant='danger' onClick={()=>{Eliminar(val)}}>ELIMINAR</Button></td>
-
+                                <td>{formatCurrency(val.precioVenta - val.precioCompra)}</td>
+                                <td className="text-center">
+                                    <Button variant="danger" size="md" onClick={() => Eliminar(val)} title="Eliminar producto">
+                                        <FontAwesomeIcon icon={faTrash} />
+                                    </Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -423,6 +472,7 @@ const NuevoProduct = ({ filename, sheetname }) => {
             <hr />
             <button onClick={exportToExcel} style={{margin:'10px'}} className='btn btn-secondary'>Exportar a Excel</button>
             <button onClick={exportToExcel2} style={{margin:'10px'}} className='btn btn-secondary'>Exportar Catalogo</button>
+            <ScrollToTopButton />
         </>
     );
 };
