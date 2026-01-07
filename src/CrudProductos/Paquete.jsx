@@ -12,7 +12,7 @@ import Productos from '../components/Productos';
 import Paginacion from '../components/Paginacion.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFloppyDisk} from "@fortawesome/free-regular-svg-icons";
-import { faBan } from "@fortawesome/free-solid-svg-icons";
+import { faBan, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faClipboard } from '@fortawesome/free-regular-svg-icons';
 import { faDollar } from '@fortawesome/free-solid-svg-icons';
 
@@ -466,8 +466,16 @@ const handleAgregar = (compra) => {
                         ))}
                     </ul>
                 </td>
-                <td><button className='btn btn-primary' onClick={()=>seePaquetes(val)}>SELECCIONAR</button></td>
-                <td><button className='btn btn-danger' onClick={()=>eliminarPaquete(val.Id_paquete)}>ELIMINAR</button></td>
+                <td>
+                  <button onClick={()=>seePaquetes(val)} className='btn btn-warning'>
+                      <FontAwesomeIcon icon={faPenToSquare} size="lg"  />
+                  </button>
+                </td>        
+                 <td>
+                  <button onClick={()=>eliminarPaquete(val.Id_paquete)} className='btn btn-danger'>
+                      <FontAwesomeIcon icon={faTrash} size="lg"  />
+                  </button>
+                </td>         
             </tr>
         ))}
     </tbody>

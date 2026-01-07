@@ -943,7 +943,39 @@ useEffect(()=>{
       </div>
     </div>
   </div>
+
+  
+<hr />
+<h3 className='h3-clientes'>
+      <FontAwesomeIcon icon={faTags} style={{ color: "#01992f" }} /> PRODUCTOS ELIMINADOS:</h3>
+    <div className="container table">
+      <Table striped bordered hover className='table-primary'>
+        <thead className='custom-table-header'>
+          <tr>
+            <th>N° VENTA</th>
+            <th>PRODUCTO</th>
+            <th>PRECIO</th>
+            <th>MOTIVO</th>
+            <th>USUARIO</th>
+          </tr>
+        </thead>
+        <tbody>
+          {productoseliminados.map(venta => (
+            <tr key={venta.Id_venta}>
+              <td>{venta.Id_venta}</td>
+              <td>{venta.nombre_producto}</td>
+              <td>{formatCurrency(venta.precioVentaProducto)}</td>
+              <td>{venta.Motivo}</td>
+              <td>{venta.nombre_usuario}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+
+
   </>
+
 )}
 
 </div>
@@ -1169,34 +1201,6 @@ useEffect(()=>{
   
 
 </div>
-
-<hr />
-<h3 className='h3-clientes'>
-      <FontAwesomeIcon icon={faTags} style={{ color: "#01992f" }} /> PRODUCTOS ELIMINADOS:</h3>
-    <div className="container table">
-      <Table striped bordered hover className='table-primary'>
-        <thead className='custom-table-header'>
-          <tr>
-            <th>N° VENTA</th>
-            <th>PRODUCTO</th>
-            <th>PRECIO</th>
-            <th>MOTIVO</th>
-            <th>USUARIO</th>
-          </tr>
-        </thead>
-        <tbody>
-          {productoseliminados.map(venta => (
-            <tr key={venta.Id_venta}>
-              <td>{venta.Id_venta}</td>
-              <td>{venta.nombre_producto}</td>
-              <td>{formatCurrency(venta.precioVentaProducto)}</td>
-              <td>{venta.Motivo}</td>
-              <td>{venta.nombre_usuario}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
 
 <Modal show={showModal9} onHide={handleCloseModal9}>
             <Modal.Header closeButton>

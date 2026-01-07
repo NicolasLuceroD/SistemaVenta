@@ -429,12 +429,14 @@ const NuevoProduct = ({ filename, sheetname }) => {
                             <th>COD PRODUCTO</th>
                             <th>NOMBRE</th>
                             <th>PRECIO COSTO</th>
-                            <th>PRECIO VENTA</th>
+                            <th>PRECIO VENTA SUC GUILLERMINA</th>
+                            <th>PRECIO VENTA SUC SAN MARTIN</th>
                             <th>PRECIO MAYOREO</th>
                             <th>TIPO VENTA</th>
                             <th>DEPARTAMENTO</th>
                             <th>FECHA DE CREACION</th>
-                            <th>GANANCIA</th>
+                            <th>GANANCIA SUC GUILLERMINA</th>
+                            <th>GANANCIA SUC SAN MARTIN</th>
                             <th>ELIMINAR</th>
                         </tr>
                     </thead>
@@ -445,12 +447,14 @@ const NuevoProduct = ({ filename, sheetname }) => {
                                 <td>{val.codProducto}</td>
                                 <td>{val.nombre_producto}</td>
                                 <td className='precio-costo'><strong>{formatCurrency(val.precioCompra)}</strong></td>
-                                <td className='precio-venta'><strong>{formatCurrency(val.precioVenta)}</strong></td>
+                                <td className='precio-venta'><strong>{formatCurrency(val.precioVentaSucGuillermina)}</strong></td>
+                                <td className='precio-venta'><strong>{formatCurrency(val.precioVentaSucSanMartin)}</strong></td>
                                 <td className='precio-mayoreo'><strong>{formatCurrency(val.PrecioMayoreo)}</strong></td>
                                 <td>{val.tipo_venta}</td>
                                 <td>{val.nombre_categoria}</td>
                                 <td>{new Date(val.FechaRegistro).toISOString().slice(0, 10)}</td>
-                                <td>{formatCurrency(val.precioVenta - val.precioCompra)}</td>
+                                <td>{formatCurrency(val.precioVentaSucGuillermina - val.precioCompra)}</td>
+                                <td>{formatCurrency(val.precioVentaSucSanMartin - val.precioCompra)}</td>
                                 <td className="text-center">
                                     <Button variant="danger" size="md" onClick={() => Eliminar(val)} title="Eliminar producto">
                                         <FontAwesomeIcon icon={faTrash} />

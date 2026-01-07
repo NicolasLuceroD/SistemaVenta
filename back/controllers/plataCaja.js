@@ -203,24 +203,53 @@ const cerrarCaja = async (req, res) => {
 const verMetodosPagos = (req,res) => {
     const {Id_caja,Id_usuario} = req.params
     connection.query(`
-   SELECT 
-        m.Id_metodoPago,
-        m.tipo_metodoPago,
-        COALESCE(SUM(v.precioTotal_venta), 0) AS total_ventas_metodo
-        FROM venta v
-        INNER JOIN metopago m 
-        ON m.Id_metodoPago = v.Id_metodoPago
-        WHERE v.Id_caja = ?
-        AND v.Id_usuario = ?
- 
-        AND v.fecha_registro >= (
-            SELECT MAX(FechaRegistro)
-            FROM plataencajalogin
-            WHERE Id_caja = ? AND Id_usuario = ?  AND estado = 1
-        )
-        GROUP BY m.Id_metodoPago, m.tipo_metodoPago
-        ORDER BY total_ventas_metodo DESC;         
-        `,[Id_caja,Id_usuario,Id_caja,Id_usuario],(error,results)=>{ 
+   
+(
+  SELECT 
+    m.Id_metodoPago AS Id_item,
+    m.tipo_metodoPago AS tipo_item,
+    COALESCE(SUM(v.precioTotal_venta), 0) AS total
+  FROM venta v
+  INNER JOIN metopago m ON m.Id_metodoPago = v.Id_metodoPago
+  WHERE v.Id_caja = ?
+    AND v.Id_usuario = ?
+    AND v.fecha_registro >= (
+      SELECT MAX(FechaRegistro)
+      FROM plataencajalogin
+      WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
+    )
+  GROUP BY m.Id_metodoPago, m.tipo_metodoPago
+)
+
+UNION ALL
+
+(
+  SELECT
+    -5 AS Id_item,
+    'Cigarrillos' AS tipo_item,
+    COALESCE(SUM(
+      dv.CantidadVendida *
+      CASE 
+        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+        ELSE p.precioVentaSucGuillermina
+      END
+    ), 0) AS total
+  FROM venta v
+  INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+  INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+  WHERE v.Id_caja = ?
+    AND v.Id_usuario = ?
+    AND p.Id_categoria = 10
+    AND v.fecha_registro >= (
+      SELECT MAX(FechaRegistro)
+      FROM plataencajalogin
+      WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
+    )
+)
+
+ORDER BY total DESC;         
+        `,[Id_caja,Id_usuario,Id_caja,Id_usuario,Id_caja,Id_usuario,Id_caja,Id_usuario],(error,results)=>{ 
             if(error) throw error
             res.json(results)
         })

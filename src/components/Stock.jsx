@@ -351,7 +351,7 @@ const seleccionarProducto = (producto) =>{
                         <Form.Select key={Id_sucursal} value={sucursal} onChange={(e)=> setSucursal(e.target.value)} aria-label="Nombre Categoria" id="suc">
                         <option value="0" disabled selected>--Seleccione una sucursal--</option>
                         <option value="1" >Lavalle 87</option>
-                        <option value="2" >Lavalle Guillermina </option>
+                        <option value="2" >San Martin 773 </option>
                         </Form.Select>
                         </MDBInputGroup>
                         <br />
@@ -377,7 +377,7 @@ const seleccionarProducto = (producto) =>{
                    
                 </div>
                 <div className='container'>
-            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - Lavalle 87</h2>
+            <h2 style={{marginTop: '60px'}}>SUCURSAL - Lavalle 87</h2>
             <MDBInputGroup>
             <span className="input-group-text">
                         <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#01992f",}} />
@@ -431,7 +431,7 @@ const seleccionarProducto = (producto) =>{
             />
             </div>
             <button onClick={exportToExcel} className='btn btn-secondary'>Exportar a Excel</button>
-
+<br /><br />
 <hr />
             </div>
             </div>
@@ -439,7 +439,7 @@ const seleccionarProducto = (producto) =>{
 
 
                 <div className='container'>
-            <h2 style={{marginTop: '60px'}}>STOCK DE PRODUCTOS SUCURSAL - GUILLERMINA</h2>
+            <h2 style={{marginTop: '60px'}}>SUCURSAL - San Martin 773</h2>
             <MDBInputGroup>
             <span className="input-group-text">
                         <FontAwesomeIcon icon={faMagnifyingGlass} size="lg" style={{color: "#01992f",}} />

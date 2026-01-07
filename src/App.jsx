@@ -382,11 +382,11 @@ const iconMap = {
                   icon={iconMap[tipo.Id_metodoPago] || faWallet}
                   className="text-secondary"
                 />
-                {tipo.tipo_metodoPago}
+                {tipo.tipo_item}
               </td>
 
              <td className={`text-end fw-bold ${ tipo.Id_metodoPago === 5 ? "text-warning" : "text-success"}`}>
-                {formatCurrency(tipo.total_ventas_metodo)}
+                {formatCurrency(tipo.total)}
              </td>
             </tr>
           );

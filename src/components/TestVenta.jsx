@@ -2,7 +2,7 @@
 import App from '../App'
 import { Modal, Button, Table, ButtonGroup} from 'react-bootstrap';
 import axios from 'axios';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useCallback, useRef, useState } from 'react';
 import { DataContext } from '../context/DataContext';
 import { CarritoContext } from '../context/CarritoContext';
 import Swal from 'sweetalert2';
@@ -63,6 +63,7 @@ const TestVenta = () => {
     const [descUnidad, setDescUnidad] = useState(0)
     const [incrementoUnidad, setIncrementoUnidad] = useState(0)
     const [precioFinal, setPrecioFinal] = useState({})
+    const [precioVenta, setPrecioVenta] = useState(0)
 
     //EGRESOS E INGRESOS 
     const [montoTotalEgreso, setMontoTotalEgreso] = useState(0)
@@ -159,6 +160,7 @@ const TestVenta = () => {
 
     const handleShowModal8 = () => {
       setShowModal8(true);
+      setBuscar("")
     }
     const handleCloseModal8 = () => {
       setShowModal8(false);
@@ -215,7 +217,8 @@ const TestVenta = () => {
     //CONTEXT
     const { listaCompras, eliminarCompra, agregarCompra,agregarCompras, eliminarVentas } = useContext(CarritoContext);
     const {listaVentas,agregarVenta,eliminarVenta} = useContext(VentaContext)
-    const { productos,URL } = useContext(DataContext);
+    const {URL,productos} = useContext(DataContext);
+
     //STORAGE
     const id_sucursal = localStorage.getItem('sucursalId');
     const IdCaja = localStorage.getItem('idCaja')
@@ -233,7 +236,25 @@ const TestVenta = () => {
 
     };
 
+
+
+      const validarSucursal =()=>{
+        console.log('productos', productos)
+        if(id_sucursal === 1){
+          setPrecioVenta(productos.precioVentaSucGuillermina)
+        }else{
+          setPrecioVenta(productos.precioVentaSucSanMartin)
+        }
+      }
+
     
+      useEffect(()=>{
+        validarSucursal()
+      },[])
+
+
+
+
     const calcularTotal = () => {
       return listaCompras.reduce((total, item) => {
         const cantidadVendida = parseFloat(cantidadesVendidas[item.Id_producto]) || parseFloat(cantidadesVendidas[item.Id_paquete] || 0);
@@ -1157,9 +1178,9 @@ const limpiarInput = () =>{
 
  //FUNCION PARA ELIMINAR PRODUCTO DE LA VENTA
  const eliminarVentaDeLaTabla = (producto) => {
+  focusBuscar()
   const identificador = producto.Id_paquete || producto.Id_producto;
   eliminarCompra(producto.Id_producto);
-
   setDescUnidad(prev => {
     const newState = { ...prev };
     delete newState[identificador];
@@ -1285,6 +1306,7 @@ useEffect(() => {
 
 const  limpiarTabla = () =>{
   eliminarVentas()
+  focusBuscar()
 }
 
 
@@ -1514,7 +1536,30 @@ const handlePrecioChange = (e, producto) => {
   return () => clearInterval(intervalo);
 }, []);
 
-  
+
+const inputBuscarRef = useRef(null);
+
+const focusBuscar = () => {
+  setTimeout(() => inputBuscarRef.current?.focus(), 80);
+};
+
+useEffect(() => {
+  inputBuscarRef.current?.focus();
+}, []);
+
+useEffect(() => {
+  if (!showModal && !showModal2 && !showModal3 && !showModal4 && !showModal5 && !showModal6 && !showModal7 && !showModal8 && !showModal9 && !showModal10 && !showModal11 && !showModal12 && !showModalMotivoEgresos && !showModalVerProductosVenta) {
+    inputBuscarRef.current?.focus();
+  }
+}, [
+  showModal, showModal2, showModal3, showModal4, showModal5, showModal6, showModal7,
+  showModal8, showModal9, showModal10, showModal11, showModal12,
+  showModalMotivoEgresos, showModalVerProductosVenta
+]);
+
+
+
+
 
 return (
       <>
@@ -1600,7 +1645,7 @@ return (
 
        <br />
     
-          <Modal show={showModal} onHide={handleCloseModal}>
+          <Modal show={showModal} onHide={handleCloseModal} onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title>RESUMEN VENTA</Modal.Title>
             </Modal.Header>
@@ -1749,7 +1794,7 @@ return (
           </Modal>
 
 
-          <Modal show={showModal2} onHide={handleCloseModal2} dialogClassName="custom-modal" >
+          <Modal show={showModal2} onHide={handleCloseModal2} dialogClassName="custom-modal"  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title>ULTIMA VENTA</Modal.Title>
             </Modal.Header>   
@@ -1889,7 +1934,7 @@ return (
           </Modal>
     
     
-          <Modal show={showModal3} onHide={handleCloseModal3}>
+          <Modal show={showModal3} onHide={handleCloseModal3}  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title>GUARDAR VENTA</Modal.Title>
             </Modal.Header>   
@@ -1937,7 +1982,37 @@ return (
             </Modal.Footer>
           </Modal>
         
+<div className="container-fluid">
+  <div
+    style={{
+      maxWidth: "420px",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px"
+    }}
+  >
+    <input
+      className="form-control"
+      type="text"
+      placeholder="Buscar un producto..."
+      onChange={buscador}
+      ref={inputBuscarRef}
+      value={buscar}
+    />
 
+    <Button
+      onClick={limpiarInput}
+      variant="warning"
+      style={{ whiteSpace: "nowrap", color: "#fff" }}
+    >
+      LIMPIAR
+    </Button>
+  </div>
+</div>
+
+
+
+<br />
           <div className='container-fluid table'>
   <Table striped bordered hover className='custom-table'>
     <thead className='custom-table-header'>
@@ -2076,7 +2151,7 @@ return (
   </Table>
 </div>
 <h3 style ={{color: '#1a1a1aff', textAlign: 'end', marginRight: '100px' }}><strong>SUBTOTAL: {formatCurrency(calcularTotal())}</strong></h3>
-          <Modal show={showModal8} onHide={handleCloseModal8} size="lg" centered>
+          <Modal show={showModal8} onHide={handleCloseModal8} size="lg" centered  onExited={focusBuscar}>
         <Modal.Header closeButton>
           <Modal.Title>PRODUCTOS</Modal.Title>
         </Modal.Header>
@@ -2154,6 +2229,7 @@ return (
               size="lg"
               aria-labelledby="contained-modal-title-vcenter"
               centered
+               onExited={focusBuscar}
             >
               <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
@@ -2206,7 +2282,7 @@ return (
       
       
       
-      <Modal show={showModal4} onHide={handleCloseModal4}>
+      <Modal show={showModal4} onHide={handleCloseModal4}  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title> VENTA GUARDADA</Modal.Title>
             </Modal.Header>   
@@ -2249,8 +2325,8 @@ return (
           </Modal>
 
 
-          <Modal show={showModal9} onHide={handleCloseModal9}>
-            <Modal.Header closeButton>
+          <Modal show={showModal9} onHide={handleCloseModal9} onExited={focusBuscar}>
+            <Modal.Header closeButton  >
               <Modal.Title>INGRESOS Y EGRESOS </Modal.Title>
             </Modal.Header>   
             <Modal.Body >    
@@ -2274,8 +2350,8 @@ return (
             </Modal.Footer>
           </Modal>
 
-          <Modal show={showModal10} onHide={handleCloseModal10}>
-            <Modal.Header closeButton>
+          <Modal show={showModal10} onHide={handleCloseModal10} onExited={focusBuscar}>
+            <Modal.Header closeButton  >
               <Modal.Title>BUSCAR PRODUCTO </Modal.Title>
             </Modal.Header>   
             <Modal.Body >    
@@ -2317,8 +2393,8 @@ return (
 
 
 
-          <Modal show={showModal5} onHide={handleCloseModal5}>
-            <Modal.Header closeButton>
+          <Modal show={showModal5} onHide={handleCloseModal5} onExited={focusBuscar}>
+            <Modal.Header closeButton  >
               <Modal.Title>INGRESOS Y EGRESOS </Modal.Title>
             </Modal.Header>   
             <Modal.Body >    
@@ -2332,7 +2408,7 @@ return (
              
             </Modal.Footer>
           </Modal>
-          <Modal show={showModal6} onHide={handleCloseModal6}>
+          <Modal show={showModal6} onHide={handleCloseModal6}  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title >REGISTRAR INGRESO</Modal.Title>
             </Modal.Header>   
@@ -2361,7 +2437,7 @@ return (
             </Modal.Footer>
           </Modal>
 
-          <Modal show={showModal7} onHide={handleCloseModal7}>
+          <Modal show={showModal7} onHide={handleCloseModal7}  onExited={focusBuscar}>
   <Modal.Header closeButton>
     <Modal.Title>REGISTRAR EGRESO </Modal.Title>
   </Modal.Header>
@@ -2470,7 +2546,7 @@ return (
 </div>
 
       
-    <Modal show={showModal12} onHide={handleCloseModal12}>
+    <Modal show={showModal12} onHide={handleCloseModal12}  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title >CREAR PRODUCTO</Modal.Title>
             </Modal.Header>   
@@ -2504,7 +2580,7 @@ return (
 
           
         {/* MODAL EGRESOS */}
-        <Modal show={showModalMotivoEgresos} onHide={handleCloseModalMotivosEgesos}>
+        <Modal show={showModalMotivoEgresos} onHide={handleCloseModalMotivosEgesos} onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title >MOTIVOS DE EGRESOS</Modal.Title>
             </Modal.Header>   
@@ -2565,7 +2641,7 @@ return (
 
 
       {/* MODAL PRODUCTOS VENTA */}
-      <Modal size='lg' show={showModalVerProductosVenta} onHide={handleCloseModalVerProductosVenta}>
+      <Modal size='lg' show={showModalVerProductosVenta} onHide={handleCloseModalVerProductosVenta}  onExited={focusBuscar}>
             <Modal.Header closeButton>
               <Modal.Title >DETALLE VENTA</Modal.Title>
             </Modal.Header>   

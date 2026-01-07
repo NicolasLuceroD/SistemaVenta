@@ -140,33 +140,34 @@ const ventaTotalxMES = (req, res) => {
 
   
   const ventatotalxCategoria = (req, res) => {
-    const fechaSeleccionada = req.query.formattedDate;
-    const Id_sucursal = req.query.id_sucursal;
-    connection.query(
-        `SELECT 
+  const fechaSeleccionada = req.query.formattedDate;
+  const Id_sucursal = req.query.id_sucursal;
+
+  connection.query(
+    `SELECT 
         c.descripcion_categoria, 
-        SUM(dv.CantidadVendida * p.precioVenta) AS monto_total_ventas_categoria 
-        FROM 
-        venta v 
-        JOIN 
-        detalleventa dv ON v.Id_venta = dv.Id_venta 
-        JOIN 
-        producto p ON dv.Id_producto = p.Id_producto 
-        JOIN 
-        categoria c ON p.Id_categoria = c.Id_categoria 
-        WHERE 
-        DATE(v.fecha_registro) = ? 
-        AND
-        v.Id_sucursal = ?
-        GROUP BY 
-        c.descripcion_categoria;`,
-      [fechaSeleccionada,Id_sucursal], 
-      (error, results) => {                                                                                                                                                                                                               
-        if (error) throw error; 
-        res.json(results);
-      }
-    );
-  };
+        SUM(
+          dv.CantidadVendida * 
+          CASE 
+            WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+            WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+          END
+        ) AS monto_total_ventas_categoria 
+     FROM venta v 
+     JOIN detalleventa dv ON v.Id_venta = dv.Id_venta 
+     JOIN producto p ON dv.Id_producto = p.Id_producto 
+     JOIN categoria c ON p.Id_categoria = c.Id_categoria 
+     WHERE DATE(v.fecha_registro) = ? 
+       AND v.Id_sucursal = ?
+     GROUP BY c.descripcion_categoria;`,
+    [fechaSeleccionada, Id_sucursal],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
+
 
   const ventatotalxPaquetes = (req, res) => {
     const fechaSeleccionada = req.query.formattedDate;
@@ -225,58 +226,62 @@ SELECT
 
 
 
-  const ventatotalxCategoriaxMES = (req, resp) => {
-    const { formattedFirstDayOfMonth, formattedLastDayOfMonth } = req.query;
-    connection.query(
-      `SELECT 
+const ventatotalxCategoriaxMES = (req, resp) => {
+  const { formattedFirstDayOfMonth, formattedLastDayOfMonth } = req.query;
+
+  connection.query(
+    `SELECT 
         c.descripcion_categoria, 
-        SUM(dv.CantidadVendida * p.precioVenta) AS monto_total_ventas_categoria 
-      FROM 
-        venta v 
-        JOIN 
-        detalleventa dv ON v.Id_venta = dv.Id_venta 
-        JOIN 
-        producto p ON dv.Id_producto = p.Id_producto 
-        JOIN 
-        categoria c ON p.Id_categoria = c.Id_categoria 
-      WHERE 
-        v.fecha_registro BETWEEN ? AND ?
-      GROUP BY 
-        c.descripcion_categoria`,
-      [formattedFirstDayOfMonth, formattedLastDayOfMonth],
-      (error, results) => {
-        if (error) throw error;
-        resp.json(results);
-      }
-    );
-  };
+        SUM(
+          dv.CantidadVendida * 
+          CASE 
+            WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+            WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+          END
+        ) AS monto_total_ventas_categoria 
+     FROM venta v 
+     JOIN detalleventa dv ON v.Id_venta = dv.Id_venta 
+     JOIN producto p ON dv.Id_producto = p.Id_producto 
+     JOIN categoria c ON p.Id_categoria = c.Id_categoria 
+     WHERE v.fecha_registro BETWEEN ? AND ?
+     GROUP BY c.descripcion_categoria;`,
+    [formattedFirstDayOfMonth, formattedLastDayOfMonth],
+    (error, results) => {
+      if (error) throw error;
+      resp.json(results);
+    }
+  );
+};
+
   
   
-  const verGanancia = (req, res) => {
-    const fechaSeleccionada = req.query.formattedDate;
-    const Id_sucursal = req.query.id_sucursal;
-    connection.query(
-      `SELECT 
-          SUM((p.precioVenta - p.precioCompra) * dv.CantidadVendida) AS ganancia_total
-       FROM 
-          venta v
-       INNER JOIN 
-          detalleventa dv ON v.Id_venta = dv.Id_venta
-       INNER JOIN 
-          producto p ON dv.Id_producto = p.Id_producto
-       WHERE 
-          DATE(v.fecha_registro) = ?
-      AND  
-         v.Id_sucursal = ?  
-        
-          ;`,
-      [fechaSeleccionada, Id_sucursal], 
-      (error, results) => {                                                                                                                                                                                                               
-        if (error) throw error;
-        res.json(results);
-      }
-    );
-  };
+const verGanancia = (req, res) => {
+  const fechaSeleccionada = req.query.formattedDate;
+  const Id_sucursal = req.query.id_sucursal;
+
+  connection.query(
+    `SELECT 
+        SUM(
+          (
+            CASE 
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+            END
+            - p.precioCompra
+          ) * dv.CantidadVendida
+        ) AS ganancia_total
+     FROM venta v
+     INNER JOIN detalleventa dv ON v.Id_venta = dv.Id_venta
+     INNER JOIN producto p ON dv.Id_producto = p.Id_producto
+     WHERE DATE(v.fecha_registro) = ?
+       AND v.Id_sucursal = ?;`,
+    [fechaSeleccionada, Id_sucursal],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
 
   
   const verGananciaPaquetes = (req, res) => {
@@ -338,29 +343,34 @@ SELECT
     );
   };
   
-  const verGananciaXUsuario = (req, res) => {
-    const fechaSeleccionada = req.query.formattedDate;
-    const Id_usuario = req.query.Id_usuario;
-    connection.query(
-      `SELECT 
-          SUM((p.precioVenta - p.precioCompra) * dv.CantidadVendida) AS ganancia_total
-       FROM 
-          venta v
-       INNER JOIN 
-          detalleventa dv ON v.Id_venta = dv.Id_venta
-       INNER JOIN 
-          producto p ON dv.Id_producto = p.Id_producto
-       WHERE 
-          DATE(v.fecha_registro) = ?
-	   AND 
-		 v.Id_usuario = ?`,
-      [fechaSeleccionada, Id_usuario], 
-      (error, results) => {                                                                                                                                                                                                               
-        if (error) throw error;
-        res.json(results);
-      }
-    );
-  };
+const verGananciaXUsuario = (req, res) => {
+  const fechaSeleccionada = req.query.formattedDate;
+  const Id_usuario = req.query.Id_usuario;
+
+  connection.query(
+    `SELECT 
+        SUM(
+          (
+            CASE 
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+            END
+            - p.precioCompra
+          ) * dv.CantidadVendida
+        ) AS ganancia_total
+     FROM venta v
+     INNER JOIN detalleventa dv ON v.Id_venta = dv.Id_venta
+     INNER JOIN producto p ON dv.Id_producto = p.Id_producto
+     WHERE DATE(v.fecha_registro) = ?
+       AND v.Id_usuario = ?;`,
+    [fechaSeleccionada, Id_usuario],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
+
   
   
   
@@ -485,35 +495,37 @@ SELECT
     );
   };
   
-  const GananciaXdepartamento = (req, res) => {
-    const fechaSeleccionada = req.query.formattedDate;
-    const Id_sucursal = req.query.id_sucursal;
-    connection.query(`
-        SELECT 
-            c.nombre_categoria,
-            SUM((p.precioVenta - p.precioCompra) * dv.CantidadVendida) AS ganancia_por_categoria
-        FROM 
-            venta v
-        INNER JOIN 
-            detalleventa dv ON v.Id_venta = dv.Id_venta
-        INNER JOIN 
-            producto p ON dv.Id_producto = p.Id_producto
-        INNER JOIN 
-            categoria c ON p.id_categoria = c.Id_categoria
-        WHERE 
-            DATE(v.fecha_registro) = ?
-        AND 
-          v.Id_sucursal = ?
-        GROUP BY 
-            c.nombre_categoria;
-        `,
-        [fechaSeleccionada,Id_sucursal], 
-        (error, results) => {
-          if (error) throw error;
-          res.json(results);
-        }
-    );
-  }
+const GananciaXdepartamento = (req, res) => {
+  const fechaSeleccionada = req.query.formattedDate;
+  const Id_sucursal = req.query.id_sucursal;
+
+  connection.query(
+    `SELECT 
+        c.nombre_categoria,
+        SUM(
+          (
+            CASE 
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+            END
+            - p.precioCompra
+          ) * dv.CantidadVendida
+        ) AS ganancia_por_categoria
+     FROM venta v
+     INNER JOIN detalleventa dv ON v.Id_venta = dv.Id_venta
+     INNER JOIN producto p ON dv.Id_producto = p.Id_producto
+     INNER JOIN categoria c ON p.Id_categoria = c.Id_categoria
+     WHERE DATE(v.fecha_registro) = ?
+       AND v.Id_sucursal = ?
+     GROUP BY c.nombre_categoria;`,
+    [fechaSeleccionada, Id_sucursal],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
+
 
   const verEntradaEfectivo = (req, response) => {
     const fechaSeleccionada = req.query.formattedDate;
@@ -633,42 +645,37 @@ const verEmpleadoConVentaXMES = (req, response) => {
 
 
 
-const ventaxCategoriaUsuarios = (req,res) =>{
-  const {formattedDate,Id_sucursal,Id_usuario,Id_caja} = req.query
-  console.log('FECHA', formattedDate)
-  console.log('Id_sucursal', Id_sucursal)
-  console.log('Id_usuario', Id_usuario)
-  console.log('Id_Caja', Id_caja)
-  connection.query(`
-SELECT 
-      c.descripcion_categoria, 
-      SUM(dv.CantidadVendida * p.precioVenta) AS monto_total_ventas_categoria 
-      FROM 
-      venta v 
-      JOIN 
-      detalleventa dv ON v.Id_venta = dv.Id_venta 
-      JOIN 
-      producto p ON dv.Id_producto = p.Id_producto 
-      JOIN 
-      categoria c ON p.Id_categoria = c.Id_categoria 
-	  JOIN 
-      caja cj ON cj.Id_caja = v.Id_caja 
-      WHERE 
-      DATE(v.fecha_registro) = ? 
-      AND
-      v.Id_sucursal = ?
-      AND
-      v.Id_usuario = ?
-      AND
-      cj.Id_caja = ?
-      GROUP BY 
-      c.descripcion_categoria;`,[formattedDate, Id_sucursal,Id_usuario,Id_caja],
-  (error,results) =>{                                                                                                                                                                                                               
-      if(error)throw error
-      res.json(results)
-  }
-  )
-}
+const ventaxCategoriaUsuarios = (req, res) => {
+  const { formattedDate, Id_sucursal, Id_usuario, Id_caja } = req.query;
+
+  connection.query(
+    `SELECT 
+        c.descripcion_categoria, 
+        SUM(
+          dv.CantidadVendida * 
+          CASE 
+            WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+            WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+          END
+        ) AS monto_total_ventas_categoria 
+     FROM venta v 
+     JOIN detalleventa dv ON v.Id_venta = dv.Id_venta 
+     JOIN producto p ON dv.Id_producto = p.Id_producto 
+     JOIN categoria c ON p.Id_categoria = c.Id_categoria 
+     JOIN caja cj ON cj.Id_caja = v.Id_caja 
+     WHERE DATE(v.fecha_registro) = ? 
+       AND v.Id_sucursal = ?
+       AND v.Id_usuario = ?
+       AND cj.Id_caja = ?
+     GROUP BY c.descripcion_categoria;`,
+    [formattedDate, Id_sucursal, Id_usuario, Id_caja],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
+
 
 
 const verPagosCreditos = (req,res)=>{
@@ -691,25 +698,28 @@ const verPagosCreditos = (req,res)=>{
 }
 
 
-const verProductosEliminados =(req,res)=>{
-  const formattedDate = req.params.fechaSeleccionada
+const verProductosEliminados = (req, res) => {
+  const formattedDate = req.params.fechaSeleccionada;
+
   connection.query(
-    `select p.nombre_producto ,
-	  pe.precioVentaProducto, pe.Motivo, pe.fechaRegistro,
-       pe.Id_venta,
-       u.nombre_usuario
-from productosEliminados pe
-INNER JOIN producto p
-ON pe.Id_producto = p.Id_producto
-INNER JOIN usuarios u
-ON pe.Id_usuario = u.Id_usuario
-WHERE date(pe.fechaRegistro) = ? `,[formattedDate],
-(error,results)=>{
-  if(error) throw error
-  res.json(results)
-}
-)
-}
+    `SELECT 
+        p.nombre_producto,
+        pe.precioVentaProducto, pe.Motivo, pe.fechaRegistro,
+        pe.Id_venta,
+        u.nombre_usuario
+     FROM productosEliminados pe
+     INNER JOIN producto p ON pe.Id_producto = p.Id_producto
+     INNER JOIN usuarios u ON pe.Id_usuario = u.Id_usuario
+     INNER JOIN venta v ON v.Id_venta = pe.Id_venta
+     WHERE DATE(pe.fechaRegistro) = ?;`,
+    [formattedDate],
+    (error, results) => {
+      if (error) throw error;
+      res.json(results);
+    }
+  );
+};
+
 
 module.exports = {verEmpleadoConVentaXMES, verGananciaXUsuario, verPlataLoginConUsuario,
   importeVentaTotalXUsuario, verEntradaEfectivoConUsuario,ventaTotalconUsuario,ventaTotal,

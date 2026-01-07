@@ -10,34 +10,60 @@ const verStock = (req,res) =>{
     } )
 }
 
-const verStock1 = (req,res) =>{ 
-    connection.query(`SELECT 
-    s.cantidad, s.Id_stock,
-    p.nombre_producto, p.precioCompra, p.precioVenta, p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,
-    suc.nombre_sucursal, suc.Id_sucursal
-    FROM stock s
-    INNER JOIN producto p ON s.Id_producto = p.Id_producto
-    INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
-    WHERE s.Id_sucursal = 1
-    ;`, (error,results) =>{
-        if(error)throw error
-        res.json(results)
-    } )
-}
-const verStock2 = (req,res) =>{ 
-    connection.query(`SELECT 
-    s.cantidad, s.Id_stock, 
-    p.nombre_producto, p.precioCompra, p.precioVenta, p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,
-    suc.nombre_sucursal, suc.Id_sucursal
-    FROM stock s
-    INNER JOIN producto p ON s.Id_producto = p.Id_producto
-    INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
-    WHERE s.Id_sucursal = 2
-    ;`, (error,results) =>{
-        if(error)throw error
-        res.json(results)
-    } )
-}
+
+
+const verStock1 = (req, res) => { 
+  connection.query(
+    `SELECT 
+        s.cantidad, s.Id_stock,
+        p.nombre_producto, 
+        p.precioCompra,
+        p.precioVentaSucGuillermina AS precioVenta, 
+        p.precioVentaSucGuillermina,
+        p.precioVentaSucSanMartin,
+        p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,
+        p.codProducto, p.PrecioMayoreo, p.inventarioMinimo,
+        suc.nombre_sucursal, suc.Id_sucursal
+     FROM stock s
+     INNER JOIN producto p ON s.Id_producto = p.Id_producto
+     INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
+     WHERE s.Id_sucursal = 1;`,
+    (error, results) => {
+      if (error) {
+        console.error("Error verStock1:", error);
+        return res.status(500).json({ error: "Error al obtener stock sucursal 1" });
+      }
+      res.json(results);
+    }
+  );
+};
+
+const verStock2 = (req, res) => { 
+  connection.query(
+    `SELECT 
+        s.cantidad, s.Id_stock,
+        p.nombre_producto, 
+        p.precioCompra,
+        p.precioVentaSucSanMartin AS precioVenta,    
+        p.precioVentaSucGuillermina,
+        p.precioVentaSucSanMartin,
+        p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,
+        p.codProducto, p.PrecioMayoreo, p.inventarioMinimo,
+        suc.nombre_sucursal, suc.Id_sucursal
+     FROM stock s
+     INNER JOIN producto p ON s.Id_producto = p.Id_producto
+     INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
+     WHERE s.Id_sucursal = 2;`,
+    (error, results) => {
+      if (error) {
+        console.error("Error verStock2:", error);
+        return res.status(500).json({ error: "Error al obtener stock sucursal 2" });
+      }
+      res.json(results);
+    }
+  );
+};
+
 
 
 
@@ -86,22 +112,38 @@ const correlativaProduc= (req,res)=>{
 }
 
 
+const stockConInvBajo = (req, res) => {
+  connection.query(
+    `SELECT 
+        s.cantidad, s.Id_stock,
+        p.nombre_producto, 
+        p.precioCompra,
+        CASE 
+          WHEN s.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+          WHEN s.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+          ELSE p.precioVentaSucGuillermina
+        END AS precioVenta,                           
+        p.precioVentaSucGuillermina,
+        p.precioVentaSucSanMartin,
+        p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,
+        p.codProducto, p.inventarioMinimo, p.PrecioMayoreo,
+        suc.nombre_sucursal, suc.Id_sucursal
+     FROM stock s
+     INNER JOIN producto p ON s.Id_producto = p.Id_producto
+     INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
+     WHERE s.cantidad < p.inventarioMinimo
+       AND p.Estado = 1;`,
+    (error, results) => {
+      if (error) {
+        console.error("Error stockConInvBajo:", error);
+        return res.status(500).json({ error: "Error al obtener stock con inventario bajo" });
+      }
+      res.json(results);
+    }
+  );
+};
 
-const stockConInvBajo = (req,res) =>{
-    connection.query(`
-    SELECT 
-    s.cantidad, s.Id_stock, 
-    p.nombre_producto, p.precioCompra, p.precioVenta, p.descripcion_producto, p.Id_producto, p.FechaRegistro, p.tipo_venta,p.codProducto,p.inventarioMinimo,
-    suc.nombre_sucursal
-    FROM stock s
-    INNER JOIN producto p ON s.Id_producto = p.Id_producto
-    INNER JOIN sucursales suc ON s.Id_sucursal = suc.Id_sucursal
-    WHERE s.cantidad  < p.inventarioMinimo;
-    `,(error,results)=>{
-        if(error) throw error
-        res.json(results)
-    })
-}
+
  
 const validarStock = (req,res) =>{
     const {Id_producto, Id_sucursal} = req.params

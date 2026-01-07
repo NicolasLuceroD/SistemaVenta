@@ -48,19 +48,26 @@ const correlativa = (req, res) => {
 
 
 const verLaVentaCompleta = (req, res) => {
-  const Id_sucursal = req.params.Id_sucursal;
-  connection.query(`
+  const Id_sucursal = Number(req.params.Id_sucursal);
+
+  connection.query(
+    `
     SELECT 
       v.Id_venta, 
       v.precioTotal_venta, 
       v.fecha_registro,
+      v.Id_sucursal,                                  -- ✅ lo traigo por si lo querés usar
       c.Id_cliente, 
       c.nombre_cliente, 
       mt.Id_metodoPago, 
       mt.tipo_metodoPago,
       p.Id_producto, 
       p.nombre_producto, 
-      p.precioVenta, 
+      CASE 
+        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+        ELSE p.precioVentaSucGuillermina
+      END AS precioVenta,                             -- ✅ alias compatible con tu front
       p.PrecioMayoreo,
       p.precioCompra,
       dv.Id_detalleVenta, 
@@ -71,104 +78,96 @@ const verLaVentaCompleta = (req, res) => {
       pa.nombre_promocion,
       pa.precio_paquete,
       pa.Id_paquete
-    FROM 
-      detalleventa dv
-    LEFT JOIN 
-      venta v ON dv.Id_venta = v.Id_venta
-    LEFT JOIN 
-      producto p ON dv.Id_producto = p.Id_producto
-    LEFT JOIN 
-      cliente c ON v.Id_cliente = c.Id_cliente
-    LEFT JOIN 
-      metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
-    LEFT JOIN 
-      usuarios u ON v.Id_usuario = u.Id_usuario
-    LEFT JOIN
-      paquete pa ON dv.Id_paquete = pa.Id_paquete
-    WHERE 
-      v.Id_sucursal = ?
-    ORDER BY
-      v.fecha_registro DESC;
-  `, [Id_sucursal], (error, results) => {
-    if (error) {
-      console.error("Error al obtener las ventas:", error);
-      res.status(500).send("Error interno del servidor al obtener las ventas");
-      return;
+    FROM detalleventa dv
+    LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
+    LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
+    LEFT JOIN cliente c ON v.Id_cliente = c.Id_cliente
+    LEFT JOIN metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
+    LEFT JOIN usuarios u ON v.Id_usuario = u.Id_usuario
+    LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
+    WHERE v.Id_sucursal = ?
+    ORDER BY v.fecha_registro DESC;
+    `,
+    [Id_sucursal],
+    (error, results) => {
+      if (error) {
+        console.error("Error al obtener las ventas:", error);
+        return res.status(500).send("Error interno del servidor al obtener las ventas");
+      }
+
+      const ventasAgrupadas = results.reduce((acc, item) => {
+        if (!acc[item.Id_venta]) {
+          acc[item.Id_venta] = {
+            Id_venta: item.Id_venta,
+            descripcion_venta: item.descripcion_venta,
+            precioTotal_venta: item.precioTotal_venta,
+            fecha_registro: item.fecha_registro,
+            cliente: {
+              Id_cliente: item.Id_cliente,
+              nombre_cliente: item.nombre_cliente,
+            },
+            metodoPago: {
+              Id_metodoPago: item.Id_metodoPago,
+              tipo_metodoPago: item.tipo_metodoPago,
+            },
+            usuarios: {
+              nombre_usuario: item.nombre_usuario,
+            },
+            paquetes: [],
+            productos: [],
+          };
+        }
+
+        const venta = acc[item.Id_venta];
+
+        // ✅ Productos reales
+        const productoExistente = venta.productos.find(p => p.Id_producto === item.Id_producto);
+        if (!productoExistente && item.Id_producto) {
+          venta.productos.push({
+            Id_producto: item.Id_producto,
+            nombre_producto: item.nombre_producto,
+            descripcion_producto: item.descripcion_producto,
+            precioVenta: item.precioVenta,           // ✅ ya viene por sucursal
+            precioCompra: item.precioCompra,
+            PrecioMayoreo: item.PrecioMayoreo,
+            cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+            Id_detalleVenta: item.Id_detalleVenta,
+            descripcion_detalleVenta: item.descripcion_detalleVenta,
+          });
+        }
+
+        // ✅ Productos comunes
+        if (!item.Id_producto && item.productocomun) {
+          venta.productos.push({
+            Id_producto: `comun-${item.Id_detalleVenta}`,
+            nombre_producto: item.productocomun,
+            descripcion_producto: "Producto común",
+            precioVenta: parseFloat(item.precioproductocomun) || 0,
+            precioCompra: 0,
+            PrecioMayoreo: 0,
+            cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+            Id_detalleVenta: item.Id_detalleVenta,
+            descripcion_detalleVenta: item.descripcion_detalleVenta,
+          });
+        }
+
+        // ✅ Paquetes
+        const paqueteExistente = venta.paquetes.find(p => p.Id_paquete === item.Id_paquete);
+        if (!paqueteExistente && item.Id_paquete) {
+          venta.paquetes.push({
+            Id_paquete: item.Id_paquete,
+            nombre_promocion: item.nombre_promocion,
+            precio_paquete: item.precio_paquete,
+            cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+          });
+        }
+
+        return acc;
+      }, {});
+
+      res.json(Object.values(ventasAgrupadas));
     }
-
-    const ventasAgrupadas = results.reduce((acc, item) => {
-      if (!acc[item.Id_venta]) {
-        acc[item.Id_venta] = {
-          Id_venta: item.Id_venta,
-          descripcion_venta: item.descripcion_venta,
-          precioTotal_venta: item.precioTotal_venta,
-          fecha_registro: item.fecha_registro,
-          cliente: {
-            Id_cliente: item.Id_cliente,
-            nombre_cliente: item.nombre_cliente,
-          },
-          metodoPago: {
-            Id_metodoPago: item.Id_metodoPago,
-            tipo_metodoPago: item.tipo_metodoPago,
-          },
-          usuarios: {
-            nombre_usuario: item.nombre_usuario
-          },
-          paquetes: [],
-          productos: []
-        };
-      }
-
-      const venta = acc[item.Id_venta];
-
-      // ✅ Productos reales
-      const productoExistente = venta.productos.find(p => p.Id_producto === item.Id_producto);
-      if (!productoExistente && item.Id_producto) {
-        venta.productos.push({
-          Id_producto: item.Id_producto,
-          nombre_producto: item.nombre_producto,
-          descripcion_producto: item.descripcion_producto,
-          precioVenta: item.precioVenta, 
-          precioCompra: item.precioCompra,
-          PrecioMayoreo: item.PrecioMayoreo,
-          cantidadVendida: parseFloat(item.CantidadVendida) || 0,
-          Id_detalleVenta: item.Id_detalleVenta,
-          descripcion_detalleVenta: item.descripcion_detalleVenta,
-        });
-      }
-
-      // ✅ Productos comunes
-      if (!item.Id_producto && item.productocomun) {
-        venta.productos.push({
-          Id_producto: `comun-${item.Id_detalleVenta}`,
-          nombre_producto: item.productocomun,
-          descripcion_producto: 'Producto común',
-          precioVenta: parseFloat(item.precioproductocomun) || 0,
-          precioCompra: 0,
-          PrecioMayoreo: 0,
-          cantidadVendida: parseFloat(item.CantidadVendida) || 0,
-          Id_detalleVenta: item.Id_detalleVenta,
-          descripcion_detalleVenta: item.descripcion_detalleVenta,
-        });
-      }
-
-      // ✅ Paquetes
-      const paqueteExistente = venta.paquetes.find(p => p.Id_paquete === item.Id_paquete);
-      if (!paqueteExistente && item.Id_paquete) {
-        venta.paquetes.push({
-          Id_paquete: item.Id_paquete,
-          nombre_promocion: item.nombre_promocion,
-          precio_paquete: item.precio_paquete,
-          cantidadVendida: parseFloat(item.CantidadVendida) || 0
-        });
-      }
-
-      return acc;
-    }, {});
-
-    const ventas = Object.values(ventasAgrupadas);
-    res.json(ventas);
-  });
+  );
 };
 
 
@@ -334,27 +333,41 @@ const EliminarProductoVenta = (req,res) =>{
     }
   )
 }
+const verVentaSeleccionada = (req, res) => {
+  const Id_venta = req.params.Id_venta;
 
-const verVentaSeleccionada = (req,res) =>{
- const Id_venta = req.params.Id_venta
-
- connection.query(`select p.nombre_producto, p.Id_producto, p.precioVenta,
-	   pa.nombre_promocion,pa.precio_paquete,
-	   v.Id_venta, v.precioTotal_venta,
-       dv.Id_detalleVenta, dv.CantidadVendida
-FROM detalleventa dv
-LEFT JOIN producto p
-ON dv.Id_producto = p.Id_producto
-LEFT JOIN venta v
-ON dv.Id_venta = v.Id_venta
-LEFT JOIN paquete pa
-ON dv.Id_paquete = pa.Id_paquete
-WHERE v.Id_venta = ?;
-`,[Id_venta],(error,results)=>{
-  if(error) throw error
-  res.json(results)
- })
-}
+  connection.query(
+    `
+    SELECT 
+      p.nombre_producto, 
+      p.Id_producto, 
+      CASE 
+        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+        ELSE p.precioVentaSucGuillermina
+      END AS precioVenta,                                
+      pa.nombre_promocion,
+      pa.precio_paquete,
+      v.Id_venta, 
+      v.precioTotal_venta,
+      dv.Id_detalleVenta, 
+      dv.CantidadVendida
+    FROM detalleventa dv
+    LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
+    LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
+    LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
+    WHERE v.Id_venta = ?;
+    `,
+    [Id_venta],
+    (error, results) => {
+      if (error) {
+        console.error("Error verVentaSeleccionada:", error);
+        return res.status(500).json({ error: "Error al obtener la venta seleccionada" });
+      }
+      res.json(results);
+    }
+  );
+};
 
 
 const actualizarPrecioVenta = (req,res) =>{

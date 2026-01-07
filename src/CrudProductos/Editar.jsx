@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Productos from "../components/Productos.jsx"
 import { Button } from "react-bootstrap"
-import  { useState, useEffect,useContext } from 'react';
+import  { useState, useEffect,useContext ,useCallback} from 'react';
 import axios from 'axios';
 import {
     MDBInputGroup,
@@ -28,7 +28,8 @@ const Editar = () => {
     const [nombre_producto, setnombre_Producto] = useState('');
     const [descripcion_producto, setdescripcion_Producto] = useState('');
     const [precioCompra, setPrecioCompra] = useState('');
-    const [precioVenta, setPrecioVenta] = useState('');
+    const [precioVentaSucGuillermina, setPrecioVentaSucGuillermina] = useState('');
+    const [precioVentaSucSanMartin, setPrecioVentaSucSanMartin] = useState('');
     const [Id_categoria, setId_categoria] = useState('0');
     const [tipo_venta, setTipoVenta] = useState('0');
     const [categorias, setCategorias] = useState([]);
@@ -77,6 +78,7 @@ const formatFecha = (fecha) => {
         axios.get(`${URL}productos`)
         .then((response) => {
             setVer(response.data);
+            console.log('a', response.data)
             setTotal(response.data.length)
         })
         .catch((error) => {
@@ -94,7 +96,7 @@ const formatFecha = (fecha) => {
         }
         axios.put(`${URL}productos/put/preciosXCategoria/${idCat}`,
         {    
-            precioVenta: precioNuevo,
+            precioVentaSucGuillermina: precioNuevo,
         }).then(()=>{
             alert('Productos editado')
             setPrecioNuevo("")
@@ -118,7 +120,8 @@ const formatFecha = (fecha) => {
             nombre_producto: nombre_producto,
             descripcion_producto: descripcion_producto,
             precioCompra: precioCompra,
-            precioVenta: precioVenta,
+            precioVentaSucGuillermina: precioVentaSucGuillermina,
+            precioVentaSucSanMartin: precioVentaSucSanMartin,
             Id_categoria: catXproducto,
             tipo_venta: tipo_venta,
             codProducto: codProducto,
@@ -153,7 +156,8 @@ const formatFecha = (fecha) => {
         setnombre_Producto(val.nombre_producto)
         setdescripcion_Producto(val.descripcion_producto)
         setPrecioCompra(val.precioCompra)
-        setPrecioVenta(val.precioVenta)
+        setPrecioVentaSucGuillermina(val.precioVentaSucGuillermina)
+        setPrecioVentaSucSanMartin(val.precioVentaSucSanMartin)
         setId_categoria(val.Id_categoria)
         setTipoVenta(val.tipo_venta)
         setCodProducto(val.codProducto)
@@ -168,7 +172,8 @@ const formatFecha = (fecha) => {
         setnombre_Producto('')
         setdescripcion_Producto('')
         setPrecioCompra('')
-        setPrecioVenta('')
+        setPrecioVentaSucGuillermina('')
+        setPrecioVentaSucSanMartin('')
         setId_categoria('')
         setTipoVenta(0)
         setDepto(0)
@@ -274,12 +279,20 @@ const buscador = (e) => {
         <input className='form-control' type='number' placeholder="Precio costo" value={precioCompra} onChange={(e) => setPrecioCompra(e.target.value)} />
       </MDBInputGroup>
       
-      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO VENTA</p>
+      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO VENTA SUC. GUILLERMINA</p>
       <MDBInputGroup className='mb-3' >
       <span className="input-group-text">
                     <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
             </span>
-        <input className='form-control' type='email' placeholder="Precio venta" value={precioVenta} onChange={(e) => setPrecioVenta(e.target.value)}/>
+        <input className='form-control' type='email' placeholder="PRECIO VENTA SUC. GUILLERMINA" value={precioVentaSucGuillermina} onChange={(e) => setPrecioVentaSucGuillermina(e.target.value)}/>
+      </MDBInputGroup>
+
+      <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO VENTA SUC. SAN MARTIN</p>
+      <MDBInputGroup className='mb-3' >
+      <span className="input-group-text">
+                    <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
+            </span>
+        <input className='form-control' type='email' placeholder="PRECIO VENTA SUC. SAN MARTIN" value={precioVentaSucSanMartin} onChange={(e) => setPrecioVentaSucSanMartin(e.target.value)}/>
       </MDBInputGroup>
 
       <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO HASTA 23HS</p>
@@ -289,23 +302,7 @@ const buscador = (e) => {
             </span>
         <input className='form-control' type='email' placeholder="Precio hasta 23hs" value={precioMayoreo} onChange={(e) => setPrecioMayoreo(e.target.value)}/>
       </MDBInputGroup>
-    
-      {/* <MDBInputGroup className="mb-3">
-    <span className="input-group-text">
-            <FontAwesomeIcon icon={faCalendar} size="lg" style={{color: "#01992f",}} />
-    </span>
-    <input 
-    className="form-control" 
-    type="date" 
-    placeholder="Fecha de vencimiento" 
-    value={fechaVencimiento} 
-    onChange={(e) => {
-        // Parsea la fecha al formato aaaa-mm-dd
-        const fecha = e.target.value.split('/').reverse().join('-');
-        setFechaVencimineto(fecha);
-    }} 
-    />
-    </MDBInputGroup> */}
+
   
      <h4 style={{display:'flex', flexDirection:'flex-start', marginTop:'50px'}}> TIPO DE VENTA</h4>
      <MDBInputGroup>
@@ -390,8 +387,8 @@ const buscador = (e) => {
                         <td>{producto.nombre_producto}</td>
                         <td>{producto.descripcion_producto}</td>
                         <td>{producto.tipo_venta}</td>
-                        <td className="precio-venta-actual"><strong>{formatCurrency(producto.precioVenta)}</strong></td>
-                        <td className="precio-venta-nuevo"><strong>${(parseFloat(producto.precioVenta) + parseFloat(producto.precioVenta * (precioNuevo / 100))).toFixed(2)}</strong></td>
+                        <td className="precio-venta-actual"><strong>{formatCurrency(producto.precioVentaSucGuillermina)}</strong></td>
+                        <td className="precio-venta-nuevo"><strong>${(parseFloat(producto.precioVentaSucGuillermina) + parseFloat(producto.precioVentaSucGuillermina * (precioNuevo / 100))).toFixed(2)}</strong></td>
                         <td>{producto.nombre_categoria}</td>
                         </tr>
                     ))
@@ -469,11 +466,13 @@ const buscador = (e) => {
                     <th>NOMBRE</th>
                     <th>DESCRIPCION</th>
                     <th>PRECIO COSTO</th>
-                    <th>PRECIO VENTA</th>    
+                    <th>PRECIO VENTA SUC GUILLERMINA</th>    
+                    <th>PRECIO VENTA SUC SAN MARTIN</th>    
                     <th>PRECIO MAYOREO</th>
                     <th>TIPO DE VENTA</th>
                     <th>DEPARTAMENTO</th>
-                    <th>GANANCIA</th>
+                    <th>GANANCIA SUC GUILLERMINA</th>
+                    <th>GANANCIA SUC SAN MARTIN</th>
                     <th>EDITAR</th>
                 </tr>
             </thead>
@@ -485,11 +484,13 @@ const buscador = (e) => {
                             <td>{val.nombre_producto}</td>
                             <td>{val.descripcion_producto}</td>
                             <td className="precio-costo"><strong>{formatCurrency(val.precioCompra)}</strong></td>
-                            <td className="precio-venta"><strong>{formatCurrency(val.precioVenta)}</strong></td>
+                            <td className="precio-venta"><strong>{formatCurrency(val.precioVentaSucGuillermina)}</strong></td>
+                            <td className="precio-venta"><strong>{formatCurrency(val.precioVentaSucSanMartin)}</strong></td>
                             <td className="precio-mayoreo"><strong>{formatCurrency(val.PrecioMayoreo)}</strong></td>
                             <td>{val.tipo_venta}</td>
                             <td>{val.nombre_categoria}</td>
-                            <td>{formatCurrency( val.precioVenta - val.precioCompra )}</td>
+                            <td>{formatCurrency( val.precioVentaSucGuillermina - val.precioCompra )}</td>
+                            <td>{formatCurrency( val.precioVentaSucSanMartin - val.precioCompra )}</td>
                             <td className="text-center">
                               <Button
                                 className="btn btn-warning"

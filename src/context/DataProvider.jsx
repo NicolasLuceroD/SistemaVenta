@@ -10,7 +10,7 @@ const DataProvider = ({ children }) => {
 
   // "/api/"    "http://localhost:2201/api/"
 
-  const URL = "http://localhost:2201/api/"
+  const URL =  "http://localhost:2201/api/"
   
   const traerSucursales = useCallback(async () => {
     try {
@@ -27,14 +27,27 @@ const DataProvider = ({ children }) => {
     }
   }, []);
 
-  const traerProductos = useCallback(async () => {
-    try {
-      const response = await axios.get(`${URL}productos`);
-      setProductos(response.data);
-    } catch (error) {
-      console.log('Error al traer los productos', error);
-    }
-  }, []);
+const traerProductos = useCallback(async () => {
+  try {
+    const idSucursal = Number(localStorage.getItem("sucursalId")) || 1;
+   const response = await axios.get(`${URL}productos?id_sucursal=${idSucursal}`);
+
+
+    const normalizados = (Array.isArray(response.data) ? response.data : []).map(p => ({
+      ...p,
+      // 👇 este campo lo seguís usando en todo tu sistema sin tocar nada más
+      precioVenta:
+        idSucursal === 1
+          ? Number(p.precioVentaSucGuillermina ?? p.precioVenta ?? 0)
+          : Number(p.precioVentaSucSanMartin ?? p.precioVenta ?? 0),
+    }));
+
+    setProductos(normalizados);
+  } catch (error) {
+    console.log("Error al traer los productos", error);
+  }
+}, [URL]);
+
 
   useEffect(() => {
     const fetchData = async () => {
