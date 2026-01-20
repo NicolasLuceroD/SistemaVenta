@@ -47,7 +47,7 @@ export default function Reportes() {
   const lastDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0);
 
   //ID DE SUCURSAL POR LOCALSTORAGE
-  const idSucursal = parseInt(localStorage.getItem("sucursalId"), 10);
+  const idSucursal = parseInt(sessionStorage.getItem("sucursalId"), 10);
 
 
   //FUNCION PARA TREAER EL NUMERO DE VENTAS TOTALES POR DEPARTAMENTO

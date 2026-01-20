@@ -77,8 +77,8 @@ const [tablaIngreso, setTablaIngreso] = useState([])
 const [tablaEgreso, setTablaEgreso]= useState([]) 
 const [nombreEmpleado, setNombreEmpleado] = useState("")
 const [usuarios, setUsuarios] = useState([])
-const Id_usuario = localStorage.getItem("idUsuario")
-const id_sucursal = localStorage.getItem("sucursalId")
+const Id_usuario = sessionStorage.getItem("idUsuario")
+const id_sucursal = sessionStorage.getItem("sucursalId")
 const [codigoMov,setCodigoMov] = useState('')
 const [ventaEliminada, setVentaEliminada] = useState(false)
 const [pagoCredito, setPagoCredito] = useState(false)
@@ -101,7 +101,7 @@ const {  URL } = useContext(DataContext);
 
 
   useEffect(() => {
-    const id_sucursal = localStorage.getItem("sucursalId");
+    const id_sucursal = sessionStorage.getItem("sucursalId");
     axios.get(`${URL}usuarios/sucursal/${id_sucursal}`)
       .then(response => {
         setUsuarios(response.data);
@@ -422,8 +422,6 @@ useEffect(()=>{
         .then((data) => setVentas(data))
         .then(() => setFechaCierre(time))
         .then(() =>{
-          console.log('ventas',ventas)
-          console.log('ventas',ventas)
           setVentaXcategoria([])
           setVentaXcliente([])
           setGanancia([])
@@ -524,42 +522,6 @@ useEffect(()=>{
     }
     
   };
-
-  // const handleClickCorteCajeroAdmin = () => { 
-  //   const idUsuario = parseInt(document.getElementById("usuarios").value);
-  //   const cajita = parseInt(document.getElementById("caja").value)
-  //    if(cajita === 0 || idUsuario === 0) {
-  //     alert ('Debe seleccionar un empleado y una caja')
-  //   }else{
-  //     setCorteIniciado(true)
-  //     setCorteSeleccionado(false)
-  //     fetchVentaTotalUsuario()
-  //     setVentaXcategoria([])
-  //     setVentaXcliente([])
-  //     verIngresoEfectivoUsuario()
-  //     verSalidaEfectivoUsuario()
-  //     setGanancia([])
-  //     setGanancia2([])
-  //     setTablaEgreso([])
-  //     setTablaIngreso([])
-  //     setTablaEgresoUsuario(true)
-  //     setTablaIngresoUsuario(true)
-  //     setMostrarVentaUsuario(true)
-  //     fetchVerImporteXUsuario()
-  //     setMostrarVentasPaqueteUsuarios(!mostrarVentasPaqueteUsuario)
-  //     setMostrarFondoCaja(!mostrarFondoCaja)
-  //     setTablaIngresoEgreso(false)
-  //     setTabalasEscuendidas(false)
-  //     fetchVerGananciaXUsuario(idUsuario)
-  //     setVentaEliminada(true)
-  //     verVentaEliminada()
-  //     traerventaxpaquete()
-  //     traergananciapaquete()
-  //   }
-  // };
-
-
-
 
   useEffect(()=>{
     const formattedDate = formatDate(fechaSeleccionada)
@@ -842,28 +804,30 @@ useEffect(()=>{
 
 </div>
      
-     
+      
       <div className='container-fluid'>
         <div className='row'>
           <div className='col'>
             <h3 className='h3-clientes'><FontAwesomeIcon icon={faSackDollar} style={{color: "#01992f"}} ></FontAwesomeIcon> VENTAS: </h3>
             <div className="container table">
-                <Table striped bordered hover className='table-primary'>
-                    <thead className='custom-table-header'>
-                        <tr>
-                            <th>TIPO</th>
-                            <th>TOTAL</th>
-                        </tr> 
-                    </thead>
-                    <tbody>
-                        {ventas.map(venta => (
-                            <tr key={venta.tipo_metodoPago}>
-                                <td>{venta.tipo_metodo_pago}</td>
-                                <td>{formatCurrency(venta.monto_total)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+               <Table striped bordered hover className="table-primary">
+  <thead className="custom-table-header">
+    <tr> 
+      <th>TIPO</th>  
+      <th>TOTAL</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {ventas.map((venta, index) => (
+      <tr key={index}>
+        <td>{venta.tipo}</td>
+        <td>{formatCurrency(venta.monto_total)}</td>
+      </tr>
+    ))}
+  </tbody>
+</Table>
+
             </div>
             </div>
             {tablasEscuendidas && (

@@ -1,23 +1,50 @@
 const {connection} = require("../database/config")
 
 const ventaTotal = (req, res) => {
-  const fechaSeleccionada = req.query.formattedDate;
-  const Id_sucursal = req.query.id_sucursal;
+  const fechaSeleccionada1 = req.query.formattedDate;
+  const fechaSeleccionada2 = req.query.formattedDate;
+  const Id_sucursal1 = req.query.id_sucursal;
+  const Id_sucursal2 = req.query.id_sucursal;
+
   connection.query(
-    `SELECT 
-      metopago.tipo_metodoPago AS tipo_metodo_pago, 
-      SUM(v.precioTotal_venta) AS monto_total 
-    FROM 
-      venta v
-    INNER JOIN 
-      metopago ON v.Id_metodoPago = metopago.Id_metodoPago 
-    WHERE 
-      DATE(v.fecha_registro) = ?
-    AND 
-    v.Id_sucursal = ?
-    GROUP BY 
-      metopago.tipo_metodoPago;
-      `, [fechaSeleccionada,Id_sucursal], (error, results) => {
+    `(
+  SELECT 
+    mp.tipo_metodoPago AS tipo,
+    SUM(v.precioTotal_venta) AS monto_total
+  FROM venta v
+  INNER JOIN metopago mp ON mp.Id_metodoPago = v.Id_metodoPago
+  WHERE DATE(v.fecha_registro) = ?
+    AND v.Id_sucursal = ?
+  GROUP BY mp.tipo_metodoPago
+)
+
+UNION ALL
+
+(
+  SELECT 
+    'Cigarrillos' AS tipo,
+    COALESCE(
+      SUM(
+        dv.CantidadVendida *
+        COALESCE(
+          CASE 
+            WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+            WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+          END, 0
+        )
+      ), 0
+    ) AS monto_total
+  FROM venta v
+  INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+  INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+  WHERE DATE(v.fecha_registro) = ?
+    AND v.Id_sucursal = ?
+    AND p.Id_categoria = 10
+)
+ORDER BY tipo;
+
+
+      `, [fechaSeleccionada1,Id_sucursal1,fechaSeleccionada2,Id_sucursal2], (error, results) => {
       if (error) throw error;
       res.json(results);
     }
@@ -26,36 +53,63 @@ const ventaTotal = (req, res) => {
 
 
 const ventaTotalconUsuario = (req, res) => {
-   const fechaSeleccionada = req.params.fechaSeleccionada;
-  const Id_usuario = req.params.Id_usuario
-  const Id_caja = req.params.Id_caja
-  const Id_sucursal = req.params.Id_sucursal
-  connection.query(
-    `
-    SELECT 
-      metopago.tipo_metodoPago AS tipo_metodo_pago, 
-      SUM(v.precioTotal_venta) AS monto_total 
-    FROM 
-      venta v
-    INNER JOIN 
-      metopago ON v.Id_metodoPago = metopago.Id_metodoPago 
-	INNER JOIN 
-      caja cj ON cj.Id_caja = v.Id_caja  
-    WHERE 
-      DATE(v.fecha_registro) = ?
-    AND 
-    v.Id_sucursal = ?
-     AND 
-    v.Id_usuario = ?
-     AND 
-    cj.Id_caja = ?
-    GROUP BY 
-      metopago.tipo_metodoPago;`, [fechaSeleccionada,Id_sucursal,Id_usuario,Id_caja], (error, results) => {
-      if (error) throw error;
-      res.json(results);
+  const { fechaSeleccionada, Id_usuario, Id_caja, Id_sucursal } = req.params;
+
+  const query = `
+    (
+      SELECT 
+        mp.tipo_metodoPago AS tipo,
+        SUM(v.precioTotal_venta) AS monto_total
+      FROM venta v
+      INNER JOIN metopago mp ON mp.Id_metodoPago = v.Id_metodoPago
+      WHERE DATE(v.fecha_registro) = ?
+        AND v.Id_sucursal = ?
+        AND v.Id_usuario  = ?
+        AND v.Id_caja     = ?
+      GROUP BY mp.tipo_metodoPago
+    )
+
+    UNION ALL
+
+    (
+      SELECT 
+        'Cigarrillos' AS tipo,
+        COALESCE(
+          SUM(
+            dv.CantidadVendida *
+            COALESCE(
+              CASE 
+                WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+                WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+              END, 0
+            )
+          ), 0
+        ) AS monto_total
+      FROM venta v
+      INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+      INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+      WHERE DATE(v.fecha_registro) = ?
+        AND v.Id_sucursal = ?
+        AND v.Id_usuario  = ?
+        AND v.Id_caja     = ?
+        AND p.Id_categoria = 10
+    )
+    ORDER BY tipo;
+  `;
+
+  const params = [
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja,
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja
+  ];
+
+  connection.query(query, params, (error, results) => {
+    if (error) {
+      console.error("Error ventaTotalconUsuario:", error);
+      return res.status(500).json({ error: "Error al obtener totales de venta" });
     }
-  );
-}
+    res.json(results);
+  });
+};
 
 
 
@@ -707,7 +761,7 @@ const verProductosEliminados = (req, res) => {
         pe.precioVentaProducto, pe.Motivo, pe.fechaRegistro,
         pe.Id_venta,
         u.nombre_usuario
-     FROM productosEliminados pe
+     FROM productoseliminados pe
      INNER JOIN producto p ON pe.Id_producto = p.Id_producto
      INNER JOIN usuarios u ON pe.Id_usuario = u.Id_usuario
      INNER JOIN venta v ON v.Id_venta = pe.Id_venta

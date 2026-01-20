@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 export default function Productos() {
   const [mostrarModificar, setMostrarModificar] = useState(true);
-  const rolUsuario = localStorage.getItem("rolUsuario");
+  const rolUsuario = sessionStorage.getItem("rolUsuario");
 
 
 

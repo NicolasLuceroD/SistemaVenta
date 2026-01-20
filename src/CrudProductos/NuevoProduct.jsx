@@ -39,8 +39,9 @@ const NuevoProduct = ({ filename, sheetname }) => {
     const [depto, setDepto] = useState('0');
     const [interesXGanancia, setInteresXGanacia] = useState()
     const [precioConGanancia, setPrecioConGanancia] = useState(0)
-    const [precioVenta, setPrecioVenta] = useState(precioConGanancia);
     const [inventarioMinimo,setInventarioMinimo] = useState("")
+    const [precioVentaSucGuillermina, setPrecioVentaSucGuillermina] = useState('');
+    const [precioVentaSucSanMartin, setPrecioVentaSucSanMartin] = useState('');
 
 
     const {  URL } = useContext(DataContext);
@@ -49,7 +50,8 @@ const NuevoProduct = ({ filename, sheetname }) => {
         setNombre_Producto('')
         setDescripcion_Producto('')
         setPrecioCompra('')
-        setPrecioVenta('')
+        setPrecioVentaSucGuillermina('')
+        setPrecioVentaSucSanMartin('')
         setId_categoria('')
         setTipoVenta(0)
         setDepto(0)
@@ -109,7 +111,6 @@ const NuevoProduct = ({ filename, sheetname }) => {
 
     const crearProductos = () => {
         console.log(depto);
-        console.log('nombre', nombre_producto.length, 'descripcion', descripcion_producto.length, 'precioC', precioCompra.length, 'categoria', Id_categoria.length, 'tipo venta', tipo_venta.length, 'fechaV', fechaVencimiento.length, 'codigo', codProducto.length, 'precioM', precioMayoreo.length);
         if (!nombre_producto || depto === '0' || !descripcion_producto || !precioCompra || tipo_venta === '0' || !codProducto || !precioMayoreo) {
             Swal.fire({
                 icon: 'warning',
@@ -124,7 +125,8 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 nombre_producto,
                 descripcion_producto,
                 precioCompra: parseFloat(precioCompra),
-                precioVenta: parseFloat(precioConGanancia),
+                precioVentaSucGuillermina: parseFloat(precioVentaSucGuillermina),
+                precioVentaSucSanMartin: parseFloat(precioVentaSucSanMartin),
                 Id_categoria: depto,
                 tipo_venta,
                 codProducto: codProducto,
@@ -319,20 +321,28 @@ const NuevoProduct = ({ filename, sheetname }) => {
                 </MDBInputGroup>
 
                 
-                <p style={{ textAlign: 'left', fontSize:'14px' }}>PORCENTAJE DE GANANCIA</p>
+                {/* <p style={{ textAlign: 'left', fontSize:'14px' }}>PORCENTAJE DE GANANCIA</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
                         <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
                     <input className="form-control" type="number" placeholder="Ganancia %" value={interesXGanancia} onChange={(e) => setInteresXGanacia(e.target.value)} />
-                </MDBInputGroup>
+                </MDBInputGroup> */}
 
-                <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA</p>
+                <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA SUC GUILLERMINA</p>
                 <MDBInputGroup className="mb-3">
                     <span className="input-group-text">
                         <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
                     </span>
-                    <input className="form-control" type="number" placeholder="Precio venta" value={precioConGanancia} onChange={(e) => setPrecioConGanancia(e.target.value)} />
+                    <input className="form-control" type="number" placeholder="Precio venta" value={precioVentaSucGuillermina} onChange={(e) => setPrecioVentaSucGuillermina(e.target.value)} />
+                </MDBInputGroup>
+
+                 <p style={{ textAlign: 'left', fontSize:'14px' }}>PRECIO VENTA SUC SAN MARTIN</p>
+                <MDBInputGroup className="mb-3">
+                    <span className="input-group-text">
+                        <FontAwesomeIcon icon={faDollar} size="lg" style={{color: "#01992f",}} />
+                    </span>
+                    <input className="form-control" type="number" placeholder="Precio venta" value={precioVentaSucSanMartin} onChange={(e) => setPrecioVentaSucSanMartin(e.target.value)} />
                 </MDBInputGroup>
 
                 <p style={{ textAlign: 'left', fontSize:'14px'}}>PRECIO HASTA 23HS</p>

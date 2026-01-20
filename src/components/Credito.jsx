@@ -78,7 +78,7 @@ const obtenerDetalleClienteVenta = (Id_cliente) => {
 };
 
 
-const sucursalId = localStorage.getItem("sucursalId")
+const sucursalId = sessionStorage.getItem("sucursalId")
 const [datosCompletos,setDatosCompletos] = useState([])
 
 

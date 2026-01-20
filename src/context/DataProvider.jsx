@@ -10,7 +10,7 @@ const DataProvider = ({ children }) => {
 
   // "/api/"    "http://localhost:2201/api/"
 
-  const URL =  "http://localhost:2201/api/"
+  const URL =    "http://localhost:2201/api/"
   
   const traerSucursales = useCallback(async () => {
     try {
@@ -29,7 +29,7 @@ const DataProvider = ({ children }) => {
 
 const traerProductos = useCallback(async () => {
   try {
-    const idSucursal = Number(localStorage.getItem("sucursalId")) || 1;
+    const idSucursal = Number(sessionStorage.getItem('sucursalId')) || 1;
    const response = await axios.get(`${URL}productos?id_sucursal=${idSucursal}`);
 
 

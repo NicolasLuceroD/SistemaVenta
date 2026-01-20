@@ -40,7 +40,7 @@ const CreditoProveedores = () => {
 
 
   const { URL } = useContext(DataContext);
-  const idusuario = localStorage.getItem("idUsuario")
+  const idusuario = sessionStorage.getItem("idUsuario")
 
 const handleShowModal = () => setShowModal(true);
 const handleCloseModal = () => setShowModal(false);

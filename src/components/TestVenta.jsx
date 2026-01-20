@@ -219,12 +219,15 @@ const TestVenta = () => {
     const {listaVentas,agregarVenta,eliminarVenta} = useContext(VentaContext)
     const {URL,productos} = useContext(DataContext);
 
-    //STORAGE
-    const id_sucursal = localStorage.getItem('sucursalId');
-    const IdCaja = localStorage.getItem('idCaja')
-    const Id_caja = localStorage.getItem('idCaja')
-    const id_usuario = localStorage.getItem('idUsuario')
-    const rolUsuario = localStorage.getItem('rolUsuario')
+      // STORAGE
+      const id_sucursal     = sessionStorage.getItem('sucursalId');
+      const IdCaja          = sessionStorage.getItem('idCaja');
+      const id_usuario      = sessionStorage.getItem('idUsuario');
+      const rolUsuario      = sessionStorage.getItem('rolUsuario');
+      const nombreCompleto  = sessionStorage.getItem("nombreUsuario");
+      const nombreSucursal  = sessionStorage.getItem('nombreSucursal');
+
+
 
     //PARA FILTRAR X FECHA LA VENTA
     const formatDate = (date) => {
@@ -466,8 +469,7 @@ const verPrecioProducto = () =>{
   }  
 //FUNCION PARA TRAER LOS CLIENTES
   const verClienteFuncion = () => {
-    const sucursalId = localStorage.getItem('sucursalId');
-    axios.get(`${URL}clientes/${sucursalId}`)
+    axios.get(`${URL}clientes/${id_sucursal}`)
     .then(response => {
       setVerCliente(response.data);
     });
@@ -555,7 +557,7 @@ const validarCodigo = () =>{
       montoTotalIngreso: montoTotalIngreso,
       Id_sucursal: id_sucursal,
       Id_usuario: id_usuario,
-      Id_caja: Id_caja,
+      Id_caja: IdCaja,
     }).then(()=>{
       Swal.fire({
         title: " <strong>Registro de ingreso exitoso!</strong>",
@@ -588,7 +590,7 @@ const RegistrarEngreso = () => {
     montoTotalEgreso: montoTotalEgreso,
     Id_sucursal: id_sucursal,
     Id_usuario: id_usuario,
-    Id_caja: Id_caja,
+    Id_caja: IdCaja,
   }).then(() => {
     Swal.fire({
       title: " <strong>Registro de egreso exitoso!</strong>",
@@ -607,164 +609,6 @@ const RegistrarEngreso = () => {
   });
 };
 
-
-
-// FUNCION PARA SELECCIONAR UN CLIENTE PARA LA VENTA
-const FinalizarVenta = () => {
-  if (listaCompras.length === 0) {
-    alert("Debes cargar al menos 1 producto");
-    return;
-  }
-
-  const Id_metodoPago = parseInt(document.getElementById("metodoPago").value); 
-  const Id_Cliente = document.getElementById("cliente").value;
-  const totalParaTodo = SumarIntereses();
-  
-  const tieneCantidadInvalida = listaCompras.some(producto => {
-    const cantidad = cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete];
-    if (!cantidad || cantidad <= 0) {
-      Swal.fire("Debe ingresar una cantidad válida para todos los productos", "", "error");
-      return true; 
-    }
-    return false;
-  });
-
-  const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
-
-  if (tieneCantidadInvalida) return;
-
-  if (Id_metodoPago === 5 && totalConCredito()  > limiteCredito) {
-    alert('No se puede vender a este cliente porque superó su límite de crédito');
-    return;
-  }
-
-  // 2️⃣ Validación bebidas con alcohol hasta 23hs
-if (mostrarRecordatorio) { // ← solo cuando el recordatorio está activo
-  const alcoholSinPrecio = listaCompras.some(producto => {
-    return producto.Id_categoria === 12 && !usarMayoreo[producto.Id_producto];
-  });
-
-  if (alcoholSinPrecio) {
-    Swal.fire({
-      icon: "warning",
-      title: "Atención",
-      text: "Hay productos con alcohol sin precio hasta las 23:00 hs. No se puede finalizar la venta.",
-    });
-    setLoading(false); // ocultar spinner
-    return; // bloquea la venta
-  }
-}
-
-  Swal.fire({
-    title: '¿Deseas imprimir el ticket?',
-    showDenyButton: true,
-    confirmButtonText: 'Sí',
-    denyButtonText: 'No',
-  }).then((result) => {
-    if (result.isConfirmed) {
-      // Pasamos la cantidad vendida correctamente
-      const productosConCantidad = listaCompras.map((producto) => ({
-        ...producto,
-        cantidadVendida: cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete] || 1
-      }));
-
-      imprimirTicket(productosConCantidad, totalParaTodo);
-    }
-
-     setLoading(true); // ← mostrar loader
-
-    axios.post(`${URL}ventas/crear`, {
-      descripcion_venta: 'XDD',
-      precioTotal_venta: totalParaTodo,  
-      Id_metodoPago: Id_metodoPago,
-      Id_cliente: Id_Cliente,
-      Id_sucursal: id_sucursal,
-      Id_usuario: id_usuario,
-      Id_caja: IdCaja,
-      faltaPagar: faltaPagar
-    })
-    .then(() => {
-      const promesas = listaCompras.map((producto) => {
-        return axios.post(`${URL}detalleVenta/crear`, {
-          descripcion_detalleVenta: 'test',
-          ventasTotales_detalleVenta: totalParaTodo,  
-          CantidadVendida: cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete],
-          ganacia_detalleVenta: 0.0,
-          Id_venta: Id_venta,
-          Id_producto: producto.Id_producto,
-          Id_caja: IdCaja,
-          IdEstadoCredito: 1,
-          IdEstadoVenta: 1,
-          Id_paquete: producto.Id_paquete,
-          productocomun: producto.productocomun || '',
-precioproductocomun: producto.precioproductocomun || 0
-        }).then(() => {
-          return axios.put(`${URL}ventas/descStock`, {
-            Id_producto: producto.Id_producto,
-            Id_sucursal: id_sucursal,
-            cantidad: cantidadesVendidas[producto.Id_producto]
-          })
-          .then(() => {
-            if (Id_metodoPago === 5 || credito.length >= 0) {
-              return axios.put(`${URL}ventas/aumentarCredito`, {
-                Id_cliente: Id_Cliente,
-                montoCredito: credito || totalParaTodo
-              }).then(()=>{
-                axios.post(`${URL}creditos/movimientoClientes`, {
-                  Id_cliente: Id_Cliente,
-                  montoCredito: totalParaTodo,
-                  montoDebito: 0,
-                  Id_venta: Id_venta,
-                  Saldo:  parseFloat(totalParaTodo) + parseFloat(creditoActaul)
-                });
-              }).then(() => {
-                console.log("todo bien en crédito", totalParaTodo);
-              }).catch((error) => {
-                console.log('Error al actualizar el crédito:', error);
-              });
-            }
-          })
-        }).then(() => {
-          if (producto.Id_paquete && producto.productos) {
-            const promesasPaquete = producto.productos.map(productoIndividual => {
-              return axios.put(`${URL}paquete/editar/descPaquete`, {
-                Id_sucursal: id_sucursal, 
-                Id_producto: productoIndividual.Id_producto,
-                cantidad: (cantidadesVendidas[producto.Id_paquete] || 1) * productoIndividual.cantidadProducto
-              });
-            });
-            return Promise.all(promesasPaquete);
-          }
-        });
-      })
-      return Promise.all(promesas);
-    })
-    .finally(() => {
-      setLoading(false);  // ← ocultar loader
-      listaCompras.length = 0;
-      setCantidadesVendidas({});
-      setPreciosSeleccionados({});
-      setPrecioFinal({});
-      setUsarMayoreo({})
-      setDescUnidad({})
-      setIncrementoUnidad({})
-      Swal.fire({
-        title: "<strong>Venta exitosa!</strong>",
-        html: "<i>La venta fue agregada con éxito</i>",
-        icon: 'success',
-        timer: 3000
-      });
-      setEstadoModal1(false);
-      handleCloseModal(true);
-      testID();
-      setIntereses(0);
-    });
-  });
-};
-
-
-
-
 const formatCurrency = (value) => {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
@@ -773,156 +617,189 @@ const formatCurrency = (value) => {
 };
 
 
+const buildItems = () => {
+  return listaCompras.map((producto) => {
+    const idKey = producto.Id_paquete || producto.Id_producto;
+    const cantidad = Number(cantidadesVendidas[idKey] || 0);
 
-const FinalizarVentaSinTicket = () => {
-  setLoading(true); 
-  const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
-
-  if (listaCompras.length === 0) {
-    alert("Debes cargar al menos 1 producto");
-    setLoading(false);
-    return;
-  }
-
-  if (Id_metodoPago === 5 && totalConCredito() > limiteCredito) {
-    alert('No se puede vender a este cliente porque superó su límite de crédito');
-    setLoading(false);
-    return;
-  }
-
-  const Id_Cliente = document.getElementById("cliente").value;
-  const totalParaTodo = SumarIntereses();
-  const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
-
-  // 1️⃣ Validación de cantidades
-  const tieneCantidadInvalida = listaCompras.some(producto => {
-    const cantidad = cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete];
-    if (!cantidad || cantidad <= 0) {
-      Swal.fire("Debe ingresar una cantidad válida para todos los productos","","error");
-      return true; 
-    }
-    return false;
-  });
-  
-  if (tieneCantidadInvalida) {
-    setLoading(false);
-    return;
-  }
-
-// 2️⃣ Validación bebidas con alcohol hasta 23hs
-if (mostrarRecordatorio) { // ← solo cuando el recordatorio está activo
-  const alcoholSinPrecio = listaCompras.some(producto => {
-    return producto.Id_categoria === 12 && !usarMayoreo[producto.Id_producto];
-  });
-
-  if (alcoholSinPrecio) {
-    Swal.fire({
-      icon: "warning",
-      title: "Atención",
-      text: "Hay productos con alcohol sin precio hasta las 23:00 hs. No se puede finalizar la venta.",
-    });
-    setLoading(false); // ocultar spinner
-    return; // bloquea la venta
-  }
-}
-
-
-  // 3️⃣ Crear venta
-  axios.post(`${URL}ventas/crear`, {
-    descripcion_venta: 'XDD',
-    precioTotal_venta: totalParaTodo,
-    Id_metodoPago: Id_metodoPago,
-    Id_cliente: Id_Cliente,
-    Id_sucursal: id_sucursal,
-    Id_usuario: id_usuario,
-    Id_caja: IdCaja,
-    faltaPagar: faltaPagar
-  })
-  .then(() => {
-    const promesasProductos = listaCompras.map((producto) => {
-      return axios.post(`${URL}detalleVenta/crear`, {
-        descripcion_detalleVenta: 'test',
-        ventasTotales_detalleVenta: totalParaTodo,
-        CantidadVendida: cantidadesVendidas[producto.Id_producto] || cantidadesVendidas[producto.Id_paquete],
-        ganacia_detalleVenta: 0.0,
-        Id_venta: Id_venta, 
-        Id_producto: producto.Id_producto,
-        Id_caja: IdCaja,
-        IdEstadoCredito: 1,
-        IdEstadoVenta: 1,
-        Id_paquete: producto.Id_paquete,
-        productocomun: producto.productocomun || '',
-        precioproductocomun: producto.precioproductocomun || 0
-      }).then(() => {
-        return axios.put(`${URL}ventas/descStock`, {
-          Id_sucursal: id_sucursal,
-          Id_producto: producto.Id_producto,
-          cantidad: cantidadesVendidas[producto.Id_producto]
-        });
-      }).then(() => {
-        if (producto.Id_paquete && producto.productos) {
-          const promesasPaquete = producto.productos.map(productoIndividual => {
-            return axios.put(`${URL}paquete/editar/descPaquete`, {
-              Id_sucursal: id_sucursal, 
-              Id_producto: productoIndividual.Id_producto,
-              cantidad: (cantidadesVendidas[producto.Id_paquete] || 1) * productoIndividual.cantidadProducto
-            });
-          });
-          return Promise.all(promesasPaquete);
-        }
-      });
-    });
-
-    return Promise.all(promesasProductos);
-  })
-  .then(() => {
-    if (Id_metodoPago === 5 || credito.length >= 0) {
-      return axios.put(`${URL}ventas/aumentarCredito`, {
-        Id_cliente: Id_Cliente,
-        montoCredito: credito || totalParaTodo
-      }).then(()=> {
-        axios.post(`${URL}creditos/movimientoClientes`, {
-          Id_cliente: Id_Cliente,
-          montoCredito: totalParaTodo,
-          montoDebito: 0,
-          Id_venta: Id_venta,
-          Saldo:  parseFloat(totalParaTodo) + parseFloat(creditoActaul)
-        });
-      }).then(() => {
-        console.log("todo bien en crédito", totalParaTodo);
-      }).catch((error) => {
-        console.log('Error al actualizar el crédito:', error);
-      });
-    }
-  })
-  .catch((error) => {
-    console.log('Hubo un error:', error);
-  })
-  .finally(() => {
-    setLoading(false);  // ocultar spinner
-    listaCompras.length = 0;
-    setCantidadesVendidas({});
-    setPreciosSeleccionados({});
-    setPrecioFinal({});
-    setUsarMayoreo({});
-    setDescUnidad({});
-    setIncrementoUnidad({});
-    Swal.fire({
-      title: "<strong>Venta exitosa!</strong>",
-      html: "<i>La venta fue agregada con éxito</i>",
-      icon: 'success',
-      timer: 3000
-    });
-    setEstadoModal1(false);
-    handleCloseModal(true);
-    testID();
-    setIntereses(0);
+    return {
+      Id_producto: producto.Id_producto || null,
+      Id_paquete: producto.Id_paquete || null,
+      CantidadVendida: cantidad,
+      productocomun: producto.productocomun || null,
+      precioproductocomun: producto.precioproductocomun || null
+    };
   });
 };
 
 
-const nombreCompleto = localStorage.getItem("nombreUsuario")
-const nombreSucursal = localStorage.getItem('nombreSucursal')
+
+const FinalizarVenta = () => {
+  if (listaCompras.length === 0) {
+    alert("Debes cargar al menos 1 producto");
+    return;
+  }
+
+  if (!id_sucursal || !id_usuario || !IdCaja) {
+    Swal.fire({ icon: "error", title: "Sesión inválida", text: "Volvé a iniciar sesión." });
+    return;
+  }
+
+  const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
+  const Id_Cliente = document.getElementById("cliente").value;
+  const totalParaTodo = Number(SumarIntereses());
+  const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
+
+  const items = buildItems();
+
+  const tieneCantidadInvalida = items.some(it => !it.CantidadVendida || it.CantidadVendida <= 0);
+  if (tieneCantidadInvalida) {
+    Swal.fire("Debe ingresar una cantidad válida para todos los productos", "", "error");
+    return;
+  }
+
+  if (Id_metodoPago === 5 && totalConCredito() > limiteCredito) {
+    alert("No se puede vender a este cliente porque superó su límite de crédito");
+    return;
+  }
+
+  Swal.fire({
+    title: "¿Deseas imprimir el ticket?",
+    showDenyButton: true,
+    confirmButtonText: "Sí",
+    denyButtonText: "No",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const productosConCantidad = listaCompras.map((p) => ({
+        ...p,
+        cantidadVendida: cantidadesVendidas[p.Id_paquete || p.Id_producto] || 1
+      }));
+      imprimirTicket(productosConCantidad, totalParaTodo);
+    }
+
+    setLoading(true);
+
+    axios.post(`${URL}ventas/finalizar`, {
+      descripcion_venta: "XDD",
+      precioTotal_venta: totalParaTodo,
+      Id_metodoPago,
+      Id_cliente: Id_Cliente,
+      Id_sucursal: Number(id_sucursal),
+      Id_usuario: Number(id_usuario),
+      Id_caja: Number(IdCaja),
+      faltaPagar,
+      items,
+      aplicarCredito: Id_metodoPago === 5,
+      montoCredito: totalParaTodo
+    })
+    .then((resp) => {
+      // ✅ Id_venta real creado por DB
+      // const ventaIdReal = resp.data.Id_venta;
+
+      Swal.fire({
+        title: "<strong>Venta exitosa!</strong>",
+        html: "<i>La venta fue agregada con éxito</i>",
+        icon: "success",
+        timer: 3000
+      });
+
+      // limpiar estados
+      listaCompras.length = 0;
+      setCantidadesVendidas({});
+      setPreciosSeleccionados({});
+      setPrecioFinal({});
+      setUsarMayoreo({});
+      setDescUnidad({});
+      setIncrementoUnidad({});
+      setIntereses(0);
+      setEstadoModal1(false);
+      handleCloseModal(true);
+    })
+    .catch((error) => {
+      console.log("Error finalizar:", error);
+      Swal.fire("Error", "No se pudo finalizar la venta", "error");
+    })
+    .finally(() => setLoading(false));
+  });
+};
+
+
+const FinalizarVentaSinTicket = () => {
+  if (listaCompras.length === 0) {
+    alert("Debes cargar al menos 1 producto");
+    return;
+  }
+
+  if (!id_sucursal || !id_usuario || !IdCaja) {
+    Swal.fire({ icon: "error", title: "Sesión inválida", text: "Volvé a iniciar sesión." });
+    return;
+  }
+
+  const Id_metodoPago = parseInt(document.getElementById("metodoPago").value);
+  const Id_Cliente = document.getElementById("cliente").value;
+  const totalParaTodo = Number(SumarIntereses());
+  const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
+
+  const items = buildItems();
+
+  const tieneCantidadInvalida = items.some(it => !it.CantidadVendida || it.CantidadVendida <= 0);
+  if (tieneCantidadInvalida) {
+    Swal.fire("Debe ingresar una cantidad válida para todos los productos", "", "error");
+    return;
+  }
+
+  if (Id_metodoPago === 5 && totalConCredito() > limiteCredito) {
+    alert("No se puede vender a este cliente porque superó su límite de crédito");
+    return;
+  }
+
+    setLoading(true);
+
+    axios.post(`${URL}ventas/finalizar`, {
+      descripcion_venta: "XDD",
+      precioTotal_venta: totalParaTodo,
+      Id_metodoPago,
+      Id_cliente: Id_Cliente,
+      Id_sucursal: Number(id_sucursal),
+      Id_usuario: Number(id_usuario),
+      Id_caja: Number(IdCaja),
+      faltaPagar,
+      items,
+      aplicarCredito: Id_metodoPago === 5,
+      montoCredito: totalParaTodo
+    })
+    .then((resp) => {
+      // ✅ Id_venta real creado por DB
+      // const ventaIdReal = resp.data.Id_venta;
+
+      Swal.fire({
+        title: "<strong>Venta exitosa!</strong>",
+        html: "<i>La venta fue agregada con éxito</i>",
+        icon: "success",
+        timer: 3000
+      });
+
+      // limpiar estados
+      listaCompras.length = 0;
+      setCantidadesVendidas({});
+      setPreciosSeleccionados({});
+      setPrecioFinal({});
+      setUsarMayoreo({});
+      setDescUnidad({});
+      setIncrementoUnidad({});
+      setIntereses(0);
+      setEstadoModal1(false);
+      handleCloseModal(true);
+    })
+    .catch((error) => {
+      console.log("Error finalizar:", error);
+      Swal.fire("Error", "No se pudo finalizar la venta", "error");
+    })
+    .finally(() => setLoading(false));
+};
+
+
+
 
 const imprimirTicket = (productos, totalParaTodo) => {
   let ticketWindow = window.open('', 'PRINT', 'height=600,width=400');

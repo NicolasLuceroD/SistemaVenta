@@ -40,7 +40,7 @@ const Compras = () => {
   const [verSaldo, setVerSaldo] = useState([])
 
   const {  URL } = useContext(DataContext);
-  const idusuario = localStorage.getItem("idUsuario")
+  const idusuario = sessionStorage.getItem("idUsuario")
 
     //PARA FILTRAR X FECHA LA VENTA
     const formatDate = (date) => {
@@ -63,7 +63,7 @@ const Compras = () => {
 
       const verCompras = () => {
         const formattedDate = formatDate(fechaSeleccionada);
-        const sucursalId = localStorage.getItem('sucursalId');
+        const sucursalId = sessionStorage.getItem('sucursalId');
         axios.get(`${URL}compras/vercompras/${formattedDate}/${sucursalId}`).then((response)=>{
           console.log("Datos de compras recibidos:", response.data);
           setVerCompra(response.data)
@@ -88,7 +88,7 @@ const verProveedores =  ()  => {
 
 const verDeuda = () => {
   const formattedDate = formatDate(fechaSeleccionada)
-  const sucursalId = localStorage.getItem('sucursalId')
+  const sucursalId = sessionStorage.getItem('sucursalId')
   axios.get(`${URL}compras/versaldo/${formattedDate}/${sucursalId}`).then((response)=>{
     setVerSaldo(response.data[0].total_pendiente)
   }).catch((error)=>{
@@ -109,7 +109,7 @@ const FinalizarCompra = () => {
   if (idProveedor === 0) {
     alert("Debes elegir un proveedor!");
   } else {
-    const id_sucursal = localStorage.getItem('sucursalId');
+    const id_sucursal = sessionStorage.getItem('sucursalId');
     const formattedFechaEstimada = fechaLlegada ? formatDate(fechaLlegada) : null; 
     console.log('Fecha estimada de llegada:', formattedFechaEstimada);
     axios.post(`${URL}compras/post`, {

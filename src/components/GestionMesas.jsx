@@ -24,7 +24,7 @@ const GestionMesas = () => {
     const [transferencia, setTransferencia] = useState(null);
 
   const [mesas, setMesas] = useState(() => {
-    const guardadas = localStorage.getItem("mesas");
+    const guardadas = sessionStorage.getItem("mesas");
     return guardadas
       ? JSON.parse(guardadas)
       : [
@@ -55,7 +55,7 @@ const GestionMesas = () => {
   });
 
   useEffect(() => {
-    localStorage.setItem("mesas", JSON.stringify(mesas));
+    sessionStorage.setItem("mesas", JSON.stringify(mesas));
   }, [mesas]);
 
   const [mesaSeleccionada, setMesaSeleccionada] = useState(null);
@@ -238,9 +238,9 @@ const FinalizarVenta = async () => {
       precioTotal_venta: total,
       Id_metodoPago,
       Id_cliente,
-      Id_sucursal: localStorage.getItem("sucursalId"),
-      Id_usuario: localStorage.getItem("idUsuario"),
-      Id_caja: localStorage.getItem("idCaja"),
+      Id_sucursal: sessionStorage.getItem("sucursalId"),
+      Id_usuario: sessionStorage.getItem("idUsuario"),
+      Id_caja: sessionStorage.getItem("idCaja"),
       faltaPagar,
     });
 
@@ -260,7 +260,7 @@ const FinalizarVenta = async () => {
       }).then(() => {
         return axios.put(`${URL}ventas/descStock`, {
           Id_producto: producto.id,
-          Id_sucursal: localStorage.getItem("sucursalId"),
+          Id_sucursal: sessionStorage.getItem("sucursalId"),
           cantidad: producto.cantidad,
         });
       })
@@ -465,9 +465,9 @@ const imprimirTicket = (productos, totalParaTodo, cliente, metodoPago) => {
       <body>
         <div class="ticket-container">
           <img class="logo" src="${logoUrl}" alt="Logo Bar" />
-          <h3>${localStorage.getItem("nombreSucursal") || 'NOMBRE DEL BAR'}</h3>
+          <h3>${sessionStorage.getItem("nombreSucursal") || 'NOMBRE DEL BAR'}</h3>
           <p>Cel: 3812000296</p>
-          <p>Usuario: ${localStorage.getItem("nombreUsuario") || 'Cajero'}</p>
+          <p>Usuario: ${sessionStorage.getItem("nombreUsuario") || 'Cajero'}</p>
           <p>${new Date().toLocaleString()}</p>
           <hr />
           ${cliente ? `<p>Cliente: ${cliente}</p>` : ''}
@@ -541,7 +541,7 @@ const formatCurrency = (value) => {
 };
 
   const verClienteFuncion = () => {
-    const sucursalId = localStorage.getItem('sucursalId');
+    const sucursalId = sessionStorage.getItem('sucursalId');
     axios.get(`${URL}clientes/${sucursalId}`)
     .then(response => {
       setVerCliente(response.data);

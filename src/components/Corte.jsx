@@ -69,7 +69,7 @@ export const Corte = ({ filename, sheetname }) => {
     XLSX.writeFile(wb, `${filename}.xlsx`);
   };
 
-  const id_sucursal = localStorage.getItem('sucursalId');
+  const id_sucursal = sessionStorage.getItem('sucursalId');
 
   useEffect(() => {
     axios.get(`${URL}ventas/sucursal/${id_sucursal}`)
@@ -109,7 +109,7 @@ export const Corte = ({ filename, sheetname }) => {
 
 
 
-  const nombreSuc = localStorage.getItem("nombreSucursal")
+  const nombreSuc = sessionStorage.getItem("nombreSucursal")
 
   const sortedResultados = resultado.sort((a, b) => new Date(b.fecha_registro) - new Date(a.fecha_registro));
 //PAGINACION NUEVA

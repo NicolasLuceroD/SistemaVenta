@@ -5,7 +5,7 @@ const {verVentasEliminadas, ventasEliminadas, verificadorPrecio,estadoVenta,
     verVenta, crearVenta, eliminarVenta,correlativa,
      verLaVentaCompleta,descCantidad, AumentarCredito,aumentarCantidad ,
      EliminarProductoVenta,verVentaSeleccionada,actualizarPrecioVenta,
-     guardarProductoEliminado
+     guardarProductoEliminado,finalizarVenta
     } = require('../controllers/Venta');
 
 router.get("/verVentaSeleccionada/:Id_venta", verVentaSeleccionada);
@@ -27,5 +27,9 @@ router.post("/guardarProductoEliminado", guardarProductoEliminado);
 
 router.put("/actualizarPrecioVenta", actualizarPrecioVenta); 
 
+
+
+
+router.post("/finalizar", finalizarVenta);
 
 module.exports = router;

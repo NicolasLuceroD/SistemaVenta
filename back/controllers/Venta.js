@@ -382,7 +382,7 @@ const actualizarPrecioVenta = (req,res) =>{
 
 
 const guardarProductoEliminado =(req,res)=>{
-  connection.query("INSERT INTO productosEliminados SET ?",{
+  connection.query("INSERT INTO productoseliminados SET ?",{
     Id_venta: req.body.Id_venta,
     Id_producto: req.body.Id_producto,
     Id_usuario: req.body.Id_usuario,
@@ -395,7 +395,162 @@ const guardarProductoEliminado =(req,res)=>{
 }
 
 
+
+const finalizarVenta = (req, res) => {
+  const {
+    descripcion_venta,
+    precioTotal_venta,
+    Id_metodoPago,
+    Id_cliente,
+    Id_sucursal,
+    Id_usuario,
+    Id_caja,
+    faltaPagar,
+    items, // <- array de productos/paquetes/comunes con { Id_producto, Id_paquete, CantidadVendida, productocomun, precioproductocomun }
+    // opcional crédito:
+    aplicarCredito, // boolean
+    montoCredito,   // number
+    saldoCredito    // number (si querés guardar en movimientoClientes)
+  } = req.body;
+
+  // ✅ Validación mínima (rápida)
+  if (!Id_sucursal || !Id_usuario || !Id_caja) {
+    return res.status(400).json({ ok: false, message: "Faltan datos de sesión (sucursal/usuario/caja)." });
+  }
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ ok: false, message: "No hay items para registrar." });
+  }
+
+  connection.beginTransaction((err) => {
+    if (err) {
+      console.error("beginTransaction error:", err);
+      return res.status(500).json({ ok: false, message: "Error iniciando transacción." });
+    }
+
+    // 1) INSERT venta (NO mandes Id_venta, que sea AI)
+    const ventaData = {
+      descripcion_venta: descripcion_venta || "VENTA",
+      precioTotal_venta: precioTotal_venta,
+      Id_metodoPago: Id_metodoPago,
+      Id_cliente: Id_cliente,
+      Id_sucursal: Id_sucursal,
+      Id_usuario: Id_usuario,
+      Id_caja: Id_caja,
+      faltaPagar: faltaPagar || 0,
+      Estado: 1,
+    };
+
+    connection.query("INSERT INTO venta SET ?", ventaData, (err1, result1) => {
+      if (err1) {
+        console.error("INSERT venta error:", err1);
+        return connection.rollback(() => {
+          res.status(500).json({ ok: false, message: "Error creando venta." });
+        });
+      }
+
+      const Id_venta = result1.insertId;
+
+      // 2) INSERT detalleventa (bulk)
+      const detalleValues = items.map((it) => ([
+        "-",                          // descripcion_detalleVenta (ajustalo si querés)
+        String(precioTotal_venta),       // ventasTotales_detalleVenta
+        Number(it.CantidadVendida || 0), // CantidadVendida
+        0.0,                             // ganacia_detalleVenta
+        Id_venta,                        // Id_venta REAL
+        it.Id_producto || null,          // Id_producto
+        1,                               // IdEstadoCredito
+        1,                               // IdEstadoVenta
+        it.Id_paquete || null,           // Id_paquete
+        it.productocomun || null,        // productocomun
+        it.precioproductocomun || null,  // precioproductocomun
+      ]));
+
+      const detalleSql = `
+        INSERT INTO detalleventa
+          (descripcion_detalleVenta, ventasTotales_detalleVenta, CantidadVendida, ganacia_detalleVenta,
+           Id_venta, Id_producto, IdEstadoCredito, IdEstadoVenta, Id_paquete, productocomun, precioproductocomun)
+        VALUES ?
+      `;
+
+      connection.query(detalleSql, [detalleValues], (err2) => {
+        if (err2) {
+          console.error("INSERT detalleventa error:", err2);
+          return connection.rollback(() => {
+            res.status(500).json({ ok: false, message: "Error creando detalle de venta." });
+          });
+        }
+
+        // 3) Descontar stock SOLO para productos reales (no comunes)
+        //    (para paquetes, vos ya descontás luego sus productos individuales; acá lo dejamos simple)
+        const stockUpdates = items
+          .filter(it => it.Id_producto && !String(it.Id_producto).startsWith("comun-"))
+          .map(it => new Promise((resolve, reject) => {
+            const cantidad = Number(it.CantidadVendida || 0);
+            if (!cantidad || cantidad <= 0) return resolve();
+
+            connection.query(
+              "UPDATE stock SET cantidad = cantidad - ? WHERE Id_producto = ? AND Id_sucursal = ?",
+              [cantidad, it.Id_producto, Id_sucursal],
+              (err3) => err3 ? reject(err3) : resolve()
+            );
+          }));
+
+        Promise.all(stockUpdates)
+          .then(() => {
+            // 4) (Opcional) crédito
+            if (aplicarCredito) {
+              connection.query(
+                "UPDATE cliente SET montoCredito = montoCredito + ? WHERE Id_cliente = ?",
+                [Number(montoCredito || precioTotal_venta), Id_cliente],
+                (err4) => {
+                  if (err4) {
+                    console.error("UPDATE credito error:", err4);
+                    return connection.rollback(() => {
+                      res.status(500).json({ ok: false, message: "Error actualizando crédito." });
+                    });
+                  }
+
+                  // Si además querés registrar movimiento (si ya tenés esa tabla/endpoint en SQL directo)
+                  // Si NO querés tocar, podés borrar este bloque.
+                  connection.commit((errC) => {
+                    if (errC) {
+                      console.error("commit error:", errC);
+                      return connection.rollback(() => {
+                        res.status(500).json({ ok: false, message: "Error confirmando transacción." });
+                      });
+                    }
+                    return res.json({ ok: true, Id_venta });
+                  });
+                }
+              );
+            } else {
+              connection.commit((errC) => {
+                if (errC) {
+                  console.error("commit error:", errC);
+                  return connection.rollback(() => {
+                    res.status(500).json({ ok: false, message: "Error confirmando transacción." });
+                  });
+                }
+                return res.json({ ok: true, Id_venta });
+              });
+            }
+          })
+          .catch((errStock) => {
+            console.error("stock update error:", errStock);
+            return connection.rollback(() => {
+              res.status(500).json({ ok: false, message: "Error descontando stock." });
+            });
+          });
+      });
+    });
+  });
+};
+
+
+
 module.exports = {
+  finalizarVenta,
+
   guardarProductoEliminado,
   actualizarPrecioVenta,
   verVentaSeleccionada,

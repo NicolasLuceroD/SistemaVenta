@@ -51,7 +51,7 @@ function App(  ) {
     setShowModal(false);
     setCantidadPlataCaja("")
   }
-  const rolUsuario = localStorage.getItem("rolUsuario")
+  const rolUsuario = sessionStorage.getItem("rolUsuario")
 
  const navigate = useNavigate()
 
@@ -60,11 +60,11 @@ function App(  ) {
   }
 
 
- const id_sucursal = localStorage.getItem("sucursalId")
- const id_usuario = localStorage.getItem("idUsuario")
- const IdCaja = localStorage.getItem('idCaja')
- const nombreUsuario = localStorage.getItem('nombreUsuario')
- const nombreSucursal = localStorage.getItem('nombreSucursal')
+ const id_sucursal = sessionStorage.getItem("sucursalId")
+ const id_usuario = sessionStorage.getItem("idUsuario")
+ const IdCaja = sessionStorage.getItem('idCaja')
+ const nombreUsuario = sessionStorage.getItem('nombreUsuario')
+ const nombreSucursal = sessionStorage.getItem('nombreSucursal')
  
 
 
@@ -139,7 +139,7 @@ const cerrarCaja = async () => {
         allowOutsideClick: false,
         allowEscapeKey: false
       }).then(() => {
-        localStorage.removeItem('idCaja');
+        sessionStorage.removeItem('idCaja');
         navigate('/');
       });
 
@@ -170,22 +170,7 @@ useEffect(() => {
     }).format(value);
   };
 
-// LOGICA PARA QUE NO SE CIERRE EL NAVEGADOR SI NO CERRO TURNO
-//   useEffect(() => {
-//   const handleBeforeUnload = (e) => {
-//     const cajaAbierta = localStorage.getItem("idCaja");
-//     if (cajaAbierta) {
-//       e.preventDefault();
-//       e.returnValue = ""; // necesario para mostrar el diálogo en algunos navegadores
-//     }
-//   };
 
-//   window.addEventListener("beforeunload", handleBeforeUnload);
-
-//   return () => {
-//     window.removeEventListener("beforeunload", handleBeforeUnload);
-//   };
-// }, []);
 
 //ARRAY DE ICONOS CIERRE DE CAJA
 const iconMap = {

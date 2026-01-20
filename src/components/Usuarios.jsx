@@ -29,7 +29,7 @@ const Usuarios = () => {
     const [rol, setRol] = useState('0'); 
     const {  URL } = useContext(DataContext);
    
-    const Id_sucursal = localStorage.getItem("sucursalId")
+    const Id_sucursal = sessionStorage.getItem("sucursalId")
 
 
     const verUsuarios = () =>{

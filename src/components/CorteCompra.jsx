@@ -42,7 +42,7 @@ const CorteCompra = ({ filename, sheetname }) => {
   const [esconderBotones, setEsconderBotones] = useState(false)  
   const [comprasanuladas, setComprasAnuladas] = useState([])
   const [pagos,setPagos] = useState([])
-  const idSucursal = localStorage.getItem("sucursalId")
+  const idSucursal = sessionStorage.getItem("sucursalId")
 
   /*ARRAYS PARA LOS H6*/
   const [comprastotales, setComprasTotales] = useState(0)
@@ -65,7 +65,7 @@ const CorteCompra = ({ filename, sheetname }) => {
   const handleCloseModalObservaciones = () => setShowModalObservaciones(false)
 
 
-  const Id_usuario = localStorage.getItem('idUsuario');
+  const Id_usuario = sessionStorage.getItem('idUsuario');
 
 
   
@@ -80,7 +80,7 @@ const CorteCompra = ({ filename, sheetname }) => {
     };
 
 const verCompras = () => {
-  const sucursalId = localStorage.getItem('sucursalId')
+  const sucursalId = sessionStorage.getItem('sucursalId')
   const formattedDate = fechaSeleccionada ? formatDate(fechaSeleccionada) : "all";
   axios.get(`${URL}compras/vercortecompra/${formattedDate}/${sucursalId}`).then((response) => {
       setCompraVer(response.data);
@@ -156,7 +156,7 @@ const verProveedores =  ()  => {
 
  /* GETS PARA LOS H6*/
 
- const sucursalId = localStorage.getItem("sucursalId");
+ const sucursalId = sessionStorage.getItem("sucursalId");
 
  const verComprasTotales = () => {
   axios.get(`${URL}compras/verComprasTotales/${sucursalId}`).then((response)=> {
