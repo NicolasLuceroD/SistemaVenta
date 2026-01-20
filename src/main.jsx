@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import {departamentos, compra, reportes, corte2,cliente, productos, configuracion, nuevoProducto, editarProducto, eliminarProducto, app, importar, corteC, loginUsuario, usuarios, metodoPago, credito, testVenta, plataEnCaja, corte, inventario, paquete, stock, creditoproveedores, auditoriacompra, gestionMesas} from './routes/routes.js'
+import {departamentos, compra, reportes, corte2,cliente, productos, configuracion, nuevoProducto, editarProducto, eliminarProducto, app, importar, corteC, loginUsuario, usuarios, metodoPago, credito, testVenta, plataEnCaja, corte, inventario, paquete, stock, creditoproveedores, auditoriacompra, gestionMesas, turno} from './routes/routes.js'
 import Clientes from './components/Clientes.jsx'
 import Compra from './components/Compras.jsx'
 import Productos from './components/Productos.jsx'
@@ -33,6 +33,7 @@ import Paquete from './CrudProductos/Paquete.jsx'
 import CreditoProveedores from './components/CreditoProveedores.jsx'
 import AuditoriaCompra from './components/AuditoriaCompra.jsx'
 import GestionMesas from './components/GestionMesas.jsx'
+import Turno from './components/Turno.jsx'
 
 
 
@@ -70,6 +71,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                 <Route path={paquete} element={<Paquete/>}/>
                 <Route path={creditoproveedores} element={<CreditoProveedores/>}/>
                 <Route path={auditoriacompra} element={<AuditoriaCompra/>}/>
+                <Route path={turno} element={<Turno/>}/>
                 {/* PRODUCTOS */}
                 <Route path={productos} element={<Productos/>}/>
                 <Route path={nuevoProducto} element={<NuevoProduct/>}/>

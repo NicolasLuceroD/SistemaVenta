@@ -51,3 +51,6 @@ export const reporteSaldos = "/reporteSaldos"
 export const nuevoCliente = "/nuevoCliente"
 export const editarCliente = "/editarCliente"
 export const eliminarCliente = "/eliminarCliente"
+
+/*-----------------TURNOS-----------------------------------*/
+export const turno = "/turno"

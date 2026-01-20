@@ -2,11 +2,20 @@ const {connection} = require("../database/config")
 
 
 const verTurnos = (req,res) =>{
-    connection.query("SELECT * FROM Turno",(error,results)=>{
+    connection.query(`SELECT 
+                        t.*,
+                        s.nombre_sucursal AS NombreSucursal,
+                        u.nombre_usuario AS NombreUsuario
+                    FROM turno t
+                    INNER JOIN sucursales s 
+                        ON t.Id_sucursal = s.Id_sucursal
+                    INNER JOIN usuarios u 
+                        ON t.Id_usuario = u.Id_usuario
+                    ORDER BY t.FechaIngreso DESC`,(error,results)=>{
         if(error)throw error
         res.json(results)
     })
-}
+} 
 
 const abrirTurno = (req, res) => {
   connection.query(

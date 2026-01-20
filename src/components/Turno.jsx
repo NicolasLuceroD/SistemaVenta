@@ -1,0 +1,211 @@
+import { useEffect, useContext, useState } from 'react'
+import { DataContext } from '../context/DataContext'
+import App from '../App'
+import axios from 'axios'
+import ScrollToTopButton from './utils/ScrollToTopButton'
+import Paginacion from './Paginacion'
+import { set } from 'date-fns'
+
+const Turno = () => {
+
+  // API
+  const { URL } = useContext(DataContext)
+
+  // ESTADOS
+  const [turnos, setTurnos] = useState([])
+  const [fechaFiltro, setFechaFiltro] = useState('')
+
+
+  // TRAER TURNOS
+  const traerTurnos = () => {
+    axios.get(`${URL}Turno/verTurnos`)
+      .then((response) => {
+        console.log('Turnos: ', response.data)
+        setTurnos(response.data)
+        setTotal(response.data.length)
+      })
+      .catch((error) => {
+        console.error('Error al traer turnos: ', error)
+      })
+  }
+
+  useEffect(() => {
+    traerTurnos()
+  }, [])
+
+
+  const mostrarValor = (valor) => {
+    return valor === null ? '-' : valor
+  }
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency: 'ARS',
+    }).format(value)
+  }
+
+  const mostrarImporte = (valor) => {
+    if (valor === null) return '-'
+    return formatCurrency(valor)
+  }
+
+  const mostrarTotal = (valor, estado) => {
+    if (estado === 'ABIERTO') {
+      return <span className="text-success fst-italic">Turno abierto</span>
+    }
+    if (valor === null) return '-'
+    return formatCurrency(valor)
+  }
+
+  const turnosFiltrados = fechaFiltro ? turnos.filter((tur) => {
+      const fechaIngreso = new Date(tur.FechaIngreso).toISOString().split('T')[0]
+      return fechaIngreso === fechaFiltro
+    })
+    : turnos
+
+const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
+
+    //PAGINACION NUEVA
+    const productosPorPagina = 10
+    const [actualPagina, setActualPagina] = useState(1)
+    const [total, setTotal] = useState(0)
+    const ultimoIndex = actualPagina * productosPorPagina;
+    const primerIndex = ultimoIndex - productosPorPagina;
+
+
+  return (
+    <>
+      <App />
+
+      <div className="h3-ventas">
+        <h1>TURNOS</h1>
+      </div>
+
+      <br />
+
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <h2><strong>ADMINISTRACIÓN DE TURNOS</strong></h2>
+            <h4>Gestiona todos los turnos de forma centralizada.</h4>
+          </div>
+        </div>
+      </div>
+
+      <br />
+
+{/* CALENDARIO */}
+<div className="container-fluid px-4 mt-3">
+  <div className="row align-items-end">
+    <div className="col-md-3">
+      <label className="form-label fw-semibold">
+        Filtrar por fecha de ingreso
+      </label>
+      <input
+        type="date"
+        className="form-control"
+        value={fechaFiltro}
+        onChange={(e) => setFechaFiltro(e.target.value)}
+      />
+    </div>
+
+    <div className="col-md-2">
+      <button className="btn btn-outline-warning mt-2" onClick={() => setFechaFiltro('')}>
+        Limpiar filtro
+      </button>
+    </div>
+  </div>
+</div>
+
+  <div className="container-fluid mt-4 px-4">
+  <div className="card shadow-sm border-0">
+    <div className="card-body p-0">
+
+      {turnos.length === 0 ? (
+        <div className="py-4 text-center text-muted">
+          No hay turnos registrados
+        </div>
+      ) : sinResultadosPorFecha ? (
+        <div className="alert alert-warning text-center m-4">
+          No hay turnos para la fecha seleccionada
+          <br />
+          <strong>{fechaFiltro}</strong>
+        </div>
+      ) : (
+        <table className="table table-hover align-middle text-center mb-0">
+
+          <thead className="bg-light text-uppercase small border-bottom">
+            <tr>
+              <th className="px-4">Folio</th>
+              <th className="px-4">Estado</th>
+              <th className="px-4">Ingreso</th>
+              <th className="px-4">Salida</th>
+              <th className="px-4">Usuario</th>
+              <th className="px-4">Fondo</th>
+              <th className="px-4">Efectivo</th>
+              <th className="px-4">Transferencia</th>
+              <th className="px-4">Débito</th>
+              <th className="px-4">Cigarrillos</th>
+              <th className="px-4">Egreso</th>
+              <th className="px-4">Ingreso</th>
+              <th className="px-4">Total en Caja</th>
+              <th className="px-4">Sucursal</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {turnosFiltrados.slice(primerIndex,ultimoIndex).map((tur) => (
+              <tr key={tur.Id_turno}>
+                <td className="px-4 fw-semibold">{tur.Id_turno}</td>
+                <td className="px-4">
+                <span
+                    className={`badge rounded-pill px-3 py-1 ${tur.Estado === 'ABIERTO'? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}
+                >
+                  {tur.Estado}
+                  </span>
+                </td>
+
+                <td className="px-4 text-nowrap">
+                  {new Date(tur.FechaIngreso).toLocaleString()}
+                </td>
+
+                <td className="px-4 text-nowrap">
+                  {tur.FechaSalida
+                    ? new Date(tur.FechaSalida).toLocaleString()
+                    : '—'}
+                </td>
+
+                <td className="px-4">{mostrarValor(tur.NombreUsuario)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.FondoCaja)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Efectivo)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Transferencia)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Debito)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Cigarrillos)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Egreso)}</td>
+                <td className="px-4 text-end">{mostrarImporte(tur.Ingreso)}</td>
+                <td className="px-4 fw-bold text-end">
+                  {mostrarTotal(tur.TotalEnCaja, tur.Estado)}
+                </td>
+                <td className="px-4">{mostrarValor(tur.NombreSucursal)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div><br />
+        <div style={{display:'flex',justifyContent:'center'}}>
+                <Paginacion productosPorPagina={productosPorPagina}
+                    actualPagina={actualPagina}
+                    setActualPagina={setActualPagina}
+                    total={total}
+                />
+        </div>
+  </div>
+</div>
+      <ScrollToTopButton/>
+    </>
+  )
+}
+
+export default Turno

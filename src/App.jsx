@@ -288,6 +288,7 @@ const iconMap = {
         </Dropdown>
         <Button onClick={() => navegar('/corte2')} className="nav-btn">CORTE</Button>
         <Button onClick={() => navegar('/clientes')} className="nav-btn">CLIENTES</Button>
+        <Button onClick={() => navegar('/turno')} className="nav-btn">TURNO</Button>
           </>
         )}
 
