@@ -46,15 +46,12 @@ const LoginUsuario = () => {
     });
   };
 
-  // ✅ Login usuario
   const ComprobarLogin = () => {
     if (!id_sucursal) {
       Swal.fire("Error", "No hay sucursal seleccionada. Volvé a ingresar por sucursal.", "error");
       return;
     }
-
     const FechaRegistro = new Date().toISOString();
-
     axios.post(`${URL}login/usu/post`, {
       nombre_usuario,
       clave_usuario,
@@ -63,15 +60,12 @@ const LoginUsuario = () => {
     .then((response) => {
       const idUsuario = response.data.idUsuario;
       const rol_usuario = response.data.rol_usuario;
-
       if (rol_usuario && idUsuario) {
-        // ✅ Guardar en sessionStorage (crítico)
         sessionStorage.setItem('rolUsuario', rol_usuario);
         sessionStorage.setItem('idUsuario', String(idUsuario));
         sessionStorage.setItem('nombreUsuario', nombre_usuario);
         sessionStorage.setItem('FechaRegistro', FechaRegistro);
-
-        handleShowModal1(); // seleccionar caja
+        handleShowModal1();
       } else {
         Swal.fire({
           title: "<strong>Ingreso inválido!</strong>",
@@ -128,7 +122,6 @@ const LoginUsuario = () => {
         handleCloseModal1();
         navigate('/testVenta', { replace: true });
       } else {
-        // No hay caja abierta → pedir monto inicial
         handleCloseModal1();
         handleShowModal();
       }
@@ -138,45 +131,50 @@ const LoginUsuario = () => {
     }
   };
 
-  const regristroPlata = () => {
-    const idUsuario = sessionStorage.getItem("idUsuario");
-    const IdCaja = sessionStorage.getItem('idCaja');
+  const regristroPlata = async () => {
+  const idUsuario = sessionStorage.getItem("idUsuario");
+  const IdCaja = sessionStorage.getItem("idCaja");
 
-    if (!ingresoPlata || isNaN(ingresoPlata) || ingresoPlata <= 0) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Atención',
-        text: 'Debe ingresar un fondo de caja',
-        timerProgressBar: true,
-        timer: 2500
-      });
-      return;
-    }
-
-    axios.post(`${URL}plataLogin/post`, {
+  if (!ingresoPlata || isNaN(ingresoPlata) || ingresoPlata <= 0) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Atención',
+      text: 'Debe ingresar un fondo de caja',
+      timer: 2500,
+      timerProgressBar: true
+    });
+    return;
+  }
+  try {
+    await axios.post(`${URL}plataLogin/post`, {
       Id_usuario: idUsuario,
       Id_sucursal: id_sucursal,
       cantidadPlataLogin: parseFloat(ingresoPlata),
       Id_caja: IdCaja
-    })
-    .then(() => {
-      sessionStorage.setItem('platica', String(ingresoPlata));
-
-      Swal.fire({
-        title: "Ingreso Correcto",
-        text: "¡Que tenga un día exitoso!",
-        icon: "success",
-        timer: 3000
-      });
-
-      handleCloseModal();
-      navigate('/testVenta', { replace: true });
-    })
-    .catch((error) => {
-      console.error("Error al registrar el ingreso:", error);
-      Swal.fire("Error al registrar la apertura de caja.");
     });
-  };
+    sessionStorage.setItem('platica', String(ingresoPlata));
+    const respTurno = await axios.post(`${URL}turno/abrirTurno`, {
+      Id_usuario: idUsuario,
+      Id_sucursal: id_sucursal,
+      FondoCaja: ingresoPlata,
+      Id_caja: IdCaja,
+    });
+    const IdTurno = respTurno.data.IdTurno;
+    sessionStorage.setItem('IdTurno', IdTurno);
+    Swal.fire({
+      title: "Ingreso Correcto",
+      text: "¡Que tenga un día exitoso!",
+      icon: "success",
+      timer: 3000
+    });
+    handleCloseModal();
+    navigate('/testVenta', { replace: true });
+  } catch (error) {
+    console.error("Error al registrar el ingreso:", error);
+    Swal.fire("Error al registrar la apertura de caja.");
+  }
+};
+
 
   useEffect(() => {
     if (!id_sucursal) return;
@@ -190,6 +188,9 @@ const LoginUsuario = () => {
       .then(response => setUsuarios(response.data))
       .catch(error => console.error('Error fetching usuarios:', error));
   }, [id_sucursal, URL]);
+
+
+
 
   return (
     <div className='fondo-loginusuario'>

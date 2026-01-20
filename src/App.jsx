@@ -40,6 +40,15 @@ function App(  ) {
 
   const {  URL } = useContext(DataContext);
 
+
+  // const verTurno = async () =>{
+  //   try {
+  //       await axios.get(`${URL}turno/verTurno/${IdCaja}/${id_usuario}/${}`)
+  //   } catch (error) {
+      
+  //   }
+  // }
+
       
   const handleShowModal = () => {
     setShowModal(true)
@@ -65,6 +74,7 @@ function App(  ) {
  const IdCaja = sessionStorage.getItem('idCaja')
  const nombreUsuario = sessionStorage.getItem('nombreUsuario')
  const nombreSucursal = sessionStorage.getItem('nombreSucursal')
+ const IdTurno = sessionStorage.getItem('IdTurno')
  
 
 
@@ -111,25 +121,53 @@ const [plataEgreso,setPlataEgreso] = useState("")
 
 
 const cerrarCaja = async () => {
-  const plataIF = parseFloat(parseFloat(cantidadPlataCaja).toFixed(2));
+    const plataIF = parseFloat(parseFloat(cantidadPlataCaja).toFixed(2));
 
-  if (isNaN(plataIF) || plataIF < 0) {
-      return alert('Por favor ingrese un monto válido.');
-  }
+    if (isNaN(plataIF) || plataIF < 0) {
+        return alert('Por favor ingrese un monto válido.');
+    }
 
-  try {
+    try {
       await axios.post(`${URL}plataCaja/post`, {
           Id_sucursal: id_sucursal,
           Id_usuario: id_usuario,
           cantidadPlata: plataIF,
           faltante: calcularFaltante(),
-          IdCaja: IdCaja
+          IdCaja: IdCaja,
+          TotalEnCaja: total_cierre,
       });
 
-      await axios.put(`${URL}plataCaja/cerrarCaja`, {
-        Id_usuario: id_usuario,
-        Id_caja: IdCaja
-    });
+        await axios.put(`${URL}plataCaja/cerrarCaja`, {
+          Id_usuario: id_usuario,
+          Id_caja: IdCaja
+      });
+
+
+      const getTotal = (name) => {
+        return parseFloat(
+          metoPago.find(x => (x.tipo_item || "").trim().toLowerCase() === name)?.total || 0
+        );
+      };
+
+      const efectivo = getTotal("efectivo");
+      const transferencia = getTotal("transferencia");
+      const cigarrillos = getTotal("cigarrillos");
+
+      const debito = parseFloat(
+        metoPago.find(x => (x.tipo_item || "").trim().toLowerCase().includes("debito"))?.total || 0
+      );
+
+        await axios.put(`${URL}turno/finalizarTurno`,{
+        IdTurno: IdTurno,
+        Ingreso: plataIngreso,
+        Egreso: plataEgreso,
+        Efectivo: efectivo,
+        Transferencia: transferencia,
+        Cigarrillos: cigarrillos,
+        Debito: debito,
+        TotalEnCaja: total_cierre
+      });
+
       Swal.fire({
         icon: 'success',
         title: 'Éxito',

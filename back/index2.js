@@ -75,6 +75,8 @@ const Paquete = require('./routes/Paquete');
 const Reportes = require('./routes/Reportes');
 const Cancelaciones = require('./routes/Cancelaciones');
 const AuditoriaCompra = require('./routes/AuditoriaCompra');
+const Turno = require("./routes/Turno")
+
 
 app.use('/api/productos', Productos);
 app.use('/api/categorias', Categoria);
@@ -98,6 +100,7 @@ app.use('/api/paquete', Paquete);
 app.use('/api/reportes', Reportes);
 app.use('/api/cancelaciones', Cancelaciones);
 app.use('/api/auditoria', AuditoriaCompra);
+app.use('/api/Turno', Turno);
 
 // Healthcheck
 app.get('/', (req, res) => {
