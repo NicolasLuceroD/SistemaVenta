@@ -10,7 +10,7 @@ const DataProvider = ({ children }) => {
 
   // "/api/"    "http://localhost:2201/api/"
 
-  const URL =    "http://localhost:2201/api/"
+  const URL =   "http://localhost:2201/api/"
   
   const traerSucursales = useCallback(async () => {
     try {
@@ -35,7 +35,6 @@ const traerProductos = useCallback(async () => {
 
     const normalizados = (Array.isArray(response.data) ? response.data : []).map(p => ({
       ...p,
-      // 👇 este campo lo seguís usando en todo tu sistema sin tocar nada más
       precioVenta:
         idSucursal === 1
           ? Number(p.precioVentaSucGuillermina ?? p.precioVenta ?? 0)

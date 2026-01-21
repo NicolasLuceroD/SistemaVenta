@@ -200,61 +200,104 @@ const cerrarCaja = async (req, res) => {
 };
 
 
-const verMetodosPagos = (req,res) => {
-    const {Id_caja,Id_usuario} = req.params
-    connection.query(`
-   
-(
-  SELECT 
-    m.Id_metodoPago AS Id_item,
-    m.tipo_metodoPago AS tipo_item,
-    COALESCE(SUM(v.precioTotal_venta), 0) AS total
-  FROM venta v
-  INNER JOIN metopago m ON m.Id_metodoPago = v.Id_metodoPago
-  WHERE v.Id_caja = ?
-    AND v.Id_usuario = ?
-    AND v.fecha_registro >= (
-      SELECT MAX(FechaRegistro)
-      FROM plataencajalogin
-      WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
-    )
-  GROUP BY m.Id_metodoPago, m.tipo_metodoPago
-)
+const verMetodosPagos = (req, res) => {
+  const { Id_caja, Id_usuario } = req.params;
 
-UNION ALL
+  connection.query(`
+    SELECT
+      r.Id_item,
+      r.tipo_item,
+      r.total
+    FROM (
+      /* ===============================
+         1) MÉTODOS DE PAGO (NETO)
+         =============================== */
+      SELECT
+        m.Id_metodoPago AS Id_item,
+        m.tipo_metodoPago AS tipo_item,
+        ROUND(
+          COALESCE(vm.total_metodo, 0) - COALESCE(cm.total_cigarrillos, 0),
+          2
+        ) AS total
+      FROM metopago m
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(v.precioTotal_venta) AS total_metodo
+        FROM venta v
+        WHERE v.Id_caja = ?
+          AND v.Id_usuario = ?
+          AND v.fecha_registro >= (
+            SELECT MAX(FechaRegistro)
+            FROM plataencajalogin
+            WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
+          )
+        GROUP BY v.Id_metodoPago
+      ) vm ON vm.Id_metodoPago = m.Id_metodoPago
 
-(
-  SELECT
-    -5 AS Id_item,
-    'Cigarrillos' AS tipo_item,
-    COALESCE(SUM(
-      dv.CantidadVendida *
-      CASE 
-        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
-        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
-        ELSE p.precioVentaSucGuillermina
-      END
-    ), 0) AS total
-  FROM venta v
-  INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
-  INNER JOIN producto p ON p.Id_producto = dv.Id_producto
-  WHERE v.Id_caja = ?
-    AND v.Id_usuario = ?
-    AND p.Id_categoria = 10
-    AND v.fecha_registro >= (
-      SELECT MAX(FechaRegistro)
-      FROM plataencajalogin
-      WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
-    )
-)
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+        FROM venta v
+        INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+        INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+        WHERE v.Id_caja = ?
+          AND v.Id_usuario = ?
+          AND v.fecha_registro >= (
+            SELECT MAX(FechaRegistro)
+            FROM plataencajalogin
+            WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
+          )
+          AND p.Id_categoria = 10
+        GROUP BY v.Id_metodoPago
+      ) cm ON cm.Id_metodoPago = m.Id_metodoPago
 
-ORDER BY total DESC;         
-        `,[Id_caja,Id_usuario,Id_caja,Id_usuario,Id_caja,Id_usuario,Id_caja,Id_usuario],(error,results)=>{ 
-            if(error) throw error
-            res.json(results)
-        })
-}
+      WHERE COALESCE(vm.total_metodo, 0) > 0
 
+      UNION ALL
+
+      /* ===============================
+         2) FILA EXTRA: CIGARRILLOS
+         =============================== */
+      SELECT
+        999999 AS Id_item,
+        'Cigarrillos' AS tipo_item,
+        ROUND(
+          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          2
+        ) AS total
+      FROM venta v
+      INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+      INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+      WHERE v.Id_caja = ?
+        AND v.Id_usuario = ?
+        AND v.fecha_registro >= (
+          SELECT MAX(FechaRegistro)
+          FROM plataencajalogin
+          WHERE Id_caja = ? AND Id_usuario = ? AND estado = 1
+        )
+        AND p.Id_categoria = 10
+    ) r
+    ORDER BY
+      CASE WHEN r.Id_item = 999999 THEN 2 ELSE 1 END,
+      r.total DESC;
+  `,
+  [
+    // Métodos de pago
+    Id_caja, Id_usuario, Id_caja, Id_usuario,
+
+    // Cigarrillos por método
+    Id_caja, Id_usuario, Id_caja, Id_usuario,
+
+    // Total cigarrillos
+    Id_caja, Id_usuario, Id_caja, Id_usuario
+  ],
+  (error, results) => {
+    if (error) throw error;
+    res.json(results);
+  });
+};
 
 module.exports = {verPlataCaja, IngresarPlata,verUltimoIngreso,
     verCantidadTotal,verificarCajaAbierta,cerrarCaja,verMetodosPagos}

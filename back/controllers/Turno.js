@@ -50,11 +50,11 @@ const abrirTurno = (req, res) => {
 
 
 const finalizarTurno = (req, res) => {
-  const { IdTurno, Efectivo, Cigarrillos, Transferencia, Debito, Egreso, Ingreso, TotalEnCaja } = req.body;
+  const { IdTurno,FechaSalida, Efectivo, Cigarrillos, Transferencia, Debito, Egreso, Ingreso, TotalEnCaja } = req.body;
 
   connection.query(
     `UPDATE turno SET 
-      FechaSalida = NOW(),
+      FechaSalida = '${FechaSalida}',
       Efectivo = '${Efectivo}',
       Cigarrillos = '${Cigarrillos}',
       Transferencia = '${Transferencia}',

@@ -136,7 +136,8 @@ const {  URL } = useContext(DataContext);
   
   const fetchVentaTotalxCategoriaUsuarios = () => {
     const formattedDate = formatDate(fechaSeleccionada);
-    fetch(`${URL}corte/ventaxCategoriaUsuarios?formattedDate=${formattedDate}&Id_sucursal=${id_sucursal}&Id_usuario=${Id_usuario}&Id_caja=${idCaja}`)
+     const idUsuario = document.getElementById("usuarios").value;
+    fetch(`${URL}corte/ventaxCategoriaUsuarios?formattedDate=${formattedDate}&Id_sucursal=${id_sucursal}&Id_usuario=${idUsuario}&Id_caja=${idCaja}`)
     .then((response) => response.json())
       .then((data) => {
         setVentasPorcategoriasUsuarios(data);
@@ -645,7 +646,6 @@ useEffect(()=>{
       y = doc.lastAutoTable.finalY + 10;
     }
   
-    // ❌ Productos Eliminados
     if (productoseliminados.length > 0) {
       doc.text("Productos Eliminados:", 14, y);
       autoTable(doc, {
@@ -953,7 +953,7 @@ useEffect(()=>{
 <hr />  
 
     <h3 className='h3-clientes'>
-      <FontAwesomeIcon icon={faTags} style={{ color: "#01992f" }} /> VENTAS POR DEPARTAMENTOS:</h3>
+      <FontAwesomeIcon icon={faTags} style={{ color: "#01992f" }} /> VENTAS POR DEPARTAMENTOS USUARIO:</h3>
     <div className="container table">
       <Table striped bordered hover className='table-primary'>
         <thead className='custom-table-header'>

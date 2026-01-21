@@ -206,7 +206,6 @@ const TestVenta = () => {
     const seleccionarVenta = (Id_venta) =>{
       axios.get(`${URL}ventas/verVentaSeleccionada/${Id_venta}`).then((response)=>{
         setVerVentaSeleccionada(response.data)
-        console.log('response data venta', response.data)
         handleShowModalVerProductosVenta()
       }).catch((error)=>{
         console.log('Error al seleccionar la venta',error)
@@ -242,7 +241,6 @@ const TestVenta = () => {
 
 
       const validarSucursal =()=>{
-        console.log('productos', productos)
         if(id_sucursal === 1){
           setPrecioVenta(productos.precioVentaSucGuillermina)
         }else{
@@ -649,8 +647,17 @@ const FinalizarVenta = () => {
   const Id_Cliente = document.getElementById("cliente").value;
   const totalParaTodo = Number(SumarIntereses());
   const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
-
   const items = buildItems();
+
+  const pad = (n) => String(n).padStart(2, "0");
+
+    const d = new Date(); 
+    const fechaRegistro =
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+
+
 
   const tieneCantidadInvalida = items.some(it => !it.CantidadVendida || it.CantidadVendida <= 0);
   if (tieneCantidadInvalida) {
@@ -690,12 +697,10 @@ const FinalizarVenta = () => {
       faltaPagar,
       items,
       aplicarCredito: Id_metodoPago === 5,
-      montoCredito: totalParaTodo
+      montoCredito: totalParaTodo,
+      fecha_registro: fechaRegistro
     })
     .then((resp) => {
-      // ✅ Id_venta real creado por DB
-      // const ventaIdReal = resp.data.Id_venta;
-
       Swal.fire({
         title: "<strong>Venta exitosa!</strong>",
         html: "<i>La venta fue agregada con éxito</i>",
@@ -703,7 +708,6 @@ const FinalizarVenta = () => {
         timer: 3000
       });
 
-      // limpiar estados
       listaCompras.length = 0;
       setCantidadesVendidas({});
       setPreciosSeleccionados({});
@@ -740,6 +744,16 @@ const FinalizarVentaSinTicket = () => {
   const totalParaTodo = Number(SumarIntereses());
   const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
 
+  const pad = (n) => String(n).padStart(2, "0");
+
+    const d = new Date(); 
+    const fechaRegistro =
+  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
+  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+
+
+
   const items = buildItems();
 
   const tieneCantidadInvalida = items.some(it => !it.CantidadVendida || it.CantidadVendida <= 0);
@@ -766,11 +780,10 @@ const FinalizarVentaSinTicket = () => {
       faltaPagar,
       items,
       aplicarCredito: Id_metodoPago === 5,
-      montoCredito: totalParaTodo
+      montoCredito: totalParaTodo,
+      fecha_registro: fechaRegistro
     })
     .then((resp) => {
-      // ✅ Id_venta real creado por DB
-      // const ventaIdReal = resp.data.Id_venta;
 
       Swal.fire({
         title: "<strong>Venta exitosa!</strong>",

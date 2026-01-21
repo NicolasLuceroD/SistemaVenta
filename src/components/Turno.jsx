@@ -67,7 +67,7 @@ const Turno = () => {
 const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
 
     //PAGINACION NUEVA
-    const productosPorPagina = 10
+    const productosPorPagina = 5
     const [actualPagina, setActualPagina] = useState(1)
     const [total, setTotal] = useState(0)
     const ultimoIndex = actualPagina * productosPorPagina;
@@ -118,7 +118,7 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
   </div>
 </div>
 
-  <div className="container-fluid mt-4 px-4">
+ <div className="container-fluid mt-4">
   <div className="card shadow-sm border-0">
     <div className="card-body p-0">
 
@@ -133,76 +133,90 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
           <strong>{fechaFiltro}</strong>
         </div>
       ) : (
-        <table className="table table-hover align-middle text-center mb-0">
-
-          <thead className="bg-light text-uppercase small border-bottom">
-            <tr>
-              <th className="px-4">Folio</th>
-              <th className="px-4">Estado</th>
-              <th className="px-4">Ingreso</th>
-              <th className="px-4">Salida</th>
-              <th className="px-4">Usuario</th>
-              <th className="px-4">Fondo</th>
-              <th className="px-4">Efectivo</th>
-              <th className="px-4">Transferencia</th>
-              <th className="px-4">Débito</th>
-              <th className="px-4">Cigarrillos</th>
-              <th className="px-4">Egreso</th>
-              <th className="px-4">Ingreso</th>
-              <th className="px-4">Total en Caja</th>
-              <th className="px-4">Sucursal</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {turnosFiltrados.slice(primerIndex,ultimoIndex).map((tur) => (
-              <tr key={tur.Id_turno}>
-                <td className="px-4 fw-semibold">{tur.Id_turno}</td>
-                <td className="px-4">
-                <span
-                    className={`badge rounded-pill px-3 py-1 ${tur.Estado === 'ABIERTO'? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}`}
-                >
-                  {tur.Estado}
-                  </span>
-                </td>
-
-                <td className="px-4 text-nowrap">
-                  {new Date(tur.FechaIngreso).toLocaleString()}
-                </td>
-
-                <td className="px-4 text-nowrap">
-                  {tur.FechaSalida
-                    ? new Date(tur.FechaSalida).toLocaleString()
-                    : '—'}
-                </td>
-
-                <td className="px-4">{mostrarValor(tur.NombreUsuario)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.FondoCaja)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Efectivo)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Transferencia)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Debito)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Cigarrillos)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Egreso)}</td>
-                <td className="px-4 text-end">{mostrarImporte(tur.Ingreso)}</td>
-                <td className="px-4 fw-bold text-end">
-                  {mostrarTotal(tur.TotalEnCaja, tur.Estado)}
-                </td>
-                <td className="px-4">{mostrarValor(tur.NombreSucursal)}</td>
+        <div className="table-responsive">
+          <table className="table table-sm table-hover align-middle text-center mb-0 table-column-lines">
+            <thead className="table-header-gradient text-uppercase small">
+              <tr>
+                <th className="px-2">Folio</th>
+                <th className="px-2">Estado</th>
+                <th className="px-2">Ingreso</th>
+                <th className="px-2">Salida</th>
+                <th className="px-2">Usuario</th>
+                <th className="px-2">Fondo</th>
+                <th className="px-2">Efectivo</th>
+                <th className="px-2">Transferencia</th>
+                <th className="px-2">Débito</th>
+                <th className="px-2">Cigarrillos</th>
+                <th className="px-2">Egreso</th>
+                <th className="px-2">Ingreso</th>
+                <th className="px-2">Total en Caja</th>
+                <th className="px-2">Sucursal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div><br />
-        <div style={{display:'flex',justifyContent:'center'}}>
-                <Paginacion productosPorPagina={productosPorPagina}
-                    actualPagina={actualPagina}
-                    setActualPagina={setActualPagina}
-                    total={total}
-                />
+            </thead>
+
+            <tbody>
+              {turnosFiltrados.slice(primerIndex, ultimoIndex).map((tur) => (
+                <tr key={tur.Id_turno}>
+                  <td className="px-2 fw-semibold">{tur.Id_turno}</td>
+
+                  <td className="px-2">
+                    <span
+                      className={`badge rounded-pill px-3 py-1 ${
+                        tur.Estado === 'ABIERTO'
+                          ? 'bg-success-subtle text-success'
+                          : 'bg-danger-subtle text-danger'
+                      }`}
+                    >
+                      {tur.Estado}
+                    </span>
+                  </td>
+
+                  <td className="px-2 text-nowrap">
+                    {new Date(tur.FechaIngreso).toLocaleString()}
+                  </td>
+
+                  <td className="px-2 text-nowrap">
+                    {tur.FechaSalida
+                      ? new Date(tur.FechaSalida).toLocaleString()
+                      : '—'}
+                  </td>
+
+                  <td className="px-2">{mostrarValor(tur.NombreUsuario)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.FondoCaja)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Efectivo)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Transferencia)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Debito)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Cigarrillos)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Egreso)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Ingreso)}</td>
+
+                  <td className="px-2 fw-bold text-end">
+                    {mostrarTotal(tur.TotalEnCaja, tur.Estado)}
+                  </td>
+
+                  <td className="px-2">{mostrarValor(tur.NombreSucursal)}</td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
         </div>
+      )}
+    </div>
+
+    <br />
+
+    <div className="d-flex justify-content-center">
+      <Paginacion
+        productosPorPagina={productosPorPagina}
+        actualPagina={actualPagina}
+        setActualPagina={setActualPagina}
+        total={total}
+      />
+    </div>
   </div>
 </div>
+
       <ScrollToTopButton/>
     </>
   )

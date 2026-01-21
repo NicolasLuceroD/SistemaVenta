@@ -406,13 +406,14 @@ const finalizarVenta = (req, res) => {
     Id_usuario,
     Id_caja,
     faltaPagar,
-    items, // <- array de productos/paquetes/comunes con { Id_producto, Id_paquete, CantidadVendida, productocomun, precioproductocomun }
-    // opcional crédito:
+    items,
+    fecha_registro,
     aplicarCredito, // boolean
     montoCredito,   // number
     saldoCredito    // number (si querés guardar en movimientoClientes)
   } = req.body;
 
+  console.log('FECHA',fecha_registro)
   // ✅ Validación mínima (rápida)
   if (!Id_sucursal || !Id_usuario || !Id_caja) {
     return res.status(400).json({ ok: false, message: "Faltan datos de sesión (sucursal/usuario/caja)." });
@@ -438,6 +439,7 @@ const finalizarVenta = (req, res) => {
       Id_caja: Id_caja,
       faltaPagar: faltaPagar || 0,
       Estado: 1,
+      fecha_registro: fecha_registro
     };
 
     connection.query("INSERT INTO venta SET ?", ventaData, (err1, result1) => {

@@ -1057,3 +1057,47 @@ nav{
   z-index: 9999;
   backdrop-filter: blur(2px);
 }
+
+
+
+.table-column-lines th,
+.table-column-lines td {
+  border-right: 2px solid rgba(0,0,0,0.08);
+}
+.table-column-lines th:last-child,
+.table-column-lines td:last-child {
+  border-right: none;
+}
+
+
+/* ===== CABECERA CON DEGRADÉ ===== */
+.table-header-gradient {
+  background: linear-gradient(
+    135deg,
+    #000000 0%,
+    #121212 40%,
+    #00cc3d 100%,
+    #00ff4c 100%
+  );
+}
+
+.table-header-gradient th {
+  background: transparent !important;
+  color: #ffffff !important;
+}
+
+/* Opcional: líneas verticales claras en la cabecera */
+.table-header-gradient th:not(:last-child) {
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+
+.table-column-lines th,
+.table-column-lines td {
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.table-column-lines th:last-child,
+.table-column-lines td:last-child {
+  border-right: none;
+}
