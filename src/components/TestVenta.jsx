@@ -649,14 +649,7 @@ const FinalizarVenta = () => {
   const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
   const items = buildItems();
 
-  const pad = (n) => String(n).padStart(2, "0");
-
-    const d = new Date(); 
-    const fechaRegistro =
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
-  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
-
+  // const FechaRegistro = new Date().toISOString();
 
 
   const tieneCantidadInvalida = items.some(it => !it.CantidadVendida || it.CantidadVendida <= 0);
@@ -697,8 +690,7 @@ const FinalizarVenta = () => {
       faltaPagar,
       items,
       aplicarCredito: Id_metodoPago === 5,
-      montoCredito: totalParaTodo,
-      fecha_registro: fechaRegistro
+      montoCredito: totalParaTodo
     })
     .then((resp) => {
       Swal.fire({
@@ -744,14 +736,7 @@ const FinalizarVentaSinTicket = () => {
   const totalParaTodo = Number(SumarIntereses());
   const faltaPagar = Id_metodoPago === 5 ? totalParaTodo : 0;
 
-  const pad = (n) => String(n).padStart(2, "0");
-
-    const d = new Date(); 
-    const fechaRegistro =
-  `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
-  `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
-
+  //  const FechaRegistro = new Date().toISOString();
 
 
   const items = buildItems();
@@ -780,8 +765,7 @@ const FinalizarVentaSinTicket = () => {
       faltaPagar,
       items,
       aplicarCredito: Id_metodoPago === 5,
-      montoCredito: totalParaTodo,
-      fecha_registro: fechaRegistro
+      montoCredito: totalParaTodo
     })
     .then((resp) => {
 
@@ -1449,6 +1433,13 @@ useEffect(() => {
 
 
 
+    const mostrarFecha = (s) => {
+  if (!s) return "—";
+  const [fecha, hora] = s.split(" ");
+  if (!hora) return s; 
+  const [y, m, d] = fecha.split("-");
+  return `${d}/${m}/${y}, ${hora}`;
+};
 
 
 return (
@@ -1767,7 +1758,9 @@ return (
                   </td>       
                   <td>{formatCurrency(detalle.precioTotal_venta)}</td>
                   <td>{detalle.usuarios.nombre_usuario}</td>
-                  <td>{new Date(detalle.fecha_registro).toLocaleString()}</td>
+                   <td>
+                    {mostrarFecha(detalle.fecha_registro)}
+                  </td>    
                   <td>
                     <ButtonGroup>
                     <Button className="btn btn-danger" onClick={() => eliminarUltimaVenta(detalle.productos, detalle.Id_venta, detalle,detalle.usuarios.nombre_usuario )}>

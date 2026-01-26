@@ -1,44 +1,160 @@
 const {connection} = require("../database/config")
 
 const ventaTotal = (req, res) => {
-  const fechaSeleccionada1 = req.query.formattedDate;
-  const Id_sucursal1 = req.query.id_sucursal;
+  const fechaSeleccionada = req.query.formattedDate;
+  const Id_sucursal = req.query.id_sucursal;
 
-  connection.query(
-    `  SELECT 
-          mp.tipo_metodoPago AS tipo,
-          SUM(v.precioTotal_venta) AS monto_total
+  const query = `
+    SELECT
+      r.tipo,
+      r.monto_total
+    FROM (
+      /* ===============================
+         1) MÉTODOS DE PAGO (NETO)
+         =============================== */
+      SELECT
+        mp.tipo_metodoPago AS tipo,
+        ROUND(
+          COALESCE(vm.total_metodo, 0) - COALESCE(cm.total_cigarrillos, 0),
+          2
+        ) AS monto_total
+      FROM metopago mp
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(v.precioTotal_venta) AS total_metodo
         FROM venta v
-        INNER JOIN metopago mp ON mp.Id_metodoPago = v.Id_metodoPago
         WHERE DATE(v.fecha_registro) = ?
           AND v.Id_sucursal = ?
-        GROUP BY mp.tipo_metodoPago
-      ORDER BY tipo;
-      `, [fechaSeleccionada1,Id_sucursal1], (error, results) => {
-      if (error) throw error;
-      res.json(results);
-    }
-  );
-} 
+        GROUP BY v.Id_metodoPago
+      ) vm ON vm.Id_metodoPago = mp.Id_metodoPago
 
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+        FROM venta v
+        INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+        INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+        WHERE DATE(v.fecha_registro) = ?
+          AND v.Id_sucursal = ?
+          AND p.Id_categoria = 10
+        GROUP BY v.Id_metodoPago
+      ) cm ON cm.Id_metodoPago = mp.Id_metodoPago
+
+      WHERE COALESCE(vm.total_metodo, 0) > 0
+
+      UNION ALL
+
+      /* ===============================
+         2) FILA EXTRA: CIGARRILLOS
+         =============================== */
+      SELECT
+        'Cigarrillos' AS tipo,
+        ROUND(
+          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          2
+        ) AS monto_total
+      FROM venta v
+      INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+      INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+      WHERE DATE(v.fecha_registro) = ?
+        AND v.Id_sucursal = ?
+        AND p.Id_categoria = 10
+    ) r
+    ORDER BY r.tipo;
+  `;
+
+  const params = [
+    fechaSeleccionada, Id_sucursal,      // vm
+    fechaSeleccionada, Id_sucursal,      // cm
+    fechaSeleccionada, Id_sucursal       // cigarrillos
+  ];
+
+  connection.query(query, params, (error, results) => {
+    if (error) {
+      console.error("Error ventaTotal:", error);
+      return res.status(500).json({ error: "Error al obtener totales de venta" });
+    }
+    res.json(results);
+  });
+};
 
 const ventaTotalconUsuario = (req, res) => {
   const { fechaSeleccionada, Id_usuario, Id_caja, Id_sucursal } = req.params;
+
   const query = `
-      SELECT 
+    SELECT
+      r.tipo,
+      r.monto_total
+    FROM (
+      /* ===============================
+         1) MÉTODOS DE PAGO (NETO)
+         =============================== */
+      SELECT
         mp.tipo_metodoPago AS tipo,
-        SUM(v.precioTotal_venta) AS monto_total
+        ROUND(
+          COALESCE(vm.total_metodo, 0) - COALESCE(cm.total_cigarrillos, 0),
+          2
+        ) AS monto_total
+      FROM metopago mp
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(v.precioTotal_venta) AS total_metodo
+        FROM venta v
+        WHERE DATE(v.fecha_registro) = ?
+          AND v.Id_sucursal = ?
+          AND v.Id_usuario  = ?
+          AND v.Id_caja     = ?
+        GROUP BY v.Id_metodoPago
+      ) vm ON vm.Id_metodoPago = mp.Id_metodoPago
+
+      LEFT JOIN (
+        SELECT
+          v.Id_metodoPago,
+          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+        FROM venta v
+        INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+        INNER JOIN producto p ON p.Id_producto = dv.Id_producto
+        WHERE DATE(v.fecha_registro) = ?
+          AND v.Id_sucursal = ?
+          AND v.Id_usuario  = ?
+          AND v.Id_caja     = ?
+          AND p.Id_categoria = 10
+        GROUP BY v.Id_metodoPago
+      ) cm ON cm.Id_metodoPago = mp.Id_metodoPago
+
+      WHERE COALESCE(vm.total_metodo, 0) > 0
+
+      UNION ALL
+
+      /* ===============================
+         2) FILA EXTRA: CIGARRILLOS
+         =============================== */
+      SELECT
+        'Cigarrillos' AS tipo,
+        ROUND(
+          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          2
+        ) AS monto_total
       FROM venta v
-      INNER JOIN metopago mp ON mp.Id_metodoPago = v.Id_metodoPago
+      INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
+      INNER JOIN producto p ON p.Id_producto = dv.Id_producto
       WHERE DATE(v.fecha_registro) = ?
         AND v.Id_sucursal = ?
         AND v.Id_usuario  = ?
         AND v.Id_caja     = ?
-      GROUP BY mp.tipo_metodoPago
-  
+        AND p.Id_categoria = 10
+    ) r
+    ORDER BY r.tipo;
   `;
 
-  const params = [fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja];
+  const params = [
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja,   
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja,   
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja   
+  ];
 
   connection.query(query, params, (error, results) => {
     if (error) {

@@ -62,51 +62,53 @@ const ultimoDetalle = (req, res) => {
   const Id_sucursal = req.params.Id_sucursal;
 
   connection.query(
-    `SELECT 
-        v.Id_venta, 
-        v.precioTotal_venta, 
-        v.fecha_registro,
+        `SELECT 
+      v.Id_venta, 
+      v.precioTotal_venta, 
+	   DATE_FORMAT(v.fecha_registro, '%Y-%m-%d %H:%i:%s') AS fecha_registro,
 
-        c.Id_cliente, 
-        c.nombre_cliente, 
+      c.Id_cliente, 
+      c.nombre_cliente, 
 
-        mt.Id_metodoPago, 
-        mt.tipo_metodoPago,
+      mt.Id_metodoPago, 
+      mt.tipo_metodoPago,
 
-        p.Id_producto, 
-        p.nombre_producto,
+      p.Id_producto, 
+      p.nombre_producto,
 
-        CASE 
-          WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
-          WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
-        END AS precioVenta,
+      CASE 
+        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+      END AS precioVenta,
 
-        p.PrecioMayoreo,
-        p.precioCompra,
+      p.PrecioMayoreo,
+      p.precioCompra,
 
-        dv.Id_detalleVenta, 
-        dv.CantidadVendida, 
+      dv.Id_detalleVenta, 
+      dv.CantidadVendida, 
 
-        u.nombre_usuario,
+      u.nombre_usuario,
 
-        pa.nombre_promocion,
-        pa.precio_paquete,
-        pa.Id_paquete,
+      pa.nombre_promocion,
+      pa.precio_paquete,
+      pa.Id_paquete,
 
-        dv.productocomun,
-        dv.precioproductocomun
+      dv.productocomun,
+      dv.precioproductocomun
 
-     FROM detalleventa dv
-     LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
-     LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
-     LEFT JOIN cliente c ON v.Id_cliente = c.Id_cliente
-     LEFT JOIN metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
-     LEFT JOIN usuarios u ON v.Id_usuario = u.Id_usuario
-     LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
+    FROM detalleventa dv
+    LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
+    LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
+    LEFT JOIN cliente c ON v.Id_cliente = c.Id_cliente
+    LEFT JOIN metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
+    LEFT JOIN usuarios u ON v.Id_usuario = u.Id_usuario
+    LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
 
-     WHERE v.Id_sucursal = ?
-       AND DATE(v.fecha_registro) = ?
-     ORDER BY v.fecha_registro DESC;`,
+    WHERE v.Id_sucursal = ?
+      AND DATE(v.fecha_registro) = ?
+
+    ORDER BY v.fecha_registro DESC;
+`,
     [Id_sucursal, fechaSeleccionada], // ✅ solo 2 params
     (error, results) => {
       if (error) {

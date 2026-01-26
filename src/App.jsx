@@ -109,12 +109,7 @@ function App() {
   const cerrarCaja = async () => {
     const plataIF = parseFloat(parseFloat(cantidadPlataCaja || 0).toFixed(2));
 
-    const pad = (n) => String(n).padStart(2, "0");
-    const d = new Date();
-    const fechaRegistro =
-      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ` +
-      `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
+     const FechaRegistro = new Date().toISOString();
     if (isNaN(plataIF) || plataIF < 0) {
       return alert("Por favor ingrese un monto válido.");
     }
@@ -159,7 +154,7 @@ function App() {
         Cigarrillos: cigarrillos,
         Debito: debito,
         TotalEnCaja: total_cierre,
-        FechaSalida: fechaRegistro
+        FechaSalida: FechaRegistro
       });
 
       Swal.fire({

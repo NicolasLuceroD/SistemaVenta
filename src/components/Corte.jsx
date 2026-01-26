@@ -136,6 +136,16 @@ useEffect(() => {
   verUsuarios();
 }, []);
 
+
+    const mostrarFecha = (s) => {
+  if (!s) return "—";
+  const [fecha, hora] = s.split(" ");
+  if (!hora) return s; 
+  const [y, m, d] = fecha.split("-");
+  return `${d}/${m}/${y}, ${hora}`;
+};
+
+
   return (
     <>
       <App />
@@ -236,7 +246,10 @@ useEffect(() => {
       </td>             
       <td>{val.cliente.nombre_cliente}</td>
       <td>{val.metodoPago.tipo_metodoPago}</td>             
-      <td>{new Date(val.fecha_registro).toLocaleString()}</td>
+       <td>
+        {mostrarFecha(val.fecha_registro)}
+        </td>
+
       <td className='empleado'>{val.usuarios.nombre_usuario}</td>   
     </tr>
   ))}

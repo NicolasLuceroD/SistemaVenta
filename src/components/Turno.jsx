@@ -72,7 +72,15 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
     const [total, setTotal] = useState(0)
     const ultimoIndex = actualPagina * productosPorPagina;
     const primerIndex = ultimoIndex - productosPorPagina;
+  
 
+    const mostrarFecha = (s) => {
+  if (!s) return "—";
+  const [fecha, hora] = s.split(" ");
+  if (!hora) return s; 
+  const [y, m, d] = fecha.split("-");
+  return `${d}/${m}/${y}, ${hora}`;
+};
 
   return (
     <>
@@ -171,16 +179,12 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
                     </span>
                   </td>
 
-                  <td className="px-2 text-nowrap">
-                    {new Date(tur.FechaIngreso).toLocaleString()}
-                  </td>
+                  <td className="px-2 text-nowrap">{new Date(tur.FechaIngreso).toLocaleString()}</td>
 
-                  <td className="px-2 text-nowrap">
-                    {tur.FechaSalida
-                      ? new Date(tur.FechaSalida).toLocaleString()
-                      : '—'}
-                  </td>
-
+                <td className="px-2 text-nowrap">
+                  {tur.FechaSalida ? mostrarFecha(tur.FechaSalida) : "—"}
+                </td>
+                
                   <td className="px-2">{mostrarValor(tur.NombreUsuario)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.FondoCaja)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Efectivo)}</td>
@@ -209,7 +213,7 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
     <div className="d-flex justify-content-center">
       <Paginacion
         productosPorPagina={productosPorPagina}
-        actualPagina={actualPagina}
+        actualPagina={actualPagina} 
         setActualPagina={setActualPagina}
         total={total}
       />
