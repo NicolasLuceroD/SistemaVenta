@@ -210,7 +210,7 @@ const verMetodosPagos = (req, res) => {
       r.total
     FROM (
       /* ===============================
-         1) MÉTODOS DE PAGO (NETO)
+         1) MÉTODOS DE PAGO (SIN CIGARRILLOS)
          =============================== */
       SELECT
         m.Id_metodoPago AS Id_item,
@@ -236,9 +236,17 @@ const verMetodosPagos = (req, res) => {
       ) vm ON vm.Id_metodoPago = m.Id_metodoPago
 
       LEFT JOIN (
+        /* TOTAL CIGARRILLOS POR MÉTODO (BIEN CALCULADO) */
         SELECT
           v.Id_metodoPago,
-          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+          SUM(
+            dv.CantidadVendida *
+            CASE
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+              ELSE p.precioVentaSucGuillermina
+            END
+          ) AS total_cigarrillos
         FROM venta v
         INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
         INNER JOIN producto p ON p.Id_producto = dv.Id_producto
@@ -258,13 +266,20 @@ const verMetodosPagos = (req, res) => {
       UNION ALL
 
       /* ===============================
-         2) FILA EXTRA: CIGARRILLOS
+         2) TOTAL GENERAL DE CIGARRILLOS
          =============================== */
       SELECT
         999999 AS Id_item,
         'Cigarrillos' AS tipo_item,
         ROUND(
-          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          SUM(
+            dv.CantidadVendida *
+            CASE
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+              ELSE p.precioVentaSucGuillermina
+            END
+          ),
           2
         ) AS total
       FROM venta v
@@ -284,13 +299,8 @@ const verMetodosPagos = (req, res) => {
       r.total DESC;
   `,
   [
-    // Métodos de pago
     Id_caja, Id_usuario, Id_caja, Id_usuario,
-
-    // Cigarrillos por método
     Id_caja, Id_usuario, Id_caja, Id_usuario,
-
-    // Total cigarrillos
     Id_caja, Id_usuario, Id_caja, Id_usuario
   ],
   (error, results) => {
@@ -298,6 +308,7 @@ const verMetodosPagos = (req, res) => {
     res.json(results);
   });
 };
+
 
 module.exports = {verPlataCaja, IngresarPlata,verUltimoIngreso,
     verCantidadTotal,verificarCajaAbierta,cerrarCaja,verMetodosPagos}

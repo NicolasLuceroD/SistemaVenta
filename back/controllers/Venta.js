@@ -52,44 +52,41 @@ const verLaVentaCompleta = (req, res) => {
 
   connection.query(
     `
-  
-
-SELECT 
-  v.Id_venta, 
-  v.precioTotal_venta, 
- DATE_FORMAT(v.fecha_registro, '%Y-%m-%d %H:%i:%s') AS fecha_registro,
-  v.Id_sucursal,
-  c.Id_cliente, 
-  c.nombre_cliente, 
-  mt.Id_metodoPago, 
-  mt.tipo_metodoPago,
-  p.Id_producto, 
-  p.nombre_producto, 
-  CASE 
-    WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
-    WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
-    ELSE p.precioVentaSucGuillermina
-  END AS precioVenta,
-  p.PrecioMayoreo,
-  p.precioCompra,
-  dv.Id_detalleVenta, 
-  dv.CantidadVendida, 
-  dv.productocomun,
-  dv.precioproductocomun,
-  u.nombre_usuario,
-  pa.nombre_promocion,
-  pa.precio_paquete,
-  pa.Id_paquete
-FROM detalleventa dv
-LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
-LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
-LEFT JOIN cliente c ON v.Id_cliente = c.Id_cliente
-LEFT JOIN metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
-LEFT JOIN usuarios u ON v.Id_usuario = u.Id_usuario
-LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
-WHERE v.Id_sucursal = ?
-ORDER BY v.fecha_registro DESC;
-
+    SELECT 
+      v.Id_venta, 
+      DATE_FORMAT(v.fecha_registro, '%Y-%m-%d %H:%i:%s') AS fecha_registro,
+      v.Id_sucursal,
+      c.Id_cliente, 
+      c.nombre_cliente, 
+      mt.Id_metodoPago, 
+      mt.tipo_metodoPago,
+      p.Id_producto, 
+      p.Id_categoria,
+      p.nombre_producto, 
+      CASE 
+        WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+        WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+        ELSE p.precioVentaSucGuillermina
+      END AS precioVenta,
+      p.PrecioMayoreo,
+      p.precioCompra,
+      dv.Id_detalleVenta, 
+      dv.CantidadVendida, 
+      dv.productocomun,
+      dv.precioproductocomun,
+      u.nombre_usuario,
+      pa.nombre_promocion,
+      pa.precio_paquete,
+      pa.Id_paquete
+    FROM detalleventa dv
+    LEFT JOIN venta v ON dv.Id_venta = v.Id_venta
+    LEFT JOIN producto p ON dv.Id_producto = p.Id_producto
+    LEFT JOIN cliente c ON v.Id_cliente = c.Id_cliente
+    LEFT JOIN metopago mt ON v.Id_metodoPago = mt.Id_metodoPago
+    LEFT JOIN usuarios u ON v.Id_usuario = u.Id_usuario
+    LEFT JOIN paquete pa ON dv.Id_paquete = pa.Id_paquete
+    WHERE v.Id_sucursal = ?
+    ORDER BY v.fecha_registro DESC
     `,
     [Id_sucursal],
     (error, results) => {
@@ -102,8 +99,8 @@ ORDER BY v.fecha_registro DESC;
         if (!acc[item.Id_venta]) {
           acc[item.Id_venta] = {
             Id_venta: item.Id_venta,
-            descripcion_venta: item.descripcion_venta,
-            precioTotal_venta: item.precioTotal_venta,
+            precioTotal_venta: 0,      // total mostrado
+            totalCigarrillos: 0,       // acumulador interno
             fecha_registro: item.fecha_registro,
             cliente: {
               Id_cliente: item.Id_cliente,
@@ -123,55 +120,96 @@ ORDER BY v.fecha_registro DESC;
 
         const venta = acc[item.Id_venta];
 
-        // ✅ Productos reales
-        const productoExistente = venta.productos.find(p => p.Id_producto === item.Id_producto);
-        if (!productoExistente && item.Id_producto) {
-          venta.productos.push({
-            Id_producto: item.Id_producto,
-            nombre_producto: item.nombre_producto,
-            descripcion_producto: item.descripcion_producto,
-            precioVenta: item.precioVenta,           // ✅ ya viene por sucursal
-            precioCompra: item.precioCompra,
-            PrecioMayoreo: item.PrecioMayoreo,
-            cantidadVendida: parseFloat(item.CantidadVendida) || 0,
-            Id_detalleVenta: item.Id_detalleVenta,
-            descripcion_detalleVenta: item.descripcion_detalleVenta,
-          });
+        // =========================
+        // 🧾 PRODUCTOS CON CÓDIGO
+        // =========================
+        if (item.Id_producto) {
+          const productoExistente = venta.productos.find(
+            p => p.Id_producto === item.Id_producto
+          );
+
+          if (!productoExistente) {
+            venta.productos.push({
+              Id_producto: item.Id_producto,
+              nombre_producto: item.nombre_producto,
+              precioVenta: item.precioVenta,
+              precioCompra: item.precioCompra,
+              PrecioMayoreo: item.PrecioMayoreo,
+              cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+              Id_detalleVenta: item.Id_detalleVenta,
+              Id_categoria: item.Id_categoria,
+            });
+          }
+
+          const subtotal =
+            (item.precioVenta || 0) *
+            (parseFloat(item.CantidadVendida) || 0);
+
+          if (item.Id_categoria === 10) {
+            // 👉 cigarrillos: caja aparte
+            venta.totalCigarrillos += subtotal;
+          } else {
+            // 👉 productos normales
+            venta.precioTotal_venta += subtotal;
+          }
         }
 
-        // ✅ Productos comunes
+        // =========================
+        // 📦 PRODUCTOS COMUNES
+        // =========================
         if (!item.Id_producto && item.productocomun) {
           venta.productos.push({
             Id_producto: `comun-${item.Id_detalleVenta}`,
             nombre_producto: item.productocomun,
-            descripcion_producto: "Producto común",
             precioVenta: parseFloat(item.precioproductocomun) || 0,
-            precioCompra: 0,
-            PrecioMayoreo: 0,
             cantidadVendida: parseFloat(item.CantidadVendida) || 0,
             Id_detalleVenta: item.Id_detalleVenta,
-            descripcion_detalleVenta: item.descripcion_detalleVenta,
           });
+
+          venta.precioTotal_venta +=
+            (parseFloat(item.precioproductocomun) || 0) *
+            (parseFloat(item.CantidadVendida) || 0);
         }
 
-        // ✅ Paquetes
-        const paqueteExistente = venta.paquetes.find(p => p.Id_paquete === item.Id_paquete);
-        if (!paqueteExistente && item.Id_paquete) {
-          venta.paquetes.push({
-            Id_paquete: item.Id_paquete,
-            nombre_promocion: item.nombre_promocion,
-            precio_paquete: item.precio_paquete,
-            cantidadVendida: parseFloat(item.CantidadVendida) || 0,
-          });
+        // =========================
+        // 🎁 PAQUETES
+        // =========================
+        if (item.Id_paquete) {
+          const paqueteExistente = venta.paquetes.find(
+            p => p.Id_paquete === item.Id_paquete
+          );
+
+          if (!paqueteExistente) {
+            venta.paquetes.push({
+              Id_paquete: item.Id_paquete,
+              nombre_promocion: item.nombre_promocion,
+              precio_paquete: item.precio_paquete,
+              cantidadVendida: parseFloat(item.CantidadVendida) || 0,
+            });
+
+            venta.precioTotal_venta +=
+              (parseFloat(item.precio_paquete) || 0) *
+              (parseFloat(item.CantidadVendida) || 0);
+          }
         }
 
         return acc;
       }, {});
 
-      res.json(Object.values(ventasAgrupadas));
+      // 🔴 ajuste final: ventas SOLO de cigarrillos
+      const resultadoFinal = Object.values(ventasAgrupadas).map(v => {
+        if (v.precioTotal_venta === 0 && v.totalCigarrillos > 0) {
+          v.precioTotal_venta = v.totalCigarrillos;
+        }
+        delete v.totalCigarrillos; // no lo mandamos al front
+        return v;
+      });
+
+      res.json(resultadoFinal);
     }
   );
 };
+
 
 
 
