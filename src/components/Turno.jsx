@@ -17,21 +17,24 @@ const Turno = () => {
 
 
   // TRAER TURNOS
-  const traerTurnos = () => {
-    axios.get(`${URL}Turno/verTurnos`)
-      .then((response) => {
-        console.log('Turnos: ', response.data)
-        setTurnos(response.data)
-        setTotal(response.data.length)
-      })
-      .catch((error) => {
-        console.error('Error al traer turnos: ', error)
-      })
-  }
+const traerTurnos = (fecha) => {
+  const params = fecha ? { params: { fecha } } : undefined;
 
-  useEffect(() => {
-    traerTurnos()
-  }, [])
+  axios.get(`${URL}Turno/verTurnos`, params)
+    .then((response) => {
+      setTurnos(response.data);
+      setTotal(response.data.length);
+    })
+    .catch((error) => {
+      console.error('Error al traer turnos: ', error);
+    });
+};
+
+
+useEffect(() => {
+  setActualPagina(1);            // clave para que no te quedes en pag 3 sin resultados
+  traerTurnos(fechaFiltro);
+}, [fechaFiltro]);
 
 
   const mostrarValor = (valor) => {
@@ -58,11 +61,7 @@ const Turno = () => {
     return formatCurrency(valor)
   }
 
-  const turnosFiltrados = fechaFiltro ? turnos.filter((tur) => {
-      const fechaIngreso = new Date(tur.FechaIngreso).toISOString().split('T')[0]
-      return fechaIngreso === fechaFiltro
-    })
-    : turnos
+  const turnosFiltrados =  turnos
 
 const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
 

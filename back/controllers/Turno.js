@@ -1,22 +1,14 @@
 const {connection} = require("../database/config")
 
 
-const verTurnos = (req,res) =>{
-    connection.query(`
+const verTurnos = (req, res) => {
+  const { fecha } = req.query; 
+
+  let sql = `
     SELECT 
       t.Id_turno,
-      t.FechaIngreso AS FechaIngreso,
-      DATE_FORMAT(t.FechaSalida, '%Y-%m-%d %H:%i:%s')  AS FechaSalida,
-      t.FondoCaja,
-      t.Efectivo,
-      t.Cigarrillos,
-      t.Transferencia,
-      t.Debito,
-      t.Egreso,
-      t.Ingreso,
-      t.Id_turno,
-      t.FechaIngreso AS FechaIngreso,
-      DATE_FORMAT(t.FechaSalida, '%Y-%m-%d %H:%i:%s')  AS FechaSalida,
+      t.FechaIngreso,
+      DATE_FORMAT(t.FechaSalida, '%Y-%m-%d %H:%i:%s') AS FechaSalida,
       t.FondoCaja,
       t.Efectivo,
       t.Cigarrillos,
@@ -34,12 +26,29 @@ const verTurnos = (req,res) =>{
     FROM turno t
     INNER JOIN sucursales s ON t.Id_sucursal = s.Id_sucursal
     INNER JOIN usuarios u ON t.Id_usuario = u.Id_usuario
-    ORDER BY t.FechaIngreso DESC
-    `,(error,results)=>{
-        if(error)throw error
-        res.json(results)
-    })
-} 
+  `;
+
+  const params = [];
+
+  if (fecha) {
+    sql += `
+      WHERE t.FechaIngreso >= CONCAT(?, ' 00:00:00')
+        AND t.FechaIngreso <  DATE_ADD(CONCAT(?, ' 00:00:00'), INTERVAL 1 DAY)
+    `;
+    params.push(fecha, fecha);
+  }
+
+  sql += ` ORDER BY t.FechaIngreso DESC`;
+
+  connection.query(sql, params, (error, results) => {
+    if (error) return res.status(500).json({ message: "Error al traer turnos", error });
+    res.json(results);
+  });
+};
+
+
+
+
 
 const abrirTurno = (req, res) => {
   connection.query(

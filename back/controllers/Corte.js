@@ -10,7 +10,7 @@ const ventaTotal = (req, res) => {
       r.monto_total
     FROM (
       /* ===============================
-         1) MÉTODOS DE PAGO (NETO)
+         1) MÉTODOS DE PAGO (NETO SIN CIGARRILLOS)
          =============================== */
       SELECT
         mp.tipo_metodoPago AS tipo,
@@ -30,9 +30,17 @@ const ventaTotal = (req, res) => {
       ) vm ON vm.Id_metodoPago = mp.Id_metodoPago
 
       LEFT JOIN (
+        /* TOTAL CIGARRILLOS POR MÉTODO (BIEN CALCULADO) */
         SELECT
           v.Id_metodoPago,
-          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+          SUM(
+            dv.CantidadVendida *
+            CASE
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+              ELSE p.precioVentaSucGuillermina
+            END
+          ) AS total_cigarrillos
         FROM venta v
         INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
         INNER JOIN producto p ON p.Id_producto = dv.Id_producto
@@ -47,12 +55,22 @@ const ventaTotal = (req, res) => {
       UNION ALL
 
       /* ===============================
-         2) FILA EXTRA: CIGARRILLOS
+         2) FILA EXTRA: CIGARRILLOS (TOTAL GENERAL)
          =============================== */
       SELECT
         'Cigarrillos' AS tipo,
         ROUND(
-          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          COALESCE(
+            SUM(
+              dv.CantidadVendida *
+              CASE
+                WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+                WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+                ELSE p.precioVentaSucGuillermina
+              END
+            ),
+            0
+          ),
           2
         ) AS monto_total
       FROM venta v
@@ -66,9 +84,9 @@ const ventaTotal = (req, res) => {
   `;
 
   const params = [
-    fechaSeleccionada, Id_sucursal,      // vm
-    fechaSeleccionada, Id_sucursal,      // cm
-    fechaSeleccionada, Id_sucursal       // cigarrillos
+    fechaSeleccionada, Id_sucursal, // vm
+    fechaSeleccionada, Id_sucursal, // cm
+    fechaSeleccionada, Id_sucursal  // cigarrillos
   ];
 
   connection.query(query, params, (error, results) => {
@@ -80,6 +98,7 @@ const ventaTotal = (req, res) => {
   });
 };
 
+
 const ventaTotalconUsuario = (req, res) => {
   const { fechaSeleccionada, Id_usuario, Id_caja, Id_sucursal } = req.params;
 
@@ -89,7 +108,7 @@ const ventaTotalconUsuario = (req, res) => {
       r.monto_total
     FROM (
       /* ===============================
-         1) MÉTODOS DE PAGO (NETO)
+         1) MÉTODOS DE PAGO (NETO SIN CIGARRILLOS)
          =============================== */
       SELECT
         mp.tipo_metodoPago AS tipo,
@@ -111,9 +130,17 @@ const ventaTotalconUsuario = (req, res) => {
       ) vm ON vm.Id_metodoPago = mp.Id_metodoPago
 
       LEFT JOIN (
+        /* TOTAL CIGARRILLOS POR MÉTODO (BIEN CALCULADO) */
         SELECT
           v.Id_metodoPago,
-          SUM(dv.ventasTotales_detalleVenta) AS total_cigarrillos
+          SUM(
+            dv.CantidadVendida *
+            CASE
+              WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+              WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+              ELSE p.precioVentaSucGuillermina
+            END
+          ) AS total_cigarrillos
         FROM venta v
         INNER JOIN detalleventa dv ON dv.Id_venta = v.Id_venta
         INNER JOIN producto p ON p.Id_producto = dv.Id_producto
@@ -130,12 +157,22 @@ const ventaTotalconUsuario = (req, res) => {
       UNION ALL
 
       /* ===============================
-         2) FILA EXTRA: CIGARRILLOS
+         2) FILA EXTRA: CIGARRILLOS (TOTAL GENERAL)
          =============================== */
       SELECT
         'Cigarrillos' AS tipo,
         ROUND(
-          COALESCE(SUM(dv.ventasTotales_detalleVenta), 0),
+          COALESCE(
+            SUM(
+              dv.CantidadVendida *
+              CASE
+                WHEN v.Id_sucursal = 1 THEN p.precioVentaSucGuillermina
+                WHEN v.Id_sucursal = 2 THEN p.precioVentaSucSanMartin
+                ELSE p.precioVentaSucGuillermina
+              END
+            ),
+            0
+          ),
           2
         ) AS monto_total
       FROM venta v
@@ -151,9 +188,9 @@ const ventaTotalconUsuario = (req, res) => {
   `;
 
   const params = [
-    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja,   
-    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja,   
-    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja   
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja, // vm
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja, // cm
+    fechaSeleccionada, Id_sucursal, Id_usuario, Id_caja  // cigarrillos
   ];
 
   connection.query(query, params, (error, results) => {
