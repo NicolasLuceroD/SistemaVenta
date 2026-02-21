@@ -152,7 +152,9 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
                 <th className="px-2">Fondo</th>
                 <th className="px-2">Efectivo</th>
                 <th className="px-2">Transferencia</th>
+                <th className="px-2">Mixto</th>
                 <th className="px-2">Débito</th>
+                <th className="px-2">Credito</th>
                 <th className="px-2">Cigarrillos</th>
                 <th className="px-2">Egreso</th>
                 <th className="px-2">Ingreso</th>
@@ -188,7 +190,9 @@ const sinResultadosPorFecha = fechaFiltro && turnosFiltrados.length === 0
                   <td className="px-2 text-end">{mostrarImporte(tur.FondoCaja)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Efectivo)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Transferencia)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Mixto)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Debito)}</td>
+                  <td className="px-2 text-end">{mostrarImporte(tur.Credito)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Cigarrillos)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Egreso)}</td>
                   <td className="px-2 text-end">{mostrarImporte(tur.Ingreso)}</td>

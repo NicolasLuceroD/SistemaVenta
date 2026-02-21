@@ -15,6 +15,8 @@ const verTurnos = (req, res) => {
       t.Transferencia,
       t.Debito,
       t.Egreso,
+      t.Mixto,
+      t.Credito,
       t.Ingreso,
       t.TotalEnCaja,
       t.Estado,
@@ -61,7 +63,9 @@ const abrirTurno = (req, res) => {
       Transferencia: req.body.Transferencia,
       Debito: req.body.Debito,
       Egreso: req.body.Egreso,
+      Credito: req.body.Credito,
       Ingreso: req.body.Ingreso,
+      Mixto: req.body.Mixto,
       TotalEnCaja: req.body.TotalEnCaja,
       Id_sucursal: req.body.Id_sucursal,
       Id_usuario: req.body.Id_usuario,
@@ -88,11 +92,15 @@ const finalizarTurno = (req, res) => {
     Efectivo,
     Cigarrillos,
     Transferencia,
+    Credito,
     Debito,
+    Mixto,
     Egreso,
     Ingreso,
     TotalEnCaja
   } = req.body;
+
+  console.log('Mixto tota:', Mixto)
 
   connection.query(
     `
@@ -101,7 +109,9 @@ const finalizarTurno = (req, res) => {
       Efectivo = ?,
       Cigarrillos = ?,
       Transferencia = ?,
+      Credito = ?,
       Debito = ?,
+      Mixto = ?,
       Egreso = ?,
       Ingreso = ?,
       TotalEnCaja = ?,
@@ -112,7 +122,9 @@ const finalizarTurno = (req, res) => {
       Efectivo,
       Cigarrillos,
       Transferencia,
+      Credito,
       Debito,
+      Mixto,
       Egreso,
       Ingreso,
       TotalEnCaja,

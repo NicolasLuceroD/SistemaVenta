@@ -130,6 +130,12 @@ function App() {
       const transferencia = getTotalExact("transferencia");
       const cigarrillos = getTotalExact("cigarrillos");
       const debito = getTotalContains("debito");
+      const mixto =  getTotalExact("mixto")
+      const credito =  getTotalExact("Tarjeta credito")
+      
+      console.log("mixto total:", mixto)
+      console.log("credito total:", credito)
+      console.log("debito total:", debito)
 
       await axios.post(`${URL}plataCaja/post`, {
         Id_sucursal: id_sucursal,
@@ -154,7 +160,9 @@ function App() {
         Cigarrillos: cigarrillos,
         Debito: debito,
         TotalEnCaja: total_cierre,
-        FechaSalida: FechaRegistro
+        FechaSalida: FechaRegistro,
+        Mixto: mixto,
+        Credito: credito
       });
 
       Swal.fire({
