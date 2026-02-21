@@ -7,10 +7,8 @@ import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoneyBillWave,
-  faArrowRightArrowLeft,
   faCreditCard,
   faDoorOpen,
-  faHandHoldingUsd,
   faMobileAlt,
   faUser,
   faWallet,
@@ -29,12 +27,13 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [time, setTime] = useState(new Date());
   const [total_cierre, setTotalCierre] = useState(0);
-  const [cargando, setCargando] = useState(true);
   const [metoPago, setMetodosPagos] = useState([]);
 
   const [plataApertura, setPlataApertura] = useState(0);
   const [plataIngreso, setPlataIngreso] = useState(0);
   const [plataEgreso, setPlataEgreso] = useState(0);
+  const [idTurno, setIdTurno] = useState(null);
+  const [cerrando, setCerrando] = useState(false);
 
   const { URL } = useContext(DataContext);
 
@@ -44,31 +43,39 @@ function App() {
   const IdCaja = sessionStorage.getItem("idCaja");
   const nombreUsuario = sessionStorage.getItem("nombreUsuario");
   const nombreSucursal = sessionStorage.getItem("nombreSucursal");
-  const IdTurno = sessionStorage.getItem("IdTurno");
 
   const navigate = useNavigate();
 
-  const navegar = (ruta) => {
-    navigate(ruta);
-  };
+  const navegar = (ruta) => navigate(ruta);
 
   const norm = (s) => (s || "").trim().toLowerCase();
 
+  // -------------------------
+  // Métodos de pago
+  // -------------------------
   const verMetoPagos = async () => {
     try {
-      const resp = await axios.get(`${URL}plataCaja/verMetodosPagos/${IdCaja}/${id_usuario}`);
-      setMetodosPagos(resp.data);
-      return resp.data;
+      const resp = await axios.get(
+        `${URL}plataCaja/verMetodosPagos/${IdCaja}/${id_usuario}`
+      );
+      setMetodosPagos(resp.data || []);
+      return resp.data || [];
     } catch (error) {
-      console.log("Error al obtener los metodos de pago", error);
+      console.log("Error metodos de pago:", error);
       setMetodosPagos([]);
       return [];
     }
   };
 
+  // -------------------------
+  // Datos caja
+  // -------------------------
   const obtenerDatosCaja = async () => {
     try {
-      const response = await axios.get(`${URL}plataCaja/plataLogin/${id_usuario}/${IdCaja}`);
+      const response = await axios.get(
+        `${URL}plataCaja/plataLogin/${id_usuario}/${IdCaja}`
+      );
+
       if (response.data?.length) {
         setTotalCierre(parseFloat(response.data[0].total_cierre) || 0);
         setPlataApertura(parseFloat(response.data[0].montoInicial) || 0);
@@ -76,12 +83,39 @@ function App() {
         setPlataIngreso(parseFloat(response.data[0].total_ingresos) || 0);
       }
     } catch (error) {
-      console.error("Error al obtener datos de caja:", error);
-    } finally {
-      setCargando(false);
+      console.error("Error datos caja:", error);
     }
   };
 
+  // -------------------------
+  // Recuperar turno activo
+  // -------------------------
+  const recuperarTurno = async () => {
+    try {
+      const resp = await axios.get(
+        `${URL}turno/turnoActivo/${id_usuario}/${IdCaja}`
+      );
+
+      if (resp.data?.data) {
+        const turno = resp.data.data;
+
+        setIdTurno(turno.Id_turno);
+        sessionStorage.setItem("IdTurno", turno.Id_turno);
+
+        console.log("✅ Turno recuperado:", turno.Id_turno);
+      } else {
+        setIdTurno(null);
+        sessionStorage.removeItem("IdTurno");
+        console.log("ℹ️ No hay turno activo");
+      }
+    } catch (error) {
+      console.log("❌ Error recuperando turno:", error);
+    }
+  };
+
+  // -------------------------
+  // Modal
+  // -------------------------
   const handleShowModal = async () => {
     setShowModal(true);
     await obtenerDatosCaja();
@@ -93,66 +127,70 @@ function App() {
     setCantidadPlataCaja("");
   };
 
+  // -------------------------
+  // Cálculos
+  // -------------------------
   const calcularFaltante = () => {
     const caja = parseFloat(cantidadPlataCaja || 0);
     const diferencia = parseFloat((total_cierre - caja).toFixed(2));
     return Math.max(diferencia, 0);
   };
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat("es-AR", {
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("es-AR", {
       style: "currency",
       currency: "ARS"
     }).format(Number(value || 0));
-  };
 
+  // -------------------------
+  // Cierre blindado
+  // -------------------------
   const cerrarCaja = async () => {
-    const plataIF = parseFloat(parseFloat(cantidadPlataCaja || 0).toFixed(2));
+    if (cerrando) return;
 
-     const FechaRegistro = new Date().toISOString();
-    if (isNaN(plataIF) || plataIF < 0) {
-      return alert("Por favor ingrese un monto válido.");
+    const caja = parseFloat(cantidadPlataCaja);
+    const FechaRegistro = new Date().toISOString();
+
+    if (!idTurno) {
+      Swal.fire("Error", "No hay turno activo", "error");
+      return;
     }
 
+    if (!isFinite(caja) || caja < 0) {
+      Swal.fire("Monto inválido", "Ingrese un número válido", "warning");
+      return;
+    }
+
+    setCerrando(true);
+
     try {
-      // ✅ Traigo métodos actualizados ANTES de cerrar
       const metodosActualizados = await verMetoPagos();
 
       const getTotalExact = (name) =>
-        parseFloat(metodosActualizados.find((x) => norm(x.tipo_item) === norm(name))?.total || 0);
+        parseFloat(
+          metodosActualizados.find(
+            (x) => norm(x.tipo_item) === norm(name)
+          )?.total || 0
+        );
 
       const getTotalContains = (fragment) =>
         parseFloat(
-          metodosActualizados.find((x) => norm(x.tipo_item).includes(norm(fragment)))?.total || 0
+          metodosActualizados.find(
+            (x) => norm(x.tipo_item).includes(norm(fragment))
+          )?.total || 0
         );
 
       const efectivo = getTotalExact("efectivo");
       const transferencia = getTotalExact("transferencia");
       const cigarrillos = getTotalExact("cigarrillos");
       const debito = getTotalContains("debito");
-      const mixto =  getTotalExact("mixto")
-      const credito =  getTotalExact("Tarjeta credito")
-      
-      console.log("mixto total:", mixto)
-      console.log("credito total:", credito)
-      console.log("debito total:", debito)
+      const mixto = getTotalExact("mixto");
+      const credito = getTotalExact("tarjeta credito");
 
-      await axios.post(`${URL}plataCaja/post`, {
-        Id_sucursal: id_sucursal,
-        Id_usuario: id_usuario,
-        cantidadPlata: plataIF,
-        faltante: calcularFaltante(),
-        IdCaja: IdCaja,
-        TotalEnCaja: total_cierre
-      });
-
-      await axios.put(`${URL}plataCaja/cerrarCaja`, {
-        Id_usuario: id_usuario,
-        Id_caja: IdCaja
-      });
-
+      console.log('idTurno:', idTurno);
+      // ✅ 1️⃣ Cerrar turno
       await axios.put(`${URL}turno/finalizarTurno`, {
-        IdTurno: IdTurno,
+        IdTurno: idTurno,
         Ingreso: plataIngreso,
         Egreso: plataEgreso,
         Efectivo: efectivo,
@@ -160,31 +198,56 @@ function App() {
         Cigarrillos: cigarrillos,
         Debito: debito,
         TotalEnCaja: total_cierre,
-        FechaSalida: FechaRegistro,
         Mixto: mixto,
         Credito: credito
       });
 
-      Swal.fire({
-        icon: "success",
-        title: "Éxito",
-        text: "Caja cerrada correctamente!",
-        timer: 1500,
-        timerProgressBar: true,
-        allowOutsideClick: false,
-        allowEscapeKey: false
-      }).then(() => {
-        sessionStorage.removeItem("idCaja");
-        navigate("/");
+      // ✅ 2️⃣ Cerrar caja
+      await axios.put(`${URL}plataCaja/cerrarCaja`, {
+        Id_usuario: id_usuario,
+        Id_caja: IdCaja
       });
+
+      // ✅ 3️⃣ Registrar cierre
+      await axios.post(`${URL}plataCaja/post`, {
+        Id_sucursal: id_sucursal,
+        Id_usuario: id_usuario,
+        cantidadPlata: caja,
+        faltante: calcularFaltante(),
+        IdCaja: IdCaja,
+        TotalEnCaja: total_cierre
+      });
+
+      Swal.fire("Éxito", "Caja cerrada correctamente", "success")
+        .then(() => {
+          sessionStorage.removeItem("idCaja");
+          sessionStorage.removeItem("IdTurno");
+          navigate("/");
+        });
+
     } catch (error) {
-      console.log("Error al cerrar la caja:", error);
+      console.log("❌ Error cierre:", error);
+
+      Swal.fire(
+        "Error",
+        "No se pudo cerrar correctamente",
+        "error"
+      );
+    } finally {
+      setCerrando(false);
     }
   };
 
+  // -------------------------
+  // Effects
+  // -------------------------
   useEffect(() => {
-    obtenerDatosCaja();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const init = async () => {
+      await recuperarTurno();
+      await obtenerDatosCaja();
+    };
+
+    init();
   }, []);
 
   useEffect(() => {
@@ -192,7 +255,9 @@ function App() {
     return () => clearInterval(intervalID);
   }, []);
 
-  // Iconos para la tabla (ahora por Id_item)
+  // -------------------------
+  // Iconos
+  // -------------------------
   const iconMap = {
     1: faMoneyBillWave,
     4: faMobileAlt,
@@ -200,10 +265,10 @@ function App() {
     6: faWallet,
     7: faCreditCard,
     8: faCreditCard,
-    999999: faSmoking // ✅ Cigarrillos
+    999999: faSmoking
   };
 
-  return (
+return (
     <>
       <Navbar bg="dark" expand="lg" sticky="top" className="app-navbar shadow-sm">
         <Container fluid>
@@ -423,21 +488,13 @@ function App() {
           </h5>
 
           <div className="mt-3 text-center">
-            <Button
+          <Button
               onClick={cerrarCaja}
+              disabled={cerrando}
               variant="outline-danger"
-              className="px-4 py-2 fw-bold"
-              style={{
-                borderRadius: "12px",
-                letterSpacing: "1px",
-                display: "flex",
-                alignItems: "center",
-                gap: "8px",
-                margin: "0 auto"
-              }}
             >
-              <FontAwesomeIcon icon={faDoorOpen} size="lg" />
-              CERRAR TURNO
+              <FontAwesomeIcon icon={faDoorOpen} />
+              {" "} {cerrando ? "Cerrando..." : "CERRAR TURNO"}
             </Button>
           </div>
         </Modal.Body>

@@ -177,26 +177,27 @@ const verificarCajaAbierta = async (req, res) => {
 
 
 const cerrarCaja = async (req, res) => {
-    const Id_usuario = req.body.Id_usuario
-    const Id_caja = req.body.Id_caja
+  const { Id_usuario, Id_caja } = req.body;
 
-    console.log('Id_usuario EN CERRAR CAJA', Id_usuario)
-    console.log('Id_caja EN CERRAR CAJA', Id_caja)
-    try {
-         connection.query(
-            `UPDATE plataencajalogin 
-             SET estado = 0 
-             WHERE Id_usuario = ? 
-             AND Id_caja = ? 
-             AND estado = 1`,
-            [Id_usuario, Id_caja]
-        );
+  try {
+    const [result] = await connection.promise().query(
+      `UPDATE plataencajalogin
+       SET estado = 0
+       WHERE Id_usuario = ?
+       AND Id_caja = ?
+       AND estado = 1`,
+      [Id_usuario, Id_caja]
+    );
 
-        return res.json({ mensaje: "Caja cerrada correctamente" });
-    } catch (error) {
-        console.error("Error al cerrar la caja:", error);
-        res.status(500).json({ error: "Error en el servidor" });
-    }
+    res.json({
+      mensaje: "Caja cerrada correctamente",
+      filasAfectadas: result.affectedRows
+    });
+
+  } catch (error) {
+    console.error("Error al cerrar la caja:", error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
 };
 
 

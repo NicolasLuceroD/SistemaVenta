@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Swal from 'sweetalert2';
-import { Modal, Button } from 'react-bootstrap';
-import Form from 'react-bootstrap/Form';
+import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { Modal, Button } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import {
   MDBBtn,
   MDBContainer,
@@ -12,26 +11,27 @@ import {
   MDBCol,
   MDBCard,
   MDBCardBody,
-} from 'mdb-react-ui-kit';
-import { faSackDollar, faDoorOpen } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { DataContext } from '../context/DataContext';
+} from "mdb-react-ui-kit";
+import { faSackDollar, faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { DataContext } from "../context/DataContext";
 
 const LoginUsuario = () => {
   const [nombre_usuario, setNombreUsuario] = useState("");
   const [clave_usuario, setClaveUsuario] = useState("");
   const [usuarios, setUsuarios] = useState([]);
 
-  const [showModal, setShowModal] = useState(false);   // dinero en caja
-  const [showModal1, setShowModal1] = useState(false); // seleccionar caja
+  const [showModal, setShowModal] = useState(false);
+  const [showModal1, setShowModal1] = useState(false);
 
-  const [ingresoPlata, setIngresoPlata] = useState(0);
+  const [ingresoPlata, setIngresoPlata] = useState("");
   const [caja, setCaja] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const { URL } = useContext(DataContext);
 
-  // ✅ Leer sucursal desde sessionStorage
   const id_sucursal = sessionStorage.getItem("sucursalId");
 
   const handleShowModal = () => setShowModal(true);
@@ -40,142 +40,188 @@ const LoginUsuario = () => {
   const handleShowModal1 = () => setShowModal1(true);
   const handleCloseModal1 = () => setShowModal1(false);
 
-  const verlasCajas = () => {
-    axios.get(`${URL}caja/${id_sucursal}`).then((response) => {
+  // ✅ TRAER CAJAS
+  const verlasCajas = async () => {
+    try {
+      const response = await axios.get(`${URL}caja/${id_sucursal}`);
       setCaja(response.data);
-    });
+    } catch (error) {
+      console.error("Error cargando cajas:", error);
+    }
   };
 
-  const ComprobarLogin = () => {
+  // ✅ LOGIN
+  const ComprobarLogin = async () => {
+    if (loading) return;
+
     if (!id_sucursal) {
-      Swal.fire("Error", "No hay sucursal seleccionada. Volvé a ingresar por sucursal.", "error");
+      Swal.fire("Error", "No hay sucursal seleccionada", "error");
       return;
     }
-    const FechaRegistro = new Date().toISOString();
-    axios.post(`${URL}login/usu/post`, {
-      nombre_usuario,
-      clave_usuario,
-      Id_sucursal: id_sucursal
-    })
-    .then((response) => {
-      const idUsuario = response.data.idUsuario;
-      const rol_usuario = response.data.rol_usuario;
-      if (rol_usuario && idUsuario) {
-        sessionStorage.setItem('rolUsuario', rol_usuario);
-        sessionStorage.setItem('idUsuario', String(idUsuario));
-        sessionStorage.setItem('nombreUsuario', nombre_usuario);
-        sessionStorage.setItem('FechaRegistro', FechaRegistro);
-        handleShowModal1();
-      } else {
-        Swal.fire({
-          title: "<strong>Ingreso inválido!</strong>",
-          html: "<i><strong>Usuario no asociado a la sucursal</strong></i>",
-          icon: 'warning',
-          timer: 3000
-        });
-      }
-    })
-    .catch(() => {
-      Swal.fire({
-        title: "<strong>Ingreso inválido!</strong>",
-        html: "<i><strong>Usuario y/o contraseña incorrectos</strong></i>",
-        icon: 'warning',
-        timer: 3000
-      });
-    });
-  };
 
-  const comprobarLoginCaja = async () => {
-    const selectedCaja = document.getElementById('Caja').value;
-    if (!selectedCaja) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'Atención',
-        text: 'Debe seleccionar una caja antes de ingresar',
-        timerProgressBar: true,
-        timer: 2500
-      });
+    if (!nombre_usuario || !clave_usuario) {
+      Swal.fire("Atención", "Complete usuario y clave", "warning");
       return;
     }
 
     try {
-      const idUsuario = sessionStorage.getItem('idUsuario');
+      setLoading(true);
 
-      const response = await axios.post(`${URL}plataCaja/verificarCajaAbierta`, {
-        Id_usuario: idUsuario,
-        Id_caja: selectedCaja
+      const FechaRegistro = new Date().toISOString();
+
+      const response = await axios.post(`${URL}login/usu/post`, {
+        nombre_usuario,
+        clave_usuario,
+        Id_sucursal: id_sucursal,
       });
 
-      // ✅ Guardar caja SIEMPRE en sessionStorage
-      sessionStorage.setItem('idCaja', String(selectedCaja));
+      const { idUsuario, rol_usuario } = response.data;
 
-      if (response.data.cajaAbierta) {
-        sessionStorage.setItem('platica', String(response.data.montoInicial));
+      if (!idUsuario) throw new Error("Login inválido");
 
-        Swal.fire({
-          title: "Caja Abierta",
-          text: `Se recuperó el monto inicial de $${response.data.montoInicial}`,
-          icon: "success",
-          timer: 3000
-        });
+      sessionStorage.setItem("rolUsuario", rol_usuario);
+      sessionStorage.setItem("idUsuario", String(idUsuario));
+      sessionStorage.setItem("nombreUsuario", nombre_usuario);
+      sessionStorage.setItem("FechaRegistro", FechaRegistro);
 
-        handleCloseModal1();
-        navigate('/testVenta', { replace: true });
-      } else {
-        handleCloseModal1();
-        handleShowModal();
-      }
+      handleShowModal1();
     } catch (error) {
-      console.error("Error al verificar la caja:", error);
-      Swal.fire("Error al verificar la caja.");
+      Swal.fire(
+        "Ingreso inválido",
+        "Usuario o contraseña incorrectos",
+        "warning",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
+  // ✅ VALIDAR CAJA + RECUPERAR TURNO
+  const comprobarLoginCaja = async () => {
+    if (loading) return;
+
+    const selectedCaja = document.getElementById("Caja").value;
+
+    if (!selectedCaja) {
+      Swal.fire("Atención", "Debe seleccionar una caja", "warning");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const idUsuario = sessionStorage.getItem("idUsuario");
+
+      sessionStorage.setItem("idCaja", String(selectedCaja));
+
+      // 🔥 1️⃣ Verificar caja abierta
+      const responseCaja = await axios.post(
+        `${URL}plataCaja/verificarCajaAbierta`,
+        {
+          Id_usuario: idUsuario,
+          Id_caja: selectedCaja,
+        },
+      );
+
+      // 🔥 2️⃣ Verificar turno activo REAL en DB
+      const responseTurno = await axios.get(
+        `${URL}turno/turnoActivo/${idUsuario}/${selectedCaja}`,
+      );
+
+      if (responseTurno.data?.data) {
+        sessionStorage.setItem("IdTurno", responseTurno.data.Id_turno);
+
+        Swal.fire({
+          title: "Turno recuperado",
+          text: "Se detectó un turno abierto",
+          icon: "info",
+          timer: 2500,
+        });
+
+        handleCloseModal1();
+        navigate("/testVenta", { replace: true });
+        return;
+      }
+
+      // 🔥 3️⃣ Si caja abierta pero sin turno → reparar inconsistencia
+      if (responseCaja.data.cajaAbierta && !responseTurno.data) {
+        console.warn("⚠ Caja abierta sin turno");
+
+        handleCloseModal1();
+        handleShowModal();
+        return;
+      }
+
+      // 🔥 4️⃣ Caja cerrada → pedir fondo
+      handleCloseModal1();
+      handleShowModal();
+    } catch (error) {
+      console.error("Error verificando caja:", error);
+      Swal.fire("Error al verificar caja");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ REGISTRAR FONDO + ABRIR TURNO
   const regristroPlata = async () => {
-  const idUsuario = sessionStorage.getItem("idUsuario");
-  const IdCaja = sessionStorage.getItem("idCaja");
+    if (loading) return;
 
-  if (!ingresoPlata || isNaN(ingresoPlata) || ingresoPlata <= 0) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Atención',
-      text: 'Debe ingresar un fondo de caja',
-      timer: 2500,
-      timerProgressBar: true
-    });
-    return;
-  }
-  try {
-    await axios.post(`${URL}plataLogin/post`, {
-      Id_usuario: idUsuario,
-      Id_sucursal: id_sucursal,
-      cantidadPlataLogin: parseFloat(ingresoPlata),
-      Id_caja: IdCaja
-    });
-    sessionStorage.setItem('platica', String(ingresoPlata));
-    const respTurno = await axios.post(`${URL}turno/abrirTurno`, {
-      Id_usuario: idUsuario,
-      Id_sucursal: id_sucursal,
-      FondoCaja: ingresoPlata,
-      Id_caja: IdCaja,
-    });
-    const IdTurno = respTurno.data.IdTurno;
-    sessionStorage.setItem('IdTurno', IdTurno);
-    Swal.fire({
-      title: "Ingreso Correcto",
-      text: "¡Que tenga un día exitoso!",
-      icon: "success",
-      timer: 3000
-    });
-    handleCloseModal();
-    navigate('/testVenta', { replace: true });
-  } catch (error) {
-    console.error("Error al registrar el ingreso:", error);
-    Swal.fire("Error al registrar la apertura de caja.");
-  }
-};
+    const idUsuario = sessionStorage.getItem("idUsuario");
+    const IdCaja = sessionStorage.getItem("idCaja");
 
+    const monto = parseFloat(ingresoPlata);
 
+    if (!monto || isNaN(monto) || monto <= 0) {
+      Swal.fire("Atención", "Ingrese un fondo válido", "warning");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      // 🔥 Validar que NO exista turno abierto
+      const respTurnoActivo = await axios.get(
+        `${URL}turno/turnoActivo/${idUsuario}/${IdCaja}`,
+      );
+
+     if (respTurnoActivo.data?.data) {
+        Swal.fire("Atención", "Ya existe un turno abierto", "warning");
+        return;
+      }
+
+      // 🔥 1️⃣ Registrar fondo caja
+      await axios.post(`${URL}plataLogin/post`, {
+        Id_usuario: idUsuario,
+        Id_sucursal: id_sucursal,
+        cantidadPlataLogin: monto,
+        Id_caja: IdCaja,
+      });
+
+      // 🔥 2️⃣ Abrir turno
+      const respTurno = await axios.post(`${URL}turno/abrirTurno`, {
+        Id_usuario: idUsuario,
+        Id_sucursal: id_sucursal,
+        FondoCaja: monto,
+        Id_caja: IdCaja,
+      });
+
+      sessionStorage.setItem("platica", String(monto));
+      sessionStorage.setItem("IdTurno", respTurno.data.IdTurno);
+
+      Swal.fire("Ingreso Correcto", "Turno abierto correctamente", "success");
+
+      handleCloseModal();
+      navigate("/testVenta", { replace: true });
+    } catch (error) {
+      console.error("Error apertura:", error);
+      Swal.fire("Error", "No se pudo abrir el turno", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ EFECTOS
   useEffect(() => {
     if (!id_sucursal) return;
     verlasCajas();
@@ -184,127 +230,180 @@ const LoginUsuario = () => {
   useEffect(() => {
     if (!id_sucursal) return;
 
-    axios.get(`${URL}usuarios/sucursal/${id_sucursal}`)
-      .then(response => setUsuarios(response.data))
-      .catch(error => console.error('Error fetching usuarios:', error));
+    axios
+      .get(`${URL}usuarios/sucursal/${id_sucursal}`)
+      .then((response) => setUsuarios(response.data))
+      .catch((error) => console.error("Error usuarios:", error));
   }, [id_sucursal, URL]);
 
-
-
-
   return (
-    <div className='fondo-loginusuario'>
+    <div className="fondo-loginusuario">
+      {" "}
       <a className="brand-link">
-        <span className="brand-badge">A&L</span>
-        <span className="brand-text">SOFTWARE</span>
-      </a>
-
-      <MDBContainer fluid className='d-flex justify-content-center align-items-center min-vh-100'>
-        <MDBRow className='w-100'>
-          <MDBCol className='d-flex justify-content-center'>
-            <MDBCard className='bg-white my-5' style={{ borderRadius: '1rem', maxWidth: '500px', padding: '30px' }}>
-              <MDBCardBody className='p-5 w-100 d-flex flex-column'>
-                <div className='d-flex justify-content-center'>
-                  <h3>CHUPITO - APP</h3>
-                </div>
-
-                <br />
-
+        {" "}
+        <span className="brand-badge">A&L</span>{" "}
+        <span className="brand-text">SOFTWARE</span>{" "}
+      </a>{" "}
+      <MDBContainer
+        fluid
+        className="d-flex justify-content-center align-items-center min-vh-100"
+      >
+        {" "}
+        <MDBRow className="w-100">
+          {" "}
+          <MDBCol className="d-flex justify-content-center">
+            {" "}
+            <MDBCard
+              className="bg-white my-5"
+              style={{
+                borderRadius: "1rem",
+                maxWidth: "500px",
+                padding: "30px",
+              }}
+            >
+              {" "}
+              <MDBCardBody className="p-5 w-100 d-flex flex-column">
+                {" "}
+                <div className="d-flex justify-content-center">
+                  {" "}
+                  <h3>CHUPITO - APP</h3>{" "}
+                </div>{" "}
+                <br />{" "}
                 <select
-                  className='form-select mb-4 w-100'
+                  className="form-select mb-4 w-100"
                   value={nombre_usuario}
                   onChange={(e) => setNombreUsuario(e.target.value)}
                 >
-                  <option value='' disabled>Seleccione usuario</option>
-                  {usuarios.map(usuario => (
-                    <option key={usuario.Id_usuario} value={usuario.nombre_usuario}>
-                      {usuario.nombre_usuario}
+                  {" "}
+                  <option value="" disabled>
+                    Seleccione usuario
+                  </option>{" "}
+                  {usuarios.map((usuario) => (
+                    <option
+                      key={usuario.Id_usuario}
+                      value={usuario.nombre_usuario}
+                    >
+                      {" "}
+                      {usuario.nombre_usuario}{" "}
                     </option>
-                  ))}
-                </select>
-
+                  ))}{" "}
+                </select>{" "}
                 <input
-                  className='form-control mb-4 w-100'
-                  type='password'
+                  className="form-control mb-4 w-100"
+                  type="password"
                   size="lg"
-                  placeholder='Ingrese clave...'
+                  placeholder="Ingrese clave..."
                   value={clave_usuario}
                   onChange={(e) => setClaveUsuario(e.target.value)}
-                />
-
+                />{" "}
                 <MDBBtn
-                  size='lg'
+                  size="lg"
                   onClick={ComprobarLogin}
-                  style={{ backgroundColor: '#02962eff', border: 'none', cursor: 'pointer' }}
+                  style={{
+                    backgroundColor: "#02962eff",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
                 >
-                  INGRESAR
-                </MDBBtn>
-
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-
-      {/* MODAL SELECCIONAR CAJA */}
+                  {" "}
+                  INGRESAR{" "}
+                </MDBBtn>{" "}
+              </MDBCardBody>{" "}
+            </MDBCard>{" "}
+          </MDBCol>{" "}
+        </MDBRow>{" "}
+      </MDBContainer>{" "}
+      {/* MODAL SELECCIONAR CAJA */}{" "}
       <Modal show={showModal1} onHide={handleCloseModal1}>
+        {" "}
         <Modal.Header closeButton>
-          <Modal.Title>SELECCIONE CAJA</Modal.Title>
-        </Modal.Header>
+          {" "}
+          <Modal.Title>SELECCIONE CAJA</Modal.Title>{" "}
+        </Modal.Header>{" "}
         <Modal.Body>
-          <h3>CAJA:</h3>
+          {" "}
+          <h3>CAJA:</h3>{" "}
           <Form.Select aria-label="Caja" id="Caja">
-            <option value="">Seleccione una caja</option>
+            {" "}
+            <option value="">Seleccione una caja</option>{" "}
             {caja.map((caj) => (
               <option key={caj.Id_caja} value={caj.Id_caja}>
-                {caj.Id_caja}
+                {" "}
+                {caj.Id_caja}{" "}
               </option>
-            ))}
-          </Form.Select>
-
-          <br />
-
+            ))}{" "}
+          </Form.Select>{" "}
+          <br />{" "}
           <Button
             onClick={comprobarLoginCaja}
-            style={{ backgroundColor: '#02962eff', border: 'none', cursor: 'pointer' }}
+            style={{
+              backgroundColor: "#02962eff",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
-            ELEGIR
-          </Button>
-        </Modal.Body>
+            {" "}
+            ELEGIR{" "}
+          </Button>{" "}
+        </Modal.Body>{" "}
         <Modal.Footer>
+          {" "}
           <Button variant="danger" onClick={handleCloseModal1}>
-            CERRAR
-          </Button>
-        </Modal.Footer>
-      </Modal>
-
-      {/* MODAL DINERO EN CAJA */}
+            {" "}
+            CERRAR{" "}
+          </Button>{" "}
+        </Modal.Footer>{" "}
+      </Modal>{" "}
+      {/* MODAL DINERO EN CAJA */}{" "}
       <Modal show={showModal} onHide={handleCloseModal}>
+        {" "}
         <Modal.Header closeButton>
-          <Modal.Title>DINERO EN CAJA</Modal.Title>
-        </Modal.Header>
+          {" "}
+          <Modal.Title>DINERO EN CAJA</Modal.Title>{" "}
+        </Modal.Header>{" "}
         <Modal.Body>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <FontAwesomeIcon icon={faSackDollar} style={{ color: '#0e7c15', fontSize: '2em' }} />
+          {" "}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            {" "}
+            <FontAwesomeIcon
+              icon={faSackDollar}
+              style={{ color: "#0e7c15", fontSize: "2em" }}
+            />{" "}
             <input
               className="form-control"
               type="number"
               placeholder="INGRESE LA CANTIDAD DE DINERO EN CAJA"
               onChange={(e) => setIngresoPlata(e.target.value)}
-              style={{ width: '350px', marginLeft: '10px' }}
-            />
-          </div>
-
-          <Button variant="outline-success" onClick={regristroPlata} style={{ margin: '0 auto', marginTop: '10px' }}>
-            <FontAwesomeIcon icon={faDoorOpen} style={{ fontSize: '30px' }} /> INGRESAR
-          </Button>
-        </Modal.Body>
+              style={{ width: "350px", marginLeft: "10px" }}
+            />{" "}
+          </div>{" "}
+          <Button
+            variant="outline-success"
+            onClick={regristroPlata}
+            style={{ margin: "0 auto", marginTop: "10px" }}
+          >
+            {" "}
+            <FontAwesomeIcon
+              icon={faDoorOpen}
+              style={{ fontSize: "30px" }}
+            />{" "}
+            INGRESAR{" "}
+          </Button>{" "}
+        </Modal.Body>{" "}
         <Modal.Footer>
+          {" "}
           <Button variant="danger" onClick={handleCloseModal}>
-            CERRAR
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            {" "}
+            CERRAR{" "}
+          </Button>{" "}
+        </Modal.Footer>{" "}
+      </Modal>{" "}
     </div>
   );
 };

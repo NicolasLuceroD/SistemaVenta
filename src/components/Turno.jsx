@@ -4,7 +4,7 @@ import App from '../App'
 import axios from 'axios'
 import ScrollToTopButton from './utils/ScrollToTopButton'
 import Paginacion from './Paginacion'
-import { set } from 'date-fns'
+
 
 const Turno = () => {
 
@@ -22,7 +22,7 @@ const traerTurnos = (fecha) => {
 
   axios.get(`${URL}Turno/verTurnos`, params)
     .then((response) => {
-      setTurnos(response.data);
+      setTurnos(response.data.data);
       setTotal(response.data.length);
     })
     .catch((error) => {
