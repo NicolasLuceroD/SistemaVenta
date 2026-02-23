@@ -10,7 +10,7 @@ const DataProvider = ({ children }) => {
 
   //   "/api/"   "http://localhost:2201/api/"
 
-  const URL = "http://localhost:2201/api/"
+  const URL = "/api/" 
 
   
   const traerSucursales = useCallback(async () => {
