@@ -4,7 +4,7 @@ import App from '../App'
 import axios from 'axios'
 import ScrollToTopButton from './utils/ScrollToTopButton'
 import Paginacion from './Paginacion'
-import { set } from 'date-fns'
+
 
 const Turno = () => {
 
@@ -22,8 +22,8 @@ const traerTurnos = (fecha) => {
 
   axios.get(`${URL}Turno/verTurnos`, params)
     .then((response) => {
-      setTurnos(response.data);
-      setTotal(response.data.length);
+      setTurnos(response.data.data);
+      setTotal(response.data.data.length);
     })
     .catch((error) => {
       console.error('Error al traer turnos: ', error);
@@ -32,7 +32,7 @@ const traerTurnos = (fecha) => {
 
 
 useEffect(() => {
-  setActualPagina(1);            // clave para que no te quedes en pag 3 sin resultados
+  setActualPagina(1);            
   traerTurnos(fechaFiltro);
 }, [fechaFiltro]);
 
