@@ -54,12 +54,13 @@ const PlataEnCaja = require('./routes/plataEnCaja');
 const PlataLogin = require('./routes/PlataLogin');
 const Movimientos = require('./routes/Movimientos');
 const Caja = require('./routes/Caja');
-const Corte = require('./routes/Corte');
+ const Corte = require('./routes/Corte');
 const Paquete = require('./routes/Paquete');
 const Reportes = require("./routes/Reportes")
 const Cancelaciones = require("./routes/Cancelaciones")
 const AuditoriaCompra = require("./routes/AuditoriaCompra")
 const Turno = require("./routes/Turno")
+
 
 
 app.use('/api/productos', Productos);

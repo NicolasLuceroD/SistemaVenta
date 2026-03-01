@@ -105,6 +105,8 @@ const formatFecha = (fecha) => {
             console.log('casi pero no', error)      
         })
     }
+
+    
     function refreshPage() {
       window.location.reload();
     }

@@ -620,12 +620,41 @@ const buildItems = () => {
     const idKey = producto.Id_paquete || producto.Id_producto;
     const cantidad = Number(cantidadesVendidas[idKey] || 0);
 
+    let tipo_item = "comun";
+    let precioUnitarioVenta = 0;
+    let precioUnitarioCosto = 0;
+
+    // 🔹 PRODUCTO NORMAL
+    if (producto.Id_producto && !producto.Id_paquete) {
+      tipo_item = "producto";
+      precioUnitarioVenta = Number(producto.precioVenta) || 0;
+      precioUnitarioCosto = Number(producto.precioCompra) || 0;
+    }
+
+    // 🔹 PAQUETE
+    if (producto.Id_paquete) {
+      tipo_item = "paquete";
+      precioUnitarioVenta = Number(producto.precio_paquete) || 0;
+      precioUnitarioCosto = Number(producto.precioCosto) || 0;
+    }
+
+    // 🔹 PRODUCTO COMÚN
+    if (producto.productocomun) {
+      tipo_item = "comun";
+      precioUnitarioVenta = Number(producto.precioproductocomun) || 0;
+      precioUnitarioCosto = 0;
+    }
+
     return {
       Id_producto: producto.Id_producto || null,
       Id_paquete: producto.Id_paquete || null,
       CantidadVendida: cantidad,
       productocomun: producto.productocomun || null,
-      precioproductocomun: producto.precioproductocomun || null
+      precioproductocomun: producto.precioproductocomun || null,
+      tipo_item,
+      precioUnitarioVenta,
+      precioUnitarioCosto,
+      subtotal: cantidad * precioUnitarioVenta
     };
   });
 };
